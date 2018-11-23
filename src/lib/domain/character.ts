@@ -1,7 +1,7 @@
 import { ISystemManager } from "../types";
 import { nameableFactory, WithName } from "../components/nameable";
 import { killableFactory, WithHealth } from "../components/killable";
-import { movableFactory, WithPosition } from "../components/moveable";
+import { movableFactory, WithMovement } from "../components/moveable";
 import { ageableFactory, WithAge } from "../components/ageable";
 import { controllableFactory, WithControls } from "../components/controllable";
 
@@ -15,16 +15,16 @@ export function createCharacter(system: ISystemManager, options: CharacterModel)
   const entity = system.registerEntity();
 
   system.registerComponent(
-    withName(entity, options.name)
+    withName(entity, options)
   );
   system.registerComponent(
-    withAge(entity, options.age)
+    withAge(entity, options)
   );
   system.registerComponent(
-    withHealth(entity, options.health)
+    withHealth(entity, options)
   );
   system.registerComponent(
-    withPosition(entity, options.position)
+    withPosition(entity, options)
   );
   system.registerComponent(
     withControls(entity, {
@@ -35,4 +35,4 @@ export function createCharacter(system: ISystemManager, options: CharacterModel)
   return entity;
 }
 
-export type CharacterModel = WithName & WithAge & WithHealth & WithPosition & WithControls;
+export type CharacterModel = WithName & WithAge & WithHealth & WithMovement & WithControls;

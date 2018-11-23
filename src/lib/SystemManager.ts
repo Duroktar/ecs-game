@@ -1,6 +1,5 @@
-import { IComponent, ISystem, IConfig, ISystemManager, EntityIdType, IConfigDefaults, IEntity, IdGeneratorFunc, WithId, IKeyboard } from "./types";
-import { factory, isSameEntity } from "./utils";
-import { DeepReadonly } from "../react-app-env";
+import { IComponent, ISystem, IConfig, ISystemManager, EntityIdType, IConfigDefaults, IEntity, IdGeneratorFunc, WithId, IKeyboard, IEntityComponents, ValueOf, ISerializableState } from "./types";
+import { factory, isSameEntity, values } from "./utils";
 import { Keyboard } from "../extern/Keyboard";
 
 const defaultIdGenerator = (genesis: number = 0): IdGeneratorFunc => {
@@ -17,42 +16,57 @@ class SystemManager implements ISystemManager {
   public system: ISystem;
   public config: IConfig;
   public keyboard: IKeyboard;
-  private idGenerator: IdGeneratorFunc;
+  public epoch: number;
+  private entityComponents: IEntityComponents;
+  private entityIdGenerator: IdGeneratorFunc;
+  private componentIdGenerator: IdGeneratorFunc;
 
-  constructor(system: ISystem, config: IConfig, idGenerator?: IdGeneratorFunc, keyboard?: Keyboard) {
+  constructor(system: ISystem, config: IConfig, keyboard?: Keyboard, epochs?: number, idGenerator?: (begin?: number) => IdGeneratorFunc, entityComponents?: IEntityComponents) {
     this.system = system;
     this.config = { ...configDefaults, ...config };
     this.keyboard = keyboard ? keyboard : new Keyboard();
-    this.idGenerator = idGenerator ? idGenerator : defaultIdGenerator();
+    this.epoch = epochs ? epochs : 0;
+    this.entityIdGenerator = idGenerator ? idGenerator(this.epoch) : defaultIdGenerator(this.epoch);
+    this.entityComponents = entityComponents ? entityComponents : {};
+    this.componentIdGenerator = defaultIdGenerator(this.epoch);
   }
 
   public init = (config?: IConfig) => null;
 
   public registerEntity = () => {
-    const entityId = this.idGenerator().next()
+    const entityId = this.entityIdGenerator().next()
     const model = factory<IEntity>({ id: entityId });
     this.system.entities[entityId] = model;
+    this.entityComponents[entityId] = {};
     return model;
   };
   public registerComponent = (component: IComponent) => {
+    component.id = (component.id === -1)
+      ? this.componentIdGenerator().next()
+      : component.id;
+
     const model = factory<IComponent>(component);
     this.system.components[component.id] = model;
+    this.entityComponents[component.entityId][component.name] = component.id;
     return model;
   };
 
-  public getModelForEntity = <T>(entity: IEntity): DeepReadonly<WithId<T>> => {
+  public getEntityModel = <T>(entity: IEntity): WithId<T> => {
     const { components } = this.system;
     return components
-      .filter(o => o.entityId === entity.id)
+      .filter(o => o && o.entityId === entity.id)
       .reduce((acc, val) => {
         return { ...acc, ...val.state };
-      }, { id: entity.id }) as DeepReadonly<WithId<T>>;
+      }, { id: entity.id }) as WithId<T>;
   };
   public getComponent = (component: IComponent) => {
     return this.system.components[component.id];
   };
   public getComponentById = (componentId: EntityIdType) => {
     return this.system.components[componentId];
+  };
+  public getComponentsForEntity = (entity: IEntity): Array<EntityIdType> => {
+    return values(this.entityComponents[entity.id]);
   };
 
   public unRegisterEntity = (entityId: EntityIdType) => {
@@ -62,14 +76,51 @@ class SystemManager implements ISystemManager {
     delete this.system.components[entityId];
   };
 
-  public getState = () => this.system;
+  public getEntityComponent = <T>(entity: IEntity, componentName: string): IComponent<T> => {
+    const id = this.entityComponents[entity.id][componentName];
+    return this.getComponentById(id);
+  }
+
+  public getState = (): ISystem => {
+    return this.system;
+  };
+
+  public getSerializableState = (): ISerializableState => {
+    const { system, config, epoch, entityComponents } = this;
+    return {
+      system,
+      config,
+      epoch,
+      entityComponents,
+    };
+  };
+
+  public loadHydratedState = (state: ISerializableState) => {
+    this.system = state.system;
+    this.config = state.config;
+    this.epoch = state.epoch;
+    this.entityComponents = state.entityComponents;
+  };
 
   public step = () => {
     this.keyboard.update();
-    const callUpdate = (o: IComponent) => o.update(this, o);
-    this.system.components.forEach(callUpdate)
+    this.updateSystemEntities();
+    this.epoch++;
     return this.system;
   };
+
+  private updateSystemEntities = (): void => {
+    this.system.entities.forEach(this.updateComponentsForEntity)
+  }
+
+  private updateComponentsForEntity = (entity: IEntity): void => {
+    const callUpdate = (o: IComponent) => o.update(this, o);
+    const componentIds = this.getComponentsForEntity(entity);
+
+    componentIds
+      .map(id => this.system.components[id])
+      .forEach(callUpdate);
+  }
 
   public toString = () => {
     return JSON.stringify({

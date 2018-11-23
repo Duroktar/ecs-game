@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
-import { system, player1Entity, mobEntity } from './lib';
+import { system, player1Entity, mobEntity, saveGame, loadGame } from './lib';
 import { ISystem } from './lib/types';
 import { CharacterModel } from './lib/domain/character';
-
 
 const pp = (obj: object | null | undefined) => JSON.stringify(obj, null, '  ')
 
@@ -18,7 +17,7 @@ class App extends Component<{}, State> {
   state = { epoch: null, world: null }
 
   componentDidMount() {
-    this.setState({ world: system.getState(), epoch: 1 });
+    this.moUntWOrld();
   }
 
   componentWillUnmount() {
@@ -26,12 +25,16 @@ class App extends Component<{}, State> {
     delete this.handler;
   }
 
+  moUntWOrld = () => {
+    const world = system.getState();
+    this.setState({ world, epoch: system.epoch });
+  }
+
   tick = () => {
     const world = system.step();
 
     this.setState(state => {
-      const { epoch } = state;
-      return { world, epoch: epoch ? epoch + 1 : 1 }
+      return { world, epoch: system.epoch }
     });
   }
 
@@ -44,19 +47,27 @@ class App extends Component<{}, State> {
     if (this.handler) { cancelAnimationFrame(this.handler); }
   }
 
+  save = () => {
+    saveGame()
+  }
+
+  load = () => {
+    loadGame()
+    this.moUntWOrld();
+  }
+
   render() {
-    const { epoch } = this.state;
-    const player1Model = system.getModelForEntity<CharacterModel>(player1Entity);
-    const mobModel = system.getModelForEntity<CharacterModel>(mobEntity);
+    const { epoch, world } = this.state;
     return (
       <div className="App">
         Epoch: {epoch}
         {/* <pre>{pp(world)}</pre> */}
-        <pre>{pp(player1Model)}</pre>
-        <pre>{pp(mobModel)}</pre>
+        {system.system.entities.map(entity => <pre key={entity.id}>{pp(system.getEntityModel(entity))}</pre>)}
         <button onClick={this.start}>Start</button>
         <button onClick={this.stop}>Stop</button>
         <button onClick={this.tick}>Evolve</button>
+        <button onClick={this.save}>Save</button>
+        <button onClick={this.load}>Load</button>
       </div>
     );
   }

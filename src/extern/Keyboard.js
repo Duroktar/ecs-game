@@ -1,4 +1,3 @@
-"use strict";
 import {Key} from './Key';
 
 export function Keyboard()
@@ -7,7 +6,7 @@ export function Keyboard()
 	this.actions = [];
 
 	//Initialize Keys
-	for(var i = 0; i < 256; i++)
+	for(let i = 0; i < 256; i++)
 	{
 		this.keys.push(new Key());
 	}
@@ -16,7 +15,7 @@ export function Keyboard()
 	this.events = [];
 
 	//Actions pointer
-	var actions = this.actions;
+	const actions = this.actions;
 
 	//Key down
 	this.events.push([window, "keydown", function(event)
@@ -33,7 +32,7 @@ export function Keyboard()
 	}]);
 
 	//Initialize events
-	for(var i = 0; i < this.events.length; i++)
+	for(let i = 0; i < this.events.length; i++)
 	{
 		var event = this.events[i];
 		event[0].addEventListener(event[1], event[2]);
@@ -43,12 +42,12 @@ export function Keyboard()
 //Update key flags syncronously
 Keyboard.prototype.update = function()
 {
-	var end = 0;
+	let end = 0;
 
 	while(this.actions.length > end)
 	{
-		var key = this.actions.shift();
-		var action = this.actions.shift();
+		let key = this.actions.shift();
+		let action = this.actions.shift();
 
 		this.keys[key].update(action);
 
@@ -68,7 +67,7 @@ Keyboard.prototype.reset = function()
 	this.actions = [];
 
 	//Reset all keys
-	for(var i = 0; i < this.keys.length; i++)
+	for(let i = 0; i < this.keys.length; i++)
 	{
 		this.keys[i].reset();
 	}
@@ -95,9 +94,9 @@ Keyboard.prototype.keyJustReleased = function(key)
 //Dispose keyboard events
 Keyboard.prototype.dispose = function()
 {
-	for(var i = 0; i < this.events.length; i++)
+	for(let i = 0; i < this.events.length; i++)
 	{
-		var event = this.events[i];
+		let event = this.events[i];
 		event[0].removeEventListener(event[1], event[2]);
 	}
 }
