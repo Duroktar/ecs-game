@@ -33,7 +33,7 @@ export interface ISerializableState {
 }
 
 export type IComponentFactory = (system: ISystemManager) => IComponentFactoryInitializer;
-export type IComponentFactoryInitializer = (entity: IEntity, ...any: any) => IComponent;
+export type IComponentFactoryInitializer = (entity: IEntity, args: any, id?: number) => IComponent;
 
 export interface IComponentFactories {
   name: IComponentFactory;

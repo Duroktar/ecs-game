@@ -45,10 +45,9 @@ class SystemManager implements ISystemManager {
       ? this.componentIdGenerator().next()
       : component.id;
 
-    const model = factory<IComponent>(component);
-    this.system.components[component.id] = model;
+    this.system.components[component.id] = component;
     this.entityComponents[component.entityId][component.name] = component.id;
-    return model;
+    return component;
   };
 
   public getEntityModel = <T>(entity: IEntity): WithId<T> => {

@@ -34,6 +34,6 @@ export function hydrateLoadedComponents(system: ISystemManager, state: ISerializ
     }
 
     const entity = { id: component.entityId }
-    return componentInitializer(entity, component.state);
+    return componentInitializer(entity, component.state, component.id);
   });
 }

@@ -4,13 +4,13 @@ import { IComponent, ISystemManager, IVector, IEntity, ISystem, EntityIdType } f
 export type WithMovement = { position: IVector; }
 
 export function movableFactory(system: ISystemManager) {
-  return (entity: IEntity, position: WithMovement) => {
+  return (entity: IEntity, state: WithMovement, id = -1) => {
     return system.registerComponent(
       factory<IComponent<WithMovement>>({
-        id: -1,
+        id,
         name: 'movement',
         entityId: entity.id,
-        state: position,
+        state: { position: state.position },
         update: (system: ISystemManager, component: IComponent<WithMovement>) => { },
       }))
   }

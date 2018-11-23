@@ -4,13 +4,13 @@ import { IComponent, ISystemManager, IEntity } from "../types";
 export type WithHealth = { health: number };
 
 export function killableFactory(system: ISystemManager) {
-  return (entity: IEntity, health: WithHealth) => {
+  return (entity: IEntity, state: WithHealth, id = -1) => {
     return system.registerComponent(
       factory<IComponent<WithHealth>>({
-        id: -1,
+        id,
         name: 'health',
         entityId: entity.id,
-        state: health,
+        state: { health: state.health },
         update: () => null,
       }))
   }

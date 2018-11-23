@@ -6,13 +6,13 @@ import { WithMovement } from "./moveable";
 export type WithControls = { direction: IVector; moving: boolean; };
 
 export function controllableFactory(system: ISystemManager) {
-  return (entity: IEntity, options: WithControls) => {
+  return (entity: IEntity, state: WithControls, id = -1) => {
     return system.registerComponent(
       factory<IComponent<WithControls>>({
-        id: -1,
+        id,
         entityId: entity.id,
         name: 'controls',
-        state: options,
+        state: { direction: state.direction, moving: state.moving },
         update: (system: ISystemManager, component: IControllableEntity) => {
           handleVerticalMovement(entity, component, system);
           handleHorizontalMovement(entity, component, system);
