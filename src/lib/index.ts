@@ -1,11 +1,9 @@
-import SystemManager from "./SystemManager";
-import { createCharacter } from "./domain/character";
-import { createMob } from "./domain/mob";
-import { saveState, loadStateFromKey, hydrateLoadedComponents } from "./loader";
-import { ISerializableState } from "./types";
+import SystemManager from "./services/SystemManager";
+import { createCharacter } from "./factories/character";
+import { createMob } from "./factories/mob";
+import StorageManager from "./services/StorageManager";
 
-
-let system = new SystemManager({
+const system = new SystemManager({
   components: [],
   entities: [],
 }, {
@@ -38,16 +36,6 @@ const mobEntity = createMob(system, {
   },
 });
 
-const saveGame = () => saveState('ecs', system.getSerializableState());
+const storage = new StorageManager(system);
 
-const loadGame = () => {
-  const loaded = loadStateFromKey('ecs');
-  if (loaded === null) {
-    return;
-  }
-  const hydratedComponents = hydrateLoadedComponents(system, loaded);
-  loaded.system.components = hydratedComponents
-  system.loadHydratedState(loaded);
-}
-
-export { system, player1Entity, mobEntity, saveGame, loadGame };
+export { system, player1Entity, mobEntity, storage };

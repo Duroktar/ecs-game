@@ -1,7 +1,6 @@
 import { IComponent, ISystemManager, IVector, IEntity } from "../types";
-import { factory } from "../utils";
-import { Keyboard } from "../../extern/Keyboard";
 import { WithMovement } from "./moveable";
+import { factory } from "../utils";
 
 export type WithControls = { direction: IVector; moving: boolean; };
 
@@ -36,16 +35,16 @@ function handleHorizontalMovement(entity: IEntity, component: IControllableEntit
 function handleMovement(entity: IEntity, component: IControllableEntity, system: ISystemManager, direction: 'vertical' | 'horizontal' = 'horizontal') {
   const key = direction === 'horizontal' ? 'x' : 'y';
   const [neg, pos] = direction === 'horizontal'
-    ? [Keyboard.LEFT, Keyboard.RIGHT]
-    : [Keyboard.DOWN, Keyboard.UP];
+    ? [system.input.KeyCodes.LEFT, system.input.KeyCodes.RIGHT]
+    : [system.input.KeyCodes.DOWN, system.input.KeyCodes.UP];
 
   const movement = system.getEntityComponent<WithMovement>(entity, 'movement');
 
-  if (system.keyboard.keyPressed(pos)) {
+  if (system.input.keyPressed(pos)) {
     component.state.direction[key] = 1;
     movement.state.position[key]++;
   } else
-  if (system.keyboard.keyPressed(neg)) {
+  if (system.input.keyPressed(neg)) {
     component.state.direction[key] = -1;
     movement.state.position[key]--;
   } else {

@@ -1,5 +1,5 @@
-import { factory, isSameEntity } from "../utils";
-import { IComponent, ISystemManager, IVector, IEntity, ISystem, EntityIdType } from "../types";
+import { IComponent, ISystemManager, IVector, IEntity, ISystem } from "../types";
+import { factory, isSameEntity, first } from "../utils";
 
 export type WithMovement = { position: IVector; }
 
@@ -17,29 +17,29 @@ export function movableFactory(system: ISystemManager) {
 }
 
 export function selectMovableState(system: ISystem, entity: IEntity): null | IComponent<WithMovement> {
-  const searchResult = system.components
+  const searchResult = system
+    .components
     .filter(o =>
       isSameEntity(o, entity)
-      && hasPosition(o.state)
-    );
-    if (searchResult.length === 0) {
-      return null;
-    };
-    return first(searchResult);
+      && hasPosition(o.state));
+
+  if (searchResult.length === 0) {
+    return null;
+  };
+
+  return first(searchResult);
 }
 
 export function setMovableState(system: ISystem, entity: IEntity, state: IVector) {
   const component = selectMovableState(system, entity);
+
   if (component === null) {
     return component;
   }
+
   component.state.position = state;
 }
 
 function hasPosition(state: any) {
   return state.position !== undefined;
-}
-
-function first<T>(array: T[]): T {
-  return array[0];
 }

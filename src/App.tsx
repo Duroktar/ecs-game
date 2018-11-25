@@ -1,20 +1,18 @@
 import React, { Component } from 'react';
 import './App.css';
-import { system, player1Entity, mobEntity, saveGame, loadGame } from './lib';
-import { ISystem } from './lib/types';
-import { CharacterModel } from './lib/domain/character';
+import { system, storage } from './lib';
+import { IEntity, ISystemManager } from './lib/types';
 
 const pp = (obj: object | null | undefined) => JSON.stringify(obj, null, '  ')
 
 interface State {
   epoch: number | null;
-  world: ISystem | null;
 }
 
 class App extends Component<{}, State> {
   private handler: any;
 
-  state = { epoch: null, world: null }
+  state = { epoch: null }
 
   componentDidMount() {
     this.moUntWOrld();
@@ -25,17 +23,12 @@ class App extends Component<{}, State> {
     delete this.handler;
   }
 
-  moUntWOrld = () => {
-    const world = system.getState();
-    this.setState({ world, epoch: system.epoch });
-  }
+  moUntWOrld = () => this.setState({ epoch: system.epoch });
 
   tick = () => {
-    const world = system.step();
+    system.step();
 
-    this.setState(state => {
-      return { world, epoch: system.epoch }
-    });
+    this.setState(_ => ({ epoch: system.epoch }));
   }
 
   start = () => {
@@ -48,21 +41,22 @@ class App extends Component<{}, State> {
   }
 
   save = () => {
-    saveGame()
+    system.storage.saveGame();
   }
 
   load = () => {
-    loadGame()
+    system.storage.loadGame();
+
     this.moUntWOrld();
   }
 
   render() {
-    const { epoch, world } = this.state;
     return (
       <div className="App">
-        Epoch: {epoch}
-        {/* <pre>{pp(world)}</pre> */}
-        {system.system.entities.map(entity => <pre key={entity.id}>{pp(system.getEntityModel(entity))}</pre>)}
+        Epoch: {this.state.epoch}
+        <EntityList system={system} />
+
+        <pre>{pp(system.getState())}</pre>
         <button onClick={this.start}>Start</button>
         <button onClick={this.stop}>Stop</button>
         <button onClick={this.tick}>Evolve</button>
@@ -74,3 +68,16 @@ class App extends Component<{}, State> {
 }
 
 export default App;
+
+function entityRenderer(entity: IEntity, system: ISystemManager): JSX.Element {
+  return <pre key={entity.id}>{pp(system.getEntityModel(entity))}</pre>;
+}
+
+function EntityList(props: EntityListProps): JSX.Element {
+  const { system } = props;
+  return (<>
+    {system.system.entities.map((o: any) => entityRenderer(o, system))}
+  </>)
+}
+
+type EntityListProps = { system: ISystemManager };

@@ -1,11 +1,11 @@
-import { ISystemManager } from "../types";
+import { ISystemManager, IEntity } from "../types";
 import { nameableFactory, WithName } from "../components/nameable";
 import { killableFactory, WithHealth } from "../components/killable";
 import { movableFactory, WithMovement } from "../components/moveable";
 
-export function createMob(system: ISystemManager, options: MobModel) {
-  const withName = nameableFactory(system);
-  const withHealth = killableFactory(system);
+export function createMob(system: ISystemManager, options: MobModel): IEntity {
+  const withName     = nameableFactory(system);
+  const withHealth   = killableFactory(system);
   const withPosition = movableFactory(system);
 
   const entity = system.registerEntity();

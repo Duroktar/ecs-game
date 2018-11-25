@@ -1,10 +1,11 @@
 import { DeepReadonly } from "../react-app-env";
-import { KeysEnum } from "./keys";
 import { nameableFactory } from "./components/nameable";
 import { controllableFactory } from "./components/controllable";
 import { ageableFactory } from "./components/ageable";
 import { movableFactory } from "./components/moveable";
 import { killableFactory } from "./components/killable";
+import { KeysEnum } from "./utils";
+import { Keyboard } from "../extern/Keyboard";
 
 export interface IEntity {
   id: EntityIdType;
@@ -12,8 +13,8 @@ export interface IEntity {
 
 export interface IFactoryComponent<T = any> extends IUpdateable {
   entityId: EntityIdType;
-  name: IComponentFactoryKey;
-  state: T;
+  name:     IComponentFactoryKey;
+  state:    T;
 }
 
 export interface IComponent<T = any> extends IFactoryComponent<T> {
@@ -21,14 +22,14 @@ export interface IComponent<T = any> extends IFactoryComponent<T> {
 }
 
 export interface ISystem {
-  entities: IEntity[];
+  entities:   IEntity[];
   components: IComponent[];
 }
 
 export interface ISerializableState {
-  system: ISystem;
-  config: IConfig;
-  epoch: number;
+  system:           ISystem;
+  config:           IConfig;
+  epoch:            number;
   entityComponents: IEntityComponents;
 }
 
@@ -36,10 +37,10 @@ export type IComponentFactory = (system: ISystemManager) => IComponentFactoryIni
 export type IComponentFactoryInitializer = (entity: IEntity, args: any, id?: number) => IComponent;
 
 export interface IComponentFactories {
-  name: IComponentFactory;
-  health: IComponentFactory;
+  name:     IComponentFactory;
+  health:   IComponentFactory;
   movement: IComponentFactory;
-  age: IComponentFactory;
+  age:      IComponentFactory;
   controls: IComponentFactory;
 }
 
@@ -55,7 +56,8 @@ export interface ISystemManager {
   system: ISystem;
   config: IConfig;
   epoch: number;
-  keyboard: IKeyboard;
+  input: IInputManager;
+  storage: IStorageManager;
 
   init: (config?: IConfig) => void;
 
@@ -65,6 +67,9 @@ export interface ISystemManager {
   getComponentById: <T>(componentId: EntityIdType) => IComponent<T>;
   getEntityComponent: <T>(entity: IEntity, componentName: string) => IComponent<T>;
   getEntityModel: <T>(entity: IEntity) => DeepReadonly<WithId<T>>;
+
+  getSerializableState: () => ISerializableState;
+  loadHydratedState: (serialized: ISerializableState) => void;
 
   getState: () => ISystem;
   step: () => ISystem;
@@ -122,9 +127,32 @@ export interface IKeyStatus {
   pressed: KeysEnum[] | never[];
 }
 
-interface IKeyboard {
+export interface IMouse {
+  buttonPressed: (button: number) => boolean;
+
   update: () => void;
+}
+
+export interface IKeyboard {
   keyPressed: (key: number) => boolean;
   keyJustPressed: (key: number) => boolean;
   keyJustReleased: (key: number) => boolean;
+
+  update: () => void;
+}
+
+export interface IInputManager {
+  KeyCodes: typeof Keyboard;
+  buttonPressed: (button: number) => boolean;
+
+  keyPressed: (key: number) => boolean;
+  keyJustPressed: (key: number) => boolean;
+  keyJustReleased: (key: number) => boolean;
+
+  update: () => void;
+}
+
+export interface IStorageManager {
+  saveGame: () => void;
+  loadGame: () => void;
 }

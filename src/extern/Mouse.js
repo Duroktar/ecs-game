@@ -1,5 +1,6 @@
 "use strict";
 import {Vector2} from './Vector2';
+import {Key} from './Key';
 
 export function Mouse()
 {
