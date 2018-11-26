@@ -1,4 +1,3 @@
-"use strict";
 import {Vector2} from './Vector2';
 import {Key} from './Key';
 
@@ -27,14 +26,14 @@ export function Mouse()
 	this.events = [];
 
 	//Initialize key instances
-	for(var i = 0; i < 3; i++)
+	for(let i = 0; i < 3; i++)
 	{
 		this._keys.push(new Key());
 		this.keys.push(new Key());
 	}
 
 	//Self pointer
-	var self = this;
+	let self = this;
 
 	//Scroll wheel
 	if(window.onmousewheel !== undefined)
@@ -139,7 +138,7 @@ export function Mouse()
 	}]);
 
 	//Initialize events
-	for(var i = 0; i < this.events.length; i++)
+	for(let i = 0; i < this.events.length; i++)
 	{
 		var event = this.events[i];
 		event[0].addEventListener(event[1], event[2]);
@@ -264,7 +263,7 @@ Mouse.prototype.updateKey = function(button, action)
 Mouse.prototype.update = function()
 {
 	//Update mouse keys state
-	for(var i = 0; i < this._keys.length; i++)
+	for(let i = 0; i < this._keys.length; i++)
 	{
 		if(this._keys[i].justPressed && this.keys[i].justPressed)
 		{
@@ -321,7 +320,7 @@ Mouse.prototype.update = function()
 //Dispose mouse object
 Mouse.prototype.dispose = function()
 {
-	for(var i = 0; i < this.events.length; i++)
+	for(let i = 0; i < this.events.length; i++)
 	{
 		var event = this.events[i];
 		event[0].removeEventListener(event[1], event[2]);

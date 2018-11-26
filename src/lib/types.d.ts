@@ -28,7 +28,7 @@ export interface ISystem {
 
 export interface ISerializableState {
   system:           ISystem;
-  config:           IConfig;
+  config:           IObjectConfig;
   epoch:            number;
   entityComponents: IEntityComponents;
 }
@@ -37,11 +37,15 @@ export type IComponentFactory = (system: ISystemManager) => IComponentFactoryIni
 export type IComponentFactoryInitializer = (entity: IEntity, args: any, id?: number) => IComponent;
 
 export interface IComponentFactories {
-  name:     IComponentFactory;
-  health:   IComponentFactory;
-  movement: IComponentFactory;
-  age:      IComponentFactory;
-  controls: IComponentFactory;
+  name:      IComponentFactory;
+  health:    IComponentFactory;
+  movement:  IComponentFactory;
+  age:       IComponentFactory;
+  controls:  IComponentFactory;
+  attack:    IComponentFactory;
+  momentum:  IComponentFactory;
+  offscreen: IComponentFactory;
+  geometry:  IComponentFactory;
 }
 
 export type IComponentFactoryKey = keyof IComponentFactories;
@@ -54,17 +58,18 @@ export interface IUpdateable {
 
 export interface ISystemManager {
   system: ISystem;
-  config: IConfig;
+  config: IObjectConfig;
   epoch: number;
   input: IInputManager;
   storage: IStorageManager;
 
-  init: (config?: IConfig) => void;
+  init: (config?: IObjectConfig) => void;
 
   registerEntity: () => IEntity;
   registerComponent: <T>(component: IComponent<T>) => IComponent<T>;
   getComponent: <T>(component: IComponent<T>) => IComponent<T>;
   getComponentById: <T>(componentId: EntityIdType) => IComponent<T>;
+  getComponentFactory: (name: string) => IComponentFactory;
   getEntityComponent: <T>(entity: IEntity, componentName: string) => IComponent<T>;
   getEntityModel: <T>(entity: IEntity) => DeepReadonly<WithId<T>>;
 
@@ -101,6 +106,10 @@ export interface IObjectConfig {
   version: string;
   logging?: boolean;
   debug?: boolean;
+  screenSize?: {
+    x: number;
+    y: number;
+  }
 }
 
 export interface IFileConfig {
@@ -155,4 +164,14 @@ export interface IInputManager {
 export interface IStorageManager {
   saveGame: () => void;
   loadGame: () => void;
+}
+
+
+interface IKeyboard {
+  update: () => void;
+  reset: () => void;
+  keyPressed: (key: number) => boolean;
+  keyJustPressed: (key: number) => boolean;
+  keyJustReleased: (key: number) => boolean;
+  dispose: () => void;
 }

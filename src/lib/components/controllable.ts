@@ -2,7 +2,7 @@ import { IComponent, ISystemManager, IVector, IEntity } from "../types";
 import { WithMovement } from "./moveable";
 import { factory } from "../utils";
 
-export type WithControls = { direction: IVector; moving: boolean; };
+export type WithControls = { direction: IVector; moving: boolean; speed: number; };
 
 export function controllableFactory(system: ISystemManager) {
   return (entity: IEntity, state: WithControls, id = -1) => {
@@ -11,7 +11,7 @@ export function controllableFactory(system: ISystemManager) {
         id,
         entityId: entity.id,
         name: 'controls',
-        state: { direction: state.direction, moving: state.moving },
+        state: { direction: state.direction, moving: state.moving, speed: state.speed },
         update: (system: ISystemManager, component: IControllableEntity) => {
           handleVerticalMovement(entity, component, system);
           handleHorizontalMovement(entity, component, system);
@@ -36,17 +36,18 @@ function handleMovement(entity: IEntity, component: IControllableEntity, system:
   const key = direction === 'horizontal' ? 'x' : 'y';
   const [neg, pos] = direction === 'horizontal'
     ? [system.input.KeyCodes.LEFT, system.input.KeyCodes.RIGHT]
-    : [system.input.KeyCodes.DOWN, system.input.KeyCodes.UP];
+    : [system.input.KeyCodes.UP, system.input.KeyCodes.DOWN];
 
   const movement = system.getEntityComponent<WithMovement>(entity, 'movement');
 
+  const {speed} = component.state;
   if (system.input.keyPressed(pos)) {
     component.state.direction[key] = 1;
-    movement.state.position[key]++;
+    movement.state.position[key] += 1 * speed;
   } else
   if (system.input.keyPressed(neg)) {
     component.state.direction[key] = -1;
-    movement.state.position[key]--;
+    movement.state.position[key] -= 1 * speed;
   } else {
     component.state.direction[key] = 0;
   }
@@ -55,8 +56,8 @@ function handleMovement(entity: IEntity, component: IControllableEntity, system:
 function handleMovingFlag(entity: IEntity, component: IControllableEntity, system: ISystemManager) {
   const {x, y} = component.state.direction;
   if (x === 0 && y === 0) {
-    component.state['moving'] = false;
+    component.state.moving = false;
   } else {
-    component.state['moving'] = true;
+    component.state.moving = true;
   }
 }

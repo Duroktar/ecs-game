@@ -1,5 +1,8 @@
 import { factory } from "../utils";
 import { IComponent, ISystemManager, IEntity } from "../types";
+import { createSetter, createSelector } from "./utils";
+
+const COMPONENT_NAMESPACE = 'health';
 
 export type WithHealth = { health: number };
 
@@ -8,10 +11,15 @@ export function killableFactory(system: ISystemManager) {
     return system.registerComponent(
       factory<IComponent<WithHealth>>({
         id,
-        name: 'health',
+        name: COMPONENT_NAMESPACE,
         entityId: entity.id,
         state: { health: state.health },
         update: () => null,
       }))
   }
 }
+
+type IKillableEntity = IComponent<WithHealth>
+
+export const selectKillableState = createSelector<WithHealth>(COMPONENT_NAMESPACE);
+export const setKillableState    = createSetter<WithHealth>(selectKillableState);

@@ -1,5 +1,7 @@
 import { ITypes, IEntity, IdGeneratorFunc } from "./types";
 
+export const pp = (obj: object | null | undefined) => JSON.stringify(obj, null, '  ')
+
 export function factory<T extends ITypes>(config: T): T {
   return config;
 }

@@ -1,18 +1,32 @@
-import React, { Component } from 'react';
-import './App.css';
-import { system, storage } from './lib';
-import { IEntity, ISystemManager } from './lib/types';
+import * as React from 'react';
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import './App.style.css';
 
-const pp = (obj: object | null | undefined) => JSON.stringify(obj, null, '  ')
+import { DevScreen } from './client/Development/Dev';
+import { Intro } from './client/Screens/Intro';
+import { Menu } from './client/Screens/Menu';
+import { Game } from './client/Screens/Game';
+
+import { CharacterModel } from './game/Domain/character';
+import { ProjectileModel } from './game/Domain/projectile';
+import { system, playerEntity, bulletEntity1, bulletEntity2 } from './game';
 
 interface State {
-  epoch: number | null;
+  epoch:   number | null;
+  player:  CharacterModel;
+  bullet1: ProjectileModel;
+  bullet2: ProjectileModel;
 }
 
-class App extends Component<{}, State> {
+class App extends React.Component<{}, State> {
   private handler: any;
 
-  state = { epoch: null }
+  state = {
+    epoch:   null,
+    player:  system.getEntityModel<CharacterModel>(playerEntity),
+    bullet1: system.getEntityModel<ProjectileModel>(bulletEntity1),
+    bullet2: system.getEntityModel<ProjectileModel>(bulletEntity2),
+  }
 
   componentDidMount() {
     this.moUntWOrld();
@@ -28,10 +42,16 @@ class App extends Component<{}, State> {
   tick = () => {
     system.step();
 
-    this.setState(_ => ({ epoch: system.epoch }));
+    this.setState(_ => ({
+      epoch:   system.epoch,
+      player:  system.getEntityModel(playerEntity),
+      bullet1: system.getEntityModel<ProjectileModel>(bulletEntity1),
+      bullet2: system.getEntityModel<ProjectileModel>(bulletEntity2),
+    }));
   }
 
   start = () => {
+    this.stop();
     this.handler = requestAnimationFrame(this.start);
     this.tick();
   }
@@ -45,39 +65,44 @@ class App extends Component<{}, State> {
   }
 
   load = () => {
+    this.stop();
+
     system.storage.loadGame();
 
     this.moUntWOrld();
   }
 
   render() {
+    const { player, bullet1, bullet2 } = this.state;
     return (
-      <div className="App">
-        Epoch: {this.state.epoch}
-        <EntityList system={system} />
+      <Router>
+        <div className="App">
+          <Route exact path="/" component={Intro} />
+          <Route path="/menu" component={Menu} />
+          <Route path="/game" render={(props) => {
+            return (
+              <Game
+                {...props}
+                system={system}
+                player={player}
+                bullet1={bullet1}
+                bullet2={bullet2}
+              />
+            )
+          }} />
 
-        <pre>{pp(system.getState())}</pre>
-        <button onClick={this.start}>Start</button>
-        <button onClick={this.stop}>Stop</button>
-        <button onClick={this.tick}>Evolve</button>
-        <button onClick={this.save}>Save</button>
-        <button onClick={this.load}>Load</button>
-      </div>
+          <DevScreen
+            system={system}
+            onStart={this.start}
+            onStop={this.stop}
+            onTick={this.tick}
+            onSave={this.save}
+            onLoad={this.load}
+          />
+        </div>
+      </Router>
     );
   }
 }
 
 export default App;
-
-function entityRenderer(entity: IEntity, system: ISystemManager): JSX.Element {
-  return <pre key={entity.id}>{pp(system.getEntityModel(entity))}</pre>;
-}
-
-function EntityList(props: EntityListProps): JSX.Element {
-  const { system } = props;
-  return (<>
-    {system.system.entities.map((o: any) => entityRenderer(o, system))}
-  </>)
-}
-
-type EntityListProps = { system: ISystemManager };

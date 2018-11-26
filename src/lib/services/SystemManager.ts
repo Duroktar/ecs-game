@@ -1,4 +1,4 @@
-import { IComponent, ISystem, IConfig, ISystemManager, EntityIdType, IConfigDefaults, IEntity, IdGeneratorFunc, WithId, IKeyboard, IEntityComponents, ISerializableState, IInputManager, IStorageManager } from "../types";
+import { IComponent, ISystem, IConfig, ISystemManager, EntityIdType, IConfigDefaults, IEntity, IdGeneratorFunc, WithId, IKeyboard, IEntityComponents, ISerializableState, IInputManager, IStorageManager, IObjectConfig, IComponentFactory } from "../types";
 import InputManager from "./InputManager";
 import StorageManager from "./StorageManager";
 import { defaultIdGenerator, factory, isSameEntity, values } from "../utils";
@@ -10,15 +10,25 @@ const configDefaults: IConfigDefaults = {
 
 class SystemManager implements ISystemManager {
   public system:                ISystem;
-  public config:                IConfig;
+  public config:                IObjectConfig;
   public input:                 IInputManager;
   public storage:               IStorageManager;
   public epoch:                 number;
   private entityComponents:     IEntityComponents;
   private entityIdGenerator:    IdGeneratorFunc;
   private componentIdGenerator: IdGeneratorFunc;
+  private componentFactories:   { [key: string]: IComponentFactory };
 
-  constructor(system: ISystem, config: IConfig, input?: IInputManager, storage?: IStorageManager, epochs?: number, idGenerator?: (begin?: number) => IdGeneratorFunc, entityComponents?: IEntityComponents) {
+  constructor(
+    system: ISystem,
+    config: IObjectConfig,
+    input?: IInputManager,
+    storage?: IStorageManager,
+    epochs?: number,
+    idGenerator?: (begin?: number) => IdGeneratorFunc,
+    entityComponents?: IEntityComponents,
+    componentFactories?: { [key: string]: IComponentFactory },
+  ) {
     this.system               = system;
     this.config               = { ...configDefaults, ...config };
     this.input                = input ? input : new InputManager();
@@ -27,9 +37,10 @@ class SystemManager implements ISystemManager {
     this.entityComponents     = entityComponents ? entityComponents : {};
     this.entityIdGenerator    = idGenerator ? idGenerator(this.epoch) : defaultIdGenerator(this.epoch);
     this.componentIdGenerator = defaultIdGenerator(this.epoch);
+    this.componentFactories   = componentFactories || {};
   }
 
-  public init = (config?: IConfig) => null;
+  public init = (config?: IObjectConfig) => null;
 
   public registerEntity = () => {
     const entityId = this.entityIdGenerator().next()
@@ -58,14 +69,17 @@ class SystemManager implements ISystemManager {
       }, { id: entity.id }) as WithId<T>;
   };
 
-  public getComponent = (component: IComponent) => {
+  public getComponent = <T>(component: IComponent): IComponent<T> => {
     return this.system.components[component.id];
   };
-  public getComponentById = (componentId: EntityIdType) => {
+  public getComponentById = <T>(componentId: EntityIdType): IComponent<T> => {
     return this.system.components[componentId];
   };
   public getComponentIdsForEntity = (entity: IEntity): Array<EntityIdType> => {
     return values(this.entityComponents[entity.id]);
+  };
+  public getComponentFactory = (name: string): IComponentFactory => {
+    return this.componentFactories[name];
   };
 
   public unRegisterEntity = (entityId: EntityIdType) => {
@@ -97,7 +111,7 @@ class SystemManager implements ISystemManager {
   public loadHydratedState = (state: ISerializableState) => {
     this.system = state.system;
     this.config = state.config;
-    this.epoch = state.epoch;
+    this.epoch  = state.epoch;
     this.entityComponents = state.entityComponents;
   };
 

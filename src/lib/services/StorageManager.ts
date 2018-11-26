@@ -1,5 +1,4 @@
-import { ISerializableState, IComponent, ISystemManager, IComponentFactoryInitializer, IStorageManager } from "../types";
-import { componentFactory } from "../components";
+import { ISerializableState, IComponent, ISystemManager, IComponentFactoryInitializer, IStorageManager, IComponentFactory } from "../types";
 
 class StorageManager implements IStorageManager {
   constructor( 
@@ -49,7 +48,7 @@ class StorageManager implements IStorageManager {
       if (cached) {
         componentInitializer = cached;
       } else {
-        componentInitializer = componentFactory(component.name)(system);
+        componentInitializer = this.system.getComponentFactory(component.name)(system);
         componentInitializerCache[component.name] = componentInitializer;
       }
   

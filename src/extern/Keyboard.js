@@ -1,7 +1,7 @@
 import {Key} from './Key';
 
-export function Keyboard()
-{
+
+export function Keyboard() {
 	this.keys = [];
 	this.actions = [];
 
