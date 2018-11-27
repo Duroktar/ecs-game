@@ -9,20 +9,21 @@ import { Game } from './client/Screens/Game';
 
 import { CharacterModel } from './game/Domain/character';
 import { ProjectileModel } from './game/Domain/projectile';
-import { system, playerEntity, bulletEntity1, bulletEntity2 } from './game';
+import { MobModel } from './game/Domain/mob';
+import { system, playerEntity, bulletEntity1, bulletEntity2, enemy1 } from './game';
 
 interface State {
-  epoch:   number | null;
-  player:  CharacterModel;
-  bullet1: ProjectileModel;
-  bullet2: ProjectileModel;
+  epoch:    number;
+  player:   CharacterModel;
+  bullet1:  ProjectileModel;
+  bullet2:  ProjectileModel;
 }
 
 class App extends React.Component<{}, State> {
   private handler: any;
 
   state = {
-    epoch:   null,
+    epoch:   system.epoch,
     player:  system.getEntityModel<CharacterModel>(playerEntity),
     bullet1: system.getEntityModel<ProjectileModel>(bulletEntity1),
     bullet2: system.getEntityModel<ProjectileModel>(bulletEntity2),
@@ -30,6 +31,8 @@ class App extends React.Component<{}, State> {
 
   componentDidMount() {
     this.moUntWOrld();
+
+    this.start();
   }
 
   componentWillUnmount() {
@@ -37,7 +40,9 @@ class App extends React.Component<{}, State> {
     delete this.handler;
   }
 
-  moUntWOrld = () => this.setState({ epoch: system.epoch });
+  moUntWOrld = () => {
+    this.setState(state => ({ ...state, epoch: system.epoch }));
+  }
 
   tick = () => {
     system.step();
@@ -52,7 +57,9 @@ class App extends React.Component<{}, State> {
 
   start = () => {
     this.stop();
+
     this.handler = requestAnimationFrame(this.start);
+
     this.tick();
   }
 
@@ -70,10 +77,11 @@ class App extends React.Component<{}, State> {
     system.storage.loadGame();
 
     this.moUntWOrld();
+
+    this.start();
   }
 
   render() {
-    const { player, bullet1, bullet2 } = this.state;
     return (
       <Router>
         <div className="App">
@@ -82,11 +90,9 @@ class App extends React.Component<{}, State> {
           <Route path="/game" render={(props) => {
             return (
               <Game
-                {...props}
                 system={system}
-                player={player}
-                bullet1={bullet1}
-                bullet2={bullet2}
+                {...this.state}
+                {...props}
               />
             )
           }} />

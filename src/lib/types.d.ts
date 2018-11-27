@@ -11,8 +11,11 @@ export interface IEntity {
   id: EntityIdType;
 }
 
-export interface IFactoryComponent<T = any> extends IUpdateable {
+export interface IOwned {
   entityId: EntityIdType;
+}
+
+export interface IFactoryComponent<T = any> extends IUpdateable, IOwned {
   name:     IComponentFactoryKey;
   state:    T;
 }
@@ -37,15 +40,18 @@ export type IComponentFactory = (system: ISystemManager) => IComponentFactoryIni
 export type IComponentFactoryInitializer = (entity: IEntity, args: any, id?: number) => IComponent;
 
 export interface IComponentFactories {
-  name:      IComponentFactory;
-  health:    IComponentFactory;
-  movement:  IComponentFactory;
-  age:       IComponentFactory;
-  controls:  IComponentFactory;
-  attack:    IComponentFactory;
-  momentum:  IComponentFactory;
-  offscreen: IComponentFactory;
-  geometry:  IComponentFactory;
+  name:         IComponentFactory;
+  health:       IComponentFactory;
+  position:     IComponentFactory;
+  age:          IComponentFactory;
+  controls:     IComponentFactory;
+  attack:       IComponentFactory;
+  momentum:     IComponentFactory;
+  offscreen:    IComponentFactory;
+  geometry:     IComponentFactory;
+  collisions:   IComponentFactory;
+  collidable:   IComponentFactory;
+  loot:         IComponentFactory;
 }
 
 export type IComponentFactoryKey = keyof IComponentFactories;
@@ -57,40 +63,42 @@ export interface IUpdateable {
 }
 
 export interface ISystemManager {
-  system: ISystem;
-  config: IObjectConfig;
-  epoch: number;
-  input: IInputManager;
-  storage: IStorageManager;
+  system:     ISystem;
+  config:     IObjectConfig;
+  epoch:      number;
+  input:      IInputManager;
+  storage:    IStorageManager;
 
   init: (config?: IObjectConfig) => void;
 
-  registerEntity: () => IEntity;
-  registerComponent: <T>(component: IComponent<T>) => IComponent<T>;
-  getComponent: <T>(component: IComponent<T>) => IComponent<T>;
-  getComponentById: <T>(componentId: EntityIdType) => IComponent<T>;
-  getComponentFactory: (name: string) => IComponentFactory;
-  getEntityComponent: <T>(entity: IEntity, componentName: string) => IComponent<T>;
-  getEntityModel: <T>(entity: IEntity) => DeepReadonly<WithId<T>>;
+  registerEntity:                 () => IEntity;
+  registerComponent:              <T>(component: IComponent<T>) => IComponent<T>;
+  getComponent:                   <T>(component: IComponent<T>) => IComponent<T>;
+  getComponentById:               <T>(componentId: EntityIdType) => IComponent<T>;
+  getComponentFactory:            (name: IComponentFactoryKey) => IComponentFactory;
+  getEntityComponent:             <T>(entity: IEntity, componentName: IComponentFactoryKey) => IComponent<T>;
+  getEntitiesByComponentTypes:    (componentNames: IComponentFactoryKey[]) => EntityIdType[];
+  getEntityModel:                 <T>(entity: IEntity) => DeepReadonly<WithComponentMeta<T>>;
 
-  getSerializableState: () => ISerializableState;
-  loadHydratedState: (serialized: ISerializableState) => void;
+  getSerializableState:   () => ISerializableState;
+  loadHydratedState:      (serialized: ISerializableState) => void;
 
   getState: () => ISystem;
-  step: () => ISystem;
+  step:     () => ISystem;
 
   toString: () => string;
 }
 
 export type ITypes =
-  IEntity |
-  IComponent |
-  ISystem |
-  IConfig |
-  IKeyStatus |
+  IEntity     |
+  IComponent  |
+  ISystem     |
+  IConfig     |
+  IKeyStatus  |
   IFactoryComponent;
 
 export type WithId<T> = T & IEntity;
+export type WithComponentMeta<T> = WithId<T> & IOwned;
 
 export interface IEntityComponents {
   [key: string]: {
@@ -102,10 +110,10 @@ export type IConfig = IObjectConfig | IFileConfig;
 export type IConfigDefaults = PickOptionalProps<IObjectConfig>;
 
 export interface IObjectConfig {
-  name: string;
-  version: string;
+  name:     string;
+  version:  string;
   logging?: boolean;
-  debug?: boolean;
+  debug?:   boolean;
   screenSize?: {
     x: number;
     y: number;
@@ -143,20 +151,20 @@ export interface IMouse {
 }
 
 export interface IKeyboard {
-  keyPressed: (key: number) => boolean;
-  keyJustPressed: (key: number) => boolean;
-  keyJustReleased: (key: number) => boolean;
+  keyPressed:       (key: number) => boolean;
+  keyJustPressed:   (key: number) => boolean;
+  keyJustReleased:  (key: number) => boolean;
 
   update: () => void;
 }
 
 export interface IInputManager {
-  KeyCodes: typeof Keyboard;
-  buttonPressed: (button: number) => boolean;
+  KeyCodes:         typeof Keyboard;
+  buttonPressed:    (button: number) => boolean;
 
-  keyPressed: (key: number) => boolean;
-  keyJustPressed: (key: number) => boolean;
-  keyJustReleased: (key: number) => boolean;
+  keyPressed:       (key: number) => boolean;
+  keyJustPressed:   (key: number) => boolean;
+  keyJustReleased:  (key: number) => boolean;
 
   update: () => void;
 }
@@ -168,10 +176,10 @@ export interface IStorageManager {
 
 
 interface IKeyboard {
-  update: () => void;
-  reset: () => void;
-  keyPressed: (key: number) => boolean;
-  keyJustPressed: (key: number) => boolean;
-  keyJustReleased: (key: number) => boolean;
-  dispose: () => void;
+  update:           () => void;
+  reset:            () => void;
+  keyPressed:       (key: number) => boolean;
+  keyJustPressed:   (key: number) => boolean;
+  keyJustReleased:  (key: number) => boolean;
+  dispose:          () => void;
 }

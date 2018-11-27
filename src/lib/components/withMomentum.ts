@@ -1,10 +1,11 @@
 import { IComponent, ISystemManager, IVector, IEntity } from "../types";
-import { WithMovement } from "./moveable";
+import { WithPosition } from "./moveable";
 import { factory } from "../utils";
+import { createSelector, createSetter } from "./utils";
 
 const COMPONENT_NAMESPACE = 'momentum';
 
-export type WithMomentum = { momentum: { direction: IVector; speed: number; } };
+export type WithMomentum = { momentum: { direction: IVector; speed: number; vertical?: boolean; horizontal?: boolean; } };
 
 export function withMomentumFactory(system: ISystemManager) {
   return (entity: IEntity, state: WithMomentum, id = -1) => {
@@ -13,7 +14,10 @@ export function withMomentumFactory(system: ISystemManager) {
         id,
         entityId: entity.id,
         name: COMPONENT_NAMESPACE,
-        state: { momentum: { direction: state.momentum.direction, speed: state.momentum.speed } },
+        state: { momentum: {
+          direction:    state.momentum.direction,
+          speed:        state.momentum.speed,
+        } },
         update: (system: ISystemManager, component: IWithMomentumEntity) => {
             handleMovement(entity, component, system);
         },
@@ -21,13 +25,16 @@ export function withMomentumFactory(system: ISystemManager) {
   }
 }
 
-type IWithMomentumEntity = IComponent<WithMomentum & Partial<WithMovement>>
+type IWithMomentumEntity = IComponent<WithMomentum & Partial<WithPosition>>
 
 function handleMovement(entity: IEntity, component: IWithMomentumEntity, system: ISystemManager) {
-  const {state: { position }} = system.getEntityComponent<WithMovement>(entity, 'movement');
+  const {state: { position }} = system.getEntityComponent<WithPosition>(entity, 'position');
 
   const { momentum: { direction, speed } } = component.state;
 
-  position.x += direction.x * speed;
   position.y += direction.y * speed;
+  position.x += direction.x * speed;
 }
+
+export const selectMomentumState = createSelector<WithMomentum>(COMPONENT_NAMESPACE);
+export const setMomentumState    = createSetter<WithMomentum>(selectMomentumState);

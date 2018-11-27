@@ -1,8 +1,11 @@
-import { IEntity, ISystemManager, IComponent } from "../../lib/types";
-import { nameableFactory, WithName } from "../../lib/components/nameable";
-import { killableFactory, WithHealth } from "../../lib/components/killable";
-import { movableFactory, WithMovement } from "../../lib/components/moveable";
+import { IEntity, ISystemManager, WithId } from "../../lib/types";
+import { nameableFactory,     WithName } from "../../lib/components/nameable";
+import { killableFactory,     WithHealth } from "../../lib/components/killable";
+import { movableFactory,      WithPosition } from "../../lib/components/moveable";
 import { withGeometryFactory, WithGeometry } from "../../lib/components/withGeometry";
+import { isCollidableFactory, IsCollidable } from "../../lib/components/isCollidable";
+import { lootableFactory,     IsLootable } from "../../lib/components/lootable";
+import { IPointsLoot } from "../../types";
 
 
 export function createMob(system: ISystemManager, options: MobModel): IEntity {
@@ -10,6 +13,8 @@ export function createMob(system: ISystemManager, options: MobModel): IEntity {
   const withHealth   = killableFactory(system);
   const withPosition = movableFactory(system);
   const withGeometry = withGeometryFactory(system);
+  const isCollidable = isCollidableFactory(system);
+  const isLootable   = lootableFactory<IPointsLoot>(system);
 
   const entity = system.registerEntity();
 
@@ -25,15 +30,19 @@ export function createMob(system: ISystemManager, options: MobModel): IEntity {
   system.registerComponent(
     withGeometry(entity, options)
   );
+  system.registerComponent(
+    isCollidable(entity, options)
+  );
+  system.registerComponent(
+    isLootable(entity, options)
+  );
   return entity;
 }
 
-export type MobBase =
-  WithName     &
-  WithHealth   &
-  WithGeometry &
-  WithMovement;
-
 export type MobModel =
-  IComponent &
-  MobBase;
+  WithName        &
+  WithHealth      &
+  WithGeometry    &
+  WithPosition    &
+  IsLootable<IPointsLoot>      &
+  IsCollidable;

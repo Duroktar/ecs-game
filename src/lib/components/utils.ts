@@ -1,5 +1,5 @@
-import { IComponent, IEntity, ISystem } from "../types";
-import { isSameEntity, first } from "../utils";
+import { IComponent, IEntity, ISystem, ISystemManager } from "../types";
+import { isSameEntity, first, factory } from "../utils";
 
 export type Setter<T> = (system: ISystem, entity: IEntity, state: T) => null | undefined;
 

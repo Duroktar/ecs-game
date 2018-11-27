@@ -1,6 +1,7 @@
-import { IComponent, ISystem, IConfig, ISystemManager, EntityIdType, IConfigDefaults, IEntity, IdGeneratorFunc, WithId, IKeyboard, IEntityComponents, ISerializableState, IInputManager, IStorageManager, IObjectConfig, IComponentFactory } from "../types";
+import { IComponent, ISystem, ISystemManager, EntityIdType, IConfigDefaults, IEntity, IdGeneratorFunc, WithId, IEntityComponents, ISerializableState, IInputManager, IStorageManager, IObjectConfig, IComponentFactory, IComponentFactories, IComponentFactoryKey } from "../types";
 import InputManager from "./InputManager";
 import StorageManager from "./StorageManager";
+import { defaultComponentFactories } from "../components";
 import { defaultIdGenerator, factory, isSameEntity, values } from "../utils";
 
 const configDefaults: IConfigDefaults = {
@@ -17,17 +18,19 @@ class SystemManager implements ISystemManager {
   private entityComponents:     IEntityComponents;
   private entityIdGenerator:    IdGeneratorFunc;
   private componentIdGenerator: IdGeneratorFunc;
-  private componentFactories:   { [key: string]: IComponentFactory };
+  private componentFactories:   IComponentFactories;
+
+  private entityComponentCache:       { [key: string]: number[] } = {};
+  private entityComponentCacheBuster: number = 0;
 
   constructor(
-    system: ISystem,
-    config: IObjectConfig,
-    input?: IInputManager,
-    storage?: IStorageManager,
-    epochs?: number,
-    idGenerator?: (begin?: number) => IdGeneratorFunc,
-    entityComponents?: IEntityComponents,
-    componentFactories?: { [key: string]: IComponentFactory },
+    system:              ISystem,
+    config:              IObjectConfig,
+    input?:              IInputManager,
+    storage?:            IStorageManager,
+    epochs?:             number,
+    idGenerator?:        (begin?: number) => IdGeneratorFunc,
+    entityComponents?:   IEntityComponents,
   ) {
     this.system               = system;
     this.config               = { ...configDefaults, ...config };
@@ -37,7 +40,7 @@ class SystemManager implements ISystemManager {
     this.entityComponents     = entityComponents ? entityComponents : {};
     this.entityIdGenerator    = idGenerator ? idGenerator(this.epoch) : defaultIdGenerator(this.epoch);
     this.componentIdGenerator = defaultIdGenerator(this.epoch);
-    this.componentFactories   = componentFactories || {};
+    this.componentFactories   = defaultComponentFactories;
   }
 
   public init = (config?: IObjectConfig) => null;
@@ -78,7 +81,7 @@ class SystemManager implements ISystemManager {
   public getComponentIdsForEntity = (entity: IEntity): Array<EntityIdType> => {
     return values(this.entityComponents[entity.id]);
   };
-  public getComponentFactory = (name: string): IComponentFactory => {
+  public getComponentFactory = (name: IComponentFactoryKey): IComponentFactory => {
     return this.componentFactories[name];
   };
 
@@ -92,6 +95,28 @@ class SystemManager implements ISystemManager {
   public getEntityComponent = <T>(entity: IEntity, componentName: string): IComponent<T> => {
     const id = this.entityComponents[entity.id][componentName];
     return this.getComponentById(id);
+  }
+  public getEntitiesByComponentTypes = (componentNames: IComponentFactoryKey[]): EntityIdType[] => {
+    const cacheKey = componentNames.join('-');
+
+    if (this.entityComponentCache[cacheKey] !== undefined) {
+      return this.entityComponentCache[cacheKey];
+    }
+
+    const entities = this.system.entities.reduce((acc: EntityIdType[], entity) => {
+      const components = this.getComponentIdsForEntity(entity)
+        .map(this.getComponentById)
+        .filter(o => componentNames.indexOf(o.name) !== -1);
+
+      if (components.length === componentNames.length) {
+        return acc.concat(entity.id);
+      }
+      return acc;
+    }, []);
+
+    this.entityComponentCache[cacheKey] = entities;
+
+    return entities;
   }
 
   public getState = (): ISystem => {
@@ -118,6 +143,7 @@ class SystemManager implements ISystemManager {
   public step = () => {
     this.input.update();
     this.updateSystemEntities();
+    this.entityComponentCache = {};
     this.epoch++;
     return this.system;
   };

@@ -1,22 +1,24 @@
 import { IComponent, ISystemManager, IVector, IEntity, ISystem } from "../types";
 import { factory, isSameEntity, first } from "../utils";
 
-export type WithMovement = { position: IVector; }
+const COMPONENT_NAMESPACE = 'position';
+
+export type WithPosition = { position: IVector; }
 
 export function movableFactory(system: ISystemManager) {
-  return (entity: IEntity, state: WithMovement, id = -1) => {
+  return (entity: IEntity, state: WithPosition, id = -1) => {
     return system.registerComponent(
-      factory<IComponent<WithMovement>>({
+      factory<IComponent<WithPosition>>({
         id,
-        name: 'movement',
+        name: COMPONENT_NAMESPACE,
         entityId: entity.id,
         state: { position: state.position },
-        update: (system: ISystemManager, component: IComponent<WithMovement>) => { },
+        update: (system: ISystemManager, component: IComponent<WithPosition>) => { },
       }))
   }
 }
 
-export function selectMovableState(system: ISystem, entity: IEntity): null | IComponent<WithMovement> {
+export function selectPositionState(system: ISystem, entity: IEntity): null | IComponent<WithPosition> {
   const searchResult = system
     .components
     .filter(o =>
@@ -30,8 +32,8 @@ export function selectMovableState(system: ISystem, entity: IEntity): null | ICo
   return first(searchResult);
 }
 
-export function setMovableState(system: ISystem, entity: IEntity, state: IVector) {
-  const component = selectMovableState(system, entity);
+export function setPositionState(system: ISystem, entity: IEntity, state: IVector) {
+  const component = selectPositionState(system, entity);
 
   if (component === null) {
     return component;

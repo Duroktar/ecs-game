@@ -1,8 +1,8 @@
 import { IComponent, ISystemManager, IVector, IEntity } from "../types";
-import { WithMovement } from "./moveable";
+import { WithPosition } from "./moveable";
 import { factory } from "../utils";
 
-export type WithControls = { direction: IVector; moving: boolean; speed: number; };
+export type WithControls = { direction: IVector; moving: boolean; speed: IVector; };
 
 export function controllableFactory(system: ISystemManager) {
   return (entity: IEntity, state: WithControls, id = -1) => {
@@ -11,7 +11,11 @@ export function controllableFactory(system: ISystemManager) {
         id,
         entityId: entity.id,
         name: 'controls',
-        state: { direction: state.direction, moving: state.moving, speed: state.speed },
+        state: {
+          direction: state.direction,
+          moving: state.moving,
+          speed: state.speed,
+        },
         update: (system: ISystemManager, component: IControllableEntity) => {
           handleVerticalMovement(entity, component, system);
           handleHorizontalMovement(entity, component, system);
@@ -22,7 +26,7 @@ export function controllableFactory(system: ISystemManager) {
   }
 }
 
-type IControllableEntity = IComponent<WithControls & Partial<WithMovement>>
+type IControllableEntity = IComponent<WithControls & Partial<WithPosition>>
 
 function handleVerticalMovement(entity: IEntity, component: IControllableEntity, system: ISystemManager) {
   handleMovement(entity, component, system, 'vertical');
@@ -38,9 +42,10 @@ function handleMovement(entity: IEntity, component: IControllableEntity, system:
     ? [system.input.KeyCodes.LEFT, system.input.KeyCodes.RIGHT]
     : [system.input.KeyCodes.UP, system.input.KeyCodes.DOWN];
 
-  const movement = system.getEntityComponent<WithMovement>(entity, 'movement');
+  const movement = system.getEntityComponent<WithPosition>(entity, 'position');
 
-  const {speed} = component.state;
+  const speed = component.state.speed[key];
+
   if (system.input.keyPressed(pos)) {
     component.state.direction[key] = 1;
     movement.state.position[key] += 1 * speed;

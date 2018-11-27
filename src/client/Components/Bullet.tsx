@@ -20,7 +20,11 @@ function getStyles(props: Props): React.CSSProperties {
     height:       '32px',
     width:        '0px', 
     left:         props.model.position.x + 30,
-    bottom:       props.model.position.y,
-    display:      props.model.offscreen ? 'none' : '',
+    top:          props.model.position.y,
+    display:      cssDisplayValue(props.model),
   }
+}
+
+function cssDisplayValue(model: ProjectileModel) {
+  return (model.health === 0) ? 'none' : ''
 }

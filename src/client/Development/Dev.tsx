@@ -3,17 +3,23 @@ import './styles/Dev.style.css';
 import Draggable from 'react-draggable';
 import { IEntity, ISystemManager } from '../../lib/types';
 import { pp } from '../../lib/utils';
+import { withBlur } from '../utils';
 import { Link } from 'react-router-dom';
 import { FPS } from './FPS';
+import { withEntity } from '../Hoc/withEntity';
 
 interface Props {
-  system: ISystemManager;
-  onStart: () => void;
-  onStop: () => void;
-  onTick: () => void;
-  onSave: () => void;
-  onLoad: () => void;
+  system:   ISystemManager;
+  onStart:  () => void;
+  onStop:   () => void;
+  onTick:   () => void;
+  onSave:   () => void;
+  onLoad:   () => void;
 }
+
+const EntityInspector = withEntity(props =>
+  <pre>{pp(props.model)}</pre>
+);
 
 export const DevScreen = (props: Props) => (
   <Draggable>
@@ -31,13 +37,27 @@ export const DevScreen = (props: Props) => (
 
       <FPS />
 
-      <EntityList system={props.system} />
+      {/* <EntityList system={props.system} /> */}
 
-      <pre>{pp(props.system.getState())}</pre>
+      {/* <pre>{pp(props.system.getState())}</pre> */}
+
+      <EntityInspector entity={{ id: 0 }} system={props.system} />
 
     </div>
   </Draggable>
 )
+
+function Buttons(props: Props) {
+  return (
+    <>
+      <button onClick={withBlur(props.onStart)}>Start</button>
+      <button onClick={withBlur(props.onStop)}>Stop</button>
+      <button onClick={withBlur(props.onTick)}>Evolve</button>
+      <button onClick={withBlur(props.onSave)}>Save</button>
+      <button onClick={withBlur(props.onLoad)}>Load</button>
+    </>
+  )
+}
 
 function entityRenderer(entity: IEntity, system: ISystemManager): JSX.Element {
   return <pre key={entity.id}>{pp(system.getEntityModel(entity))}</pre>;
@@ -51,15 +71,3 @@ function EntityList(props: EntityListProps): JSX.Element {
 }
 
 type EntityListProps = { system: ISystemManager };
-
-function Buttons(props: Props) {
-  return (
-    <>
-      <button onClick={props.onStart}>Start</button>
-      <button onClick={props.onStop}>Stop</button>
-      <button onClick={props.onTick}>Evolve</button>
-      <button onClick={props.onSave}>Save</button>
-      <button onClick={props.onLoad}>Load</button>
-    </>
-  )
-}

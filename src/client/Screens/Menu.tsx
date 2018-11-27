@@ -14,6 +14,7 @@ interface Props {
 }
 
 export class Menu extends React.Component<Props> {
+  state = {}
   render() {
     return (
       <Gui

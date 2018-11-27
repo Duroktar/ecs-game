@@ -1,11 +1,11 @@
 import { IComponent, ISystemManager, IEntity } from "../types";
-import { WithMovement } from "./moveable";
+import { WithPosition } from "./moveable";
 import { factory } from "../utils";
 
 export type WithOffscreen = { offscreen?: boolean; };
 
 export function withOffscreenFactory(system: ISystemManager) {
-  return (entity: IEntity, state: WithOffscreen & Partial<WithMovement>, id = -1) => {
+  return (entity: IEntity, state: WithOffscreen & Partial<WithPosition>, id = -1) => {
     return system.registerComponent(
       factory<IComponent<WithOffscreen>>({
         id,
@@ -19,10 +19,10 @@ export function withOffscreenFactory(system: ISystemManager) {
   }
 }
 
-type IWithOffscreenEntity = IComponent<WithOffscreen & WithMovement>
+type IWithOffscreenEntity = IComponent<WithOffscreen & WithPosition>
 
 function handleOffscreenFlag(entity: IEntity, component: IWithOffscreenEntity, system: ISystemManager) {
-  const {state: { position }} = system.getEntityComponent<WithMovement>(entity, 'movement');
+  const {state: { position }} = system.getEntityComponent<WithPosition>(entity, 'position');
   const {screenSize} = system.config;
 
   if (position.x < 0 || position.y < 0) {

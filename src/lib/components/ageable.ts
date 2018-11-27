@@ -1,5 +1,5 @@
 import { factory } from "../utils";
-import { IComponent, ISystemManager, IEntity, EntityIdType } from "../types";
+import { IComponent, ISystemManager, IEntity } from "../types";
 
 export type WithAge = { age: number };
 
