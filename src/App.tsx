@@ -9,8 +9,7 @@ import { Game } from './client/Screens/Game';
 
 import { CharacterModel } from './game/Domain/character';
 import { ProjectileModel } from './game/Domain/projectile';
-import { MobModel } from './game/Domain/mob';
-import { system, playerEntity, bulletEntity1, bulletEntity2, enemy1 } from './game';
+import { system, playerEntity, bulletEntity1, bulletEntity2 } from './game';
 
 interface State {
   epoch:    number;
@@ -37,6 +36,7 @@ class App extends React.Component<{}, State> {
 
   componentWillUnmount() {
     this.stop();
+
     delete this.handler;
   }
 
