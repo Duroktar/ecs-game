@@ -11,6 +11,8 @@ export interface IEntity {
   id: EntityIdType;
 }
 
+export type IEntityModel<T> = Partial<IEntity> & T;
+
 export interface IOwned {
   entityId: EntityIdType;
 }
@@ -78,7 +80,7 @@ export interface ISystemManager {
   getComponentFactory:            (name: IComponentFactoryKey) => IComponentFactory;
   getEntityComponent:             <T>(entity: IEntity, componentName: IComponentFactoryKey) => IComponent<T>;
   getEntitiesByComponentTypes:    (componentNames: IComponentFactoryKey[]) => EntityIdType[];
-  getEntityModel:                 <T>(entity: IEntity) => DeepReadonly<WithComponentMeta<T>>;
+  getEntityModel:                 <T>(entity: IEntity) => WithComponentMeta<T>;
 
   getSerializableState:   () => ISerializableState;
   loadHydratedState:      (serialized: ISerializableState) => void;
@@ -98,7 +100,7 @@ export type ITypes =
   IFactoryComponent;
 
 export type WithId<T> = T & IEntity;
-export type WithComponentMeta<T> = WithId<T> & IOwned;
+export type WithComponentMeta<T> = IOwned & WithId<T>;
 
 export interface IEntityComponents {
   [key: string]: {
@@ -126,8 +128,6 @@ export interface IFileConfig {
 
 export type IdGenerator = { next: () => EntityIdType };
 export type IdGeneratorFunc = (args?: any) => IdGenerator;
-
-export type IVector = { x: number; y: number; }
 
 export type ValueOf<T> = T[keyof T]
 
@@ -182,4 +182,21 @@ interface IKeyboard {
   keyJustPressed:   (key: number) => boolean;
   keyJustReleased:  (key: number) => boolean;
   dispose:          () => void;
+}
+
+export interface IVector {
+  x: number;
+  y: number;
+}
+
+export interface IDimensions {
+  width: number;
+  height: number;
+}
+
+export interface Bounds {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
 }

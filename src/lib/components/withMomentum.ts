@@ -1,7 +1,6 @@
 import { IComponent, ISystemManager, IVector, IEntity } from "../types";
 import { WithPosition } from "./moveable";
-import { factory } from "../utils";
-import { createSelector, createSetter } from "./utils";
+import { factory, createSelector, createSetter } from "../utils";
 
 const COMPONENT_NAMESPACE = 'momentum';
 
@@ -13,13 +12,13 @@ export function withMomentumFactory(system: ISystemManager) {
       factory<IComponent<WithMomentum>>({
         id,
         entityId: entity.id,
-        name: COMPONENT_NAMESPACE,
+        name:     COMPONENT_NAMESPACE,
         state: { momentum: {
           direction:    state.momentum.direction,
           speed:        state.momentum.speed,
         } },
         update: (system: ISystemManager, component: IWithMomentumEntity) => {
-            handleMovement(entity, component, system);
+          handleMovement(entity, component, system);
         },
       }))
   }

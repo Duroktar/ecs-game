@@ -1,4 +1,4 @@
-import { IEntity, ISystemManager, WithId } from "../../lib/types";
+import { IEntity, ISystemManager } from "../../lib/types";
 import { nameableFactory,     WithName } from "../../lib/components/nameable";
 import { killableFactory,     WithHealth } from "../../lib/components/killable";
 import { movableFactory,      WithPosition } from "../../lib/components/moveable";
@@ -40,9 +40,9 @@ export function createMob(system: ISystemManager, options: MobModel): IEntity {
 }
 
 export type MobModel =
-  WithName        &
-  WithHealth      &
-  WithGeometry    &
-  WithPosition    &
-  IsLootable<IPointsLoot>      &
+  WithName                &
+  WithHealth              &
+  WithGeometry            &
+  WithPosition            &
+  IsLootable<IPointsLoot> &
   IsCollidable;

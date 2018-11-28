@@ -1,5 +1,5 @@
 import { ISystemManager, IVector, IEntity } from '../../lib/types';
-import { GameState, IPointsLoot } from '../../types';
+import { IGameState, IPointsLoot } from '../../types';
 import * as React from 'react';
 
 import StarField from '../Backgrounds/StarField';
@@ -13,7 +13,7 @@ import { IsLootable } from '../../lib/components/lootable';
 import { first } from '../../lib/utils';
 
 
-interface Props extends GameState {
+interface Props extends IGameState {
   system:   ISystemManager;
   children: React.ReactNode;
   onPoints: (score: any) => void;
@@ -22,9 +22,12 @@ interface Props extends GameState {
 interface State {
   shots:    number;
   hits:     number;
+  score:    number;
+  credits:  number;
+  lives:    number;
 }
 
-export class Game extends React.Component<GameState, State> {
+export class Game extends React.Component<IGameState, State> {
   state = {
     score:    0,
     credits:  0,
@@ -100,10 +103,6 @@ export class Game extends React.Component<GameState, State> {
     }
 
     component.state.health = 0;
-    component.state.position = {
-      x: -100,
-      y: -100,
-    }
   }
 
   reviveEntity = (entity: IEntity, health: number) => {
@@ -145,7 +144,7 @@ export class Game extends React.Component<GameState, State> {
         background={<StarField />}
       >
         <Loader
-          current={'demo'}
+          currentLevel={'demo'}
           state={this.props}
           system={this.props.system}
           onEnemyDeath={this.onEnemyDeath}
@@ -153,10 +152,4 @@ export class Game extends React.Component<GameState, State> {
       </Gui>
     )
   }
-}
-
-interface State {
-  score:    number;
-  credits:  number;
-  lives:    number;
 }

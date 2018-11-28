@@ -1,6 +1,42 @@
-import { ITypes, IEntity, IdGeneratorFunc } from "./types";
+import { ITypes, IEntity, IdGeneratorFunc, ISystem, IComponent } from "./types";
 
 export const pp = (obj: object | null | undefined) => JSON.stringify(obj, null, '  ')
+
+export type Setter<T> = (system: ISystem, entity: IEntity, state: T) => null | undefined;
+
+export type Selector<T> = (system: ISystem, entity: IEntity) => null | IComponent<T>
+
+export function createSelector<T>(path: string): Selector<T> {
+  return (system: ISystem, entity: IEntity): null | IComponent<T> => {
+    const searchResult = system
+      .components
+      .filter(o =>
+        isSameEntity(o, entity)
+        && hasState(path, o.state));
+
+    if (searchResult.length === 0) {
+      return null;
+    };
+
+    return first(searchResult);
+  }
+}
+
+export function createSetter<T>(selector: Selector<T>): Setter<T> {
+  return (system: ISystem, entity: IEntity, state: T) => {
+    const component = selector(system, entity);
+
+    if (component === null) {
+      return component;
+    }
+
+    component.state = state;
+  }
+}
+
+export function hasState(path: string, state: any) {
+  return state[path] !== undefined;
+}
 
 export function factory<T extends ITypes>(config: T): T {
   return config;

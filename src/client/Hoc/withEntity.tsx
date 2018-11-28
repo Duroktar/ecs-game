@@ -7,13 +7,13 @@ import { CharacterModel } from "../../game/Domain/character";
 interface WithEntityProps {
   entity:     IEntity;
   system:     ISystemManager;
-  onDeath?:    (entity: IEntity) => void;
+  onDeath?:   (entity: IEntity) => void;
 }
 
-type IModelType<P> = { model: DeepReadonly<WithComponentMeta<P>> };
+type IModelType<P> = { model: WithComponentMeta<P> };
 
 export const withEntity = <P extends MobModel | CharacterModel> (
-    Component:    React.ComponentType<IModelType<P>>,
+    Component: React.ComponentType<IModelType<P>>,
 ): React.ComponentType<WithEntityProps> => {
   function WithEntity(props: WithEntityProps) {
     const { entity, system, ...rest } = props;

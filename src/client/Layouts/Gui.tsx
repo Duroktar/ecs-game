@@ -6,13 +6,13 @@ import { HighScore } from "../Components/HighScore";
 import { Credits } from "../Components/Credits";
 
 interface Props {
-  id: string;
+  id:         string;
   className?: string;
-  lives: number;
-  score: number;
-  credits: number;
+  lives:      number;
+  score:      number;
+  credits:    number;
   background: React.ReactNode;
-  children: React.ReactNode;
+  children:   React.ReactNode;
 }
 
 export function Gui(props: Props) {

@@ -1,6 +1,5 @@
-import { factory } from "../utils";
+import { factory, createSelector, createSetter } from "../utils";
 import { IComponent, ISystemManager, IEntity } from "../types";
-import { createSetter, createSelector } from "./utils";
 
 const COMPONENT_NAMESPACE = 'health';
 

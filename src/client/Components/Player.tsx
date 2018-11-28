@@ -1,10 +1,14 @@
+import { IEntity } from '../../lib/types';
 import * as React from 'react';
 
-import ShipSprite from '../../assets/ship.png';
+import ShipSprite from '../../assets/player/ship.png';
+
 import { CharacterModel } from '../../game/Domain/character';
+import { withEntity } from '../Hoc/withEntity';
 
 interface Props {
-  model: CharacterModel;
+  model:    CharacterModel;
+  onDeath?: (entity: IEntity) => void;
 }
 
 export function Player(props: Props) {
@@ -23,3 +27,5 @@ export function Player(props: Props) {
     <div id="player" className="sprite" style={styles} />
   )
 }
+
+export const ConnectedPlayer = withEntity<CharacterModel>(Player)

@@ -1,6 +1,5 @@
-import { IComponent, ISystemManager, IEntity, EntityIdType } from "../types";
-import { factory } from "../utils";
-import { createSelector, createSetter } from "./utils";
+import { IComponent, ISystemManager, IEntity, EntityIdType, Bounds, IVector, IDimensions } from "../types";
+import { factory, createSelector, createSetter } from "../utils";
 import { WithGeometry } from "./withGeometry";
 import { WithPosition } from "./moveable";
 
@@ -40,7 +39,6 @@ function handleCollisions(component: ICollidableEntity, system: ISystemManager) 
   collidableEntities.forEach(o => {
     const otherBounds = getBounds(o.position, o.geometry);
     if (overlap(ownBounds, otherBounds) && otherBounds !== undefined) {
-      // overlap2(ownBounds, otherBounds)
       collisions.push(o.id);
     }
   });
@@ -51,10 +49,10 @@ function handleCollisions(component: ICollidableEntity, system: ISystemManager) 
 export const selectCollidableState = createSelector<ICollidableEntity>(COMPONENT_NAMESPACE);
 export const setCollidableState    = createSetter<ICollidableEntity>(selectCollidableState);
 
-function getBounds(pos: IVector, dimensions: Dimensions) {
+function getBounds(pos: IVector, dimensions: IDimensions) {
   return {
-    left: pos.x,
-    right: pos.x + dimensions.width,
+    left: pos.x - (dimensions.width / 2),
+    right: pos.x + (dimensions.width / 2),
     top: pos.y,
     bottom: pos.y + dimensions.height,
   }
@@ -70,34 +68,4 @@ function overlap(a: Bounds, b: Bounds) {
     return false;
 
   return true;
-}
-
-function overlap2(a: Bounds, b: Bounds) {
-  // If one rectangle is on left side of other
-  if (a.left > b.right || b.left > a.right)
-    return false;
-
-  // If one rectangle is above other
-  if (a.bottom < b.top || b.bottom < a.top)
-    return false;
-
-  // debugger
-  return true;
-}
-
-export interface IVector {
-  x: number;
-  y: number;
-}
-
-export interface Dimensions {
-  width: number;
-  height: number;
-}
-
-export interface Bounds {
-  left: number;
-  right: number;
-  top: number;
-  bottom: number;
 }

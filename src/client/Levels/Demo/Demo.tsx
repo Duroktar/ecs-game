@@ -1,54 +1,51 @@
-import { GameState } from '../../../types';
+import { IEntity } from '../../../lib/types';
+import { LevelProps } from '../types';
 import * as React from 'react';
 
+import { ConnectedEnemy } from '../../Components/Enemy';
 import { Player } from '../../Components/Player';
 import { Bullet } from '../../Components/Bullet';
-import { ConnectedEnemy } from '../../Components/Enemy';
 
 import { Level } from '../Base';
-import { IEntity } from '../../../lib/types';
-import { loadLevel } from '../Loader';
-
-interface Props {
-  state:        GameState;
-  onEnemyDeath: (entity: IEntity) => void;
-}
 
 interface State {
   enemies:          IEntity[];
   enemyPositions:   number[][];
 }
 
-export class Demo extends React.Component<Props, State> {
+export class Demo extends React.Component<LevelProps, State> {
   state = {
     enemies: [] as IEntity[],
     enemyPositions: [
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0],
     ]
   }
 
   componentDidMount() {
     const {enemyPositions} = this.state;
-    const enemies = loadLevel(enemyPositions);
+    const {system, loadLevel} = this.props;
+
+    const enemies = loadLevel(system, enemyPositions);
 
     this.setState({ enemies })
   }
 
   render() {
+    const {player, bullet1, bullet2, system} = this.props.state;
     return (
       <Level>
   
-        <Player model={this.props.state.player}/>
+        <Player model={player}/>
   
-        <Bullet model={this.props.state.bullet1} />
-        <Bullet model={this.props.state.bullet2} />
+        <Bullet model={bullet1} />
+        <Bullet model={bullet2} />
   
-        {this.state.enemies.map(model => (
+        {this.state.enemies.map((entity: IEntity) => (
           <ConnectedEnemy
-            key={model.id}
-            entity={model}
-            system={this.props.state.system}
+            key={entity.id}
+            entity={entity}
+            system={system}
             onDeath={this.props.onEnemyDeath}
           />
         ))}
