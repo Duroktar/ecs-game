@@ -98,8 +98,7 @@ export class Enemy extends React.Component<Props, State> {
   }
 
   render() {
-    const {currentFrame} = this.state;
-    const isDead = false // this.props.model.health === 0;
+    const {currentFrame, dead} = this.state;
 
     const getFrame = (frame: number) => {
       return enemyFrames[frame]
@@ -116,8 +115,8 @@ export class Enemy extends React.Component<Props, State> {
       backgroundPosition: 'center',
       width:              '64px',
       height:             '64px',
-      left:               isDead ? -9999 : this.props.model.position.x,
-      top:                isDead ? -9999 : this.props.model.position.y,
+      left:               dead ? -9999 : this.props.model.position.x,
+      top:                dead ? -9999 : this.props.model.position.y,
       display:            cssDisplayValue(this.state.dead),
     }
   

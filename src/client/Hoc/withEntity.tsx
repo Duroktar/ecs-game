@@ -1,6 +1,5 @@
 import { IEntity, WithComponentMeta, ISystemManager } from "../../lib/types";
 import * as React from 'react';
-import { DeepReadonly } from "../../react-app-env";
 import { MobModel } from "../../game/Domain/mob";
 import { CharacterModel } from "../../game/Domain/character";
 
