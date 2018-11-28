@@ -1,11 +1,5 @@
-import { DeepReadonly } from "../react-app-env";
-import { nameableFactory } from "./components/nameable";
-import { controllableFactory } from "./components/controllable";
-import { ageableFactory } from "./components/ageable";
-import { movableFactory } from "./components/moveable";
-import { killableFactory } from "./components/killable";
-import { KeysEnum } from "./utils";
 import { Keyboard } from "../extern/Keyboard";
+import { KeysEnum } from "./utils";
 
 export interface IEntity {
   id: EntityIdType;
@@ -38,7 +32,7 @@ export interface ISerializableState {
   entityComponents: IEntityComponents;
 }
 
-export type IComponentFactory = (system: ISystemManager) => IComponentFactoryInitializer;
+export type IComponentFactory            = (system: ISystemManager) => IComponentFactoryInitializer;
 export type IComponentFactoryInitializer = (entity: IEntity, args: any, id?: number) => IComponent;
 
 export interface IComponentFactories {
@@ -99,7 +93,7 @@ export type ITypes =
   IKeyStatus  |
   IFactoryComponent;
 
-export type WithId<T> = T & IEntity;
+export type WithId<T>            = T & IEntity;
 export type WithComponentMeta<T> = IOwned & WithId<T>;
 
 export interface IEntityComponents {
@@ -108,7 +102,7 @@ export interface IEntityComponents {
   }
 }
 
-export type IConfig = IObjectConfig | IFileConfig;
+export type IConfig         = IObjectConfig | IFileConfig;
 export type IConfigDefaults = PickOptionalProps<IObjectConfig>;
 
 export interface IObjectConfig {
@@ -126,7 +120,7 @@ export interface IFileConfig {
   pathToConfigFile?: string;
 }
 
-export type IdGenerator = { next: () => EntityIdType };
+export type IdGenerator     = { next: () => EntityIdType };
 export type IdGeneratorFunc = (args?: any) => IdGenerator;
 
 export type ValueOf<T> = T[keyof T]
@@ -136,7 +130,7 @@ type PickOptionalProps<T> = Pick<T,
     ({} extends { [P in K]: T[K] } ? K : never)
   }[keyof T]>
 
-export type FirstArgument<T> = T extends (arg1: infer U, ...args: any[]) => any ? U : any;
+export type FirstArgument<T>  = T extends (arg1: infer U, ...args: any[]) => any ? U : any;
 export type SecondArgument<T> = T extends (arg1: any, arg2: infer U, ...args: any[]) => any ? U : any;
 
 
@@ -145,9 +139,9 @@ export interface IKeyStatus {
 }
 
 export interface IMouse {
-  buttonPressed: (button: number) => boolean;
+  buttonPressed:  (button: number) => boolean;
 
-  update: () => void;
+  update:         () => void;
 }
 
 export interface IKeyboard {
@@ -155,7 +149,7 @@ export interface IKeyboard {
   keyJustPressed:   (key: number) => boolean;
   keyJustReleased:  (key: number) => boolean;
 
-  update: () => void;
+  update:           () => void;
 }
 
 export interface IInputManager {
@@ -166,7 +160,7 @@ export interface IInputManager {
   keyJustPressed:   (key: number) => boolean;
   keyJustReleased:  (key: number) => boolean;
 
-  update: () => void;
+  update:           () => void;
 }
 
 export interface IStorageManager {
@@ -185,18 +179,18 @@ interface IKeyboard {
 }
 
 export interface IVector {
-  x: number;
-  y: number;
+  x:    number;
+  y:    number;
 }
 
 export interface IDimensions {
-  width: number;
-  height: number;
+  width:    number;
+  height:   number;
 }
 
 export interface Bounds {
-  left: number;
-  right: number;
-  top: number;
-  bottom: number;
+  left:     number;
+  right:    number;
+  top:      number;
+  bottom:   number;
 }
