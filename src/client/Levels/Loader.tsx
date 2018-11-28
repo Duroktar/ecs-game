@@ -1,5 +1,5 @@
 import { ISystemManager, IEntity } from '../../lib/types';
-import { IGameState } from '../../types';
+import { IGameState } from '../../game/types';
 import { ILevels, ILevel } from './types';
 import * as React from 'react';
 

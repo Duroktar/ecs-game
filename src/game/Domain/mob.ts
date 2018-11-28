@@ -5,7 +5,7 @@ import { movableFactory,      WithPosition } from "../../lib/components/moveable
 import { withGeometryFactory, WithGeometry } from "../../lib/components/withGeometry";
 import { isCollidableFactory, IsCollidable } from "../../lib/components/isCollidable";
 import { lootableFactory,     IsLootable } from "../../lib/components/lootable";
-import { IPointsLoot } from "../../types";
+import { IPointsLoot } from "../types";
 
 
 export function createMob(system: ISystemManager, options: MobModel): IEntity {

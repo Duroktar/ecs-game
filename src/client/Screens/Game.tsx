@@ -1,5 +1,5 @@
 import { ISystemManager, IVector, IEntity } from '../../lib/types';
-import { IGameState, IPointsLoot } from '../../types';
+import { IGameState, IPointsLoot } from '../../game/types';
 import * as React from 'react';
 
 import StarField from '../Backgrounds/StarField';
