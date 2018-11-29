@@ -19,3 +19,19 @@ body {
 .flex.rows {
   flex-direction: column;
 }
+
+.float-right {
+  float: right;
+}
+
+.float-left {
+  float: left;
+}
+
+.hidden {
+  display: none;
+}
+
+.p-1 {
+  padding: 1em;
+}

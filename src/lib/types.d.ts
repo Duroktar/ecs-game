@@ -7,6 +7,10 @@ export interface IEntity {
 
 export type IEntityModel<T> = Partial<IEntity> & T;
 
+export interface IComponent<T = any> extends IFactoryComponent<T> {
+  id: EntityIdType;
+}
+
 export interface IOwned {
   entityId: EntityIdType;
 }
@@ -14,10 +18,6 @@ export interface IOwned {
 export interface IFactoryComponent<T = any> extends IUpdateable, IOwned {
   name:     IComponentFactoryKey;
   state:    T;
-}
-
-export interface IComponent<T = any> extends IFactoryComponent<T> {
-  id: EntityIdType;
 }
 
 export interface ISystem {
