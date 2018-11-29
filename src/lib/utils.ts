@@ -59,6 +59,46 @@ export const defaultIdGenerator = (genesis: number = 0): IdGeneratorFunc => {
   return () => ({ next: () => epoch++ })
 }
 
+export function partialSetValue(object: any) {
+  return (path: (string | number)[], value: any) => setValue(object, path, value);
+}
+
+export function setValue(object: any, path: (string | number)[], value: any) {
+  let a = path;
+  let o = object;
+
+  for (let i = 0; i < a.length - 1; i++) {
+      let n = a[i];
+      if (n in o) {
+          o = o[n];
+      } else {
+          o[n] = {};
+          o = o[n];
+      }
+  }
+
+  o[a[a.length - 1]] = value;
+}
+
+export function getValue<T extends any>(object: T, path: string) {
+  let o = object;
+  path = path.replace(/\[(\w+)\]/g, '.$1');
+  path = path.replace(/^\./, '');
+  let a = path.split('.');
+
+  while (a.length) {
+      let n = a.shift() as string;
+
+      if (n in o) {
+          o = o[n];
+      } else {
+          return;
+      }
+  }
+
+  return o;
+}
+
 export enum KeysEnum {
   Backspace = 8,
   Tab = 9,

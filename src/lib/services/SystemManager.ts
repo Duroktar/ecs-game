@@ -2,7 +2,9 @@ import { IComponent, ISystem, ISystemManager, EntityIdType, IConfigDefaults, IEn
 import InputManager from "./InputManager";
 import StorageManager from "./StorageManager";
 import { defaultComponentFactories } from "../components";
-import { defaultIdGenerator, factory, isSameEntity, values } from "../utils";
+import { isSameEntity, values, setValue, partialSetValue } from "../utils";
+import ComponentManager from "./ComponentManager";
+import EntityManager from "./EntityManager";
 
 const configDefaults: IConfigDefaults = {
   debug: false,
@@ -16,67 +18,65 @@ class SystemManager implements ISystemManager {
   public storage:               IStorageManager;
   public epoch:                 number;
   private entityComponents:     IEntityComponents;
-  private entityIdGenerator:    IdGeneratorFunc;
-  private componentIdGenerator: IdGeneratorFunc;
   private componentFactories:   IComponentFactories;
+  private entityManager:        EntityManager;
+  private componentManager:     ComponentManager;
 
   private entityComponentCache:       { [key: string]: number[] } = {};
-  private entityComponentCacheBuster: number = 0;
+  private entityComponentSetter:      (path: (string | number)[], value: any) => void;
 
   constructor(
-    system:              ISystem,
     config:              IObjectConfig,
     input?:              IInputManager,
     storage?:            IStorageManager,
     epochs?:             number,
-    idGenerator?:        (begin?: number) => IdGeneratorFunc,
-    entityComponents?:   IEntityComponents,
   ) {
-    this.system               = system;
     this.config               = { ...configDefaults, ...config };
     this.input                = input ? input : new InputManager();
     this.storage              = storage ? storage : new StorageManager(this);
     this.epoch                = epochs ? epochs : 0;
-    this.entityComponents     = entityComponents ? entityComponents : {};
-    this.entityIdGenerator    = idGenerator ? idGenerator(this.epoch) : defaultIdGenerator(this.epoch);
-    this.componentIdGenerator = defaultIdGenerator(this.epoch);
+
     this.componentFactories   = defaultComponentFactories;
+
+    this.entityManager        = new EntityManager(config);
+    this.componentManager     = new ComponentManager(config);
+    this.entityComponents     = {};
+
+    this.system = {
+      entities:   this.entityManager.entities,
+      components: this.componentManager.components,
+    }
+
+    this.entityComponentSetter = partialSetValue(this.entityComponents);
   }
 
   public init = (config?: IObjectConfig) => null;
 
   public registerEntity = () => {
-    const entityId = this.entityIdGenerator().next()
-    const model    = factory<IEntity>({ id: entityId });
-    this.system.entities[entityId] = model;
-    this.entityComponents[entityId] = {};
-    return model;
+    return this.entityManager.registerEntity();
   };
 
-  public registerComponent = (component: IComponent) => {
-    component.id = (component.id === -1)
-      ? this.componentIdGenerator().next()
-      : component.id;
+  public registerComponent = <T>(component: IComponent) => {
+    const registered = this.componentManager
+      .registerComponent<T>(component)
 
-    this.system.components[component.id] = component;
-    this.entityComponents[component.entityId][component.name] = component.id;
-    return component;
+    this.entityComponentSetter(
+      [registered.entityId, registered.name],
+      registered.id,
+    )
+
+    return registered;
   };
 
   public getEntityModel = <T>(entity: IEntity): WithId<T> => {
-    const { components } = this.system;
-    return components
-      .filter(o => o && o.entityId === entity.id)
-      .reduce((acc, val) => {
-        return { ...acc, ...val.state };
-      }, { id: entity.id }) as WithId<T>;
+    return groupEntityComponents<T>(entity, this.system.components);
   };
 
   public getComponent = <T>(component: IComponent): IComponent<T> => {
-    return this.system.components[component.id];
+    return this.componentManager.get(component);
   };
   public getComponentById = <T>(componentId: EntityIdType): IComponent<T> => {
-    return this.system.components[componentId];
+    return this.componentManager.get(componentId);
   };
   public getComponentIdsForEntity = (entity: IEntity): Array<EntityIdType> => {
     return values(this.entityComponents[entity.id]);
@@ -86,15 +86,14 @@ class SystemManager implements ISystemManager {
   };
 
   public unRegisterEntity = (entityId: EntityIdType) => {
-    delete this.system.entities[entityId];
+    this.entityManager.unRegisterEntity(entityId);
   };
   public unRegisterComponent = (entityId: EntityIdType) => {
-    delete this.system.components[entityId];
+    this.componentManager.unRegisterComponent(entityId);
   };
 
   public getEntityComponent = <T>(entity: IEntity, componentName: string): IComponent<T> => {
-    const id = this.entityComponents[entity.id][componentName];
-    return this.getComponentById(id);
+    return this.getComponentById<T>(this.entityComponents[entity.id][componentName]);
   }
   public getEntitiesByComponentTypes = (componentNames: IComponentFactoryKey[]): EntityIdType[] => {
     const cacheKey = componentNames.join('-');
@@ -103,14 +102,18 @@ class SystemManager implements ISystemManager {
       return this.entityComponentCache[cacheKey];
     }
 
+    const isValidComponent = (o: IComponent) => componentNames.indexOf(o.name) !== -1;
+
     const entities = this.system.entities.reduce((acc: EntityIdType[], entity) => {
+
       const components = this.getComponentIdsForEntity(entity)
         .map(this.getComponentById)
-        .filter(o => componentNames.indexOf(o.name) !== -1);
+        .filter(isValidComponent);
 
       if (components.length === componentNames.length) {
         return acc.concat(entity.id);
       }
+
       return acc;
     }, []);
 
@@ -153,12 +156,12 @@ class SystemManager implements ISystemManager {
   }
 
   private updateComponentsForEntity = (entity: IEntity): void => {
-    const componentDoUpdate = (o: IComponent) => o.update(this, o);
-
     this.getComponentIdsForEntity(entity)
-      .map(id => this.system.components[id])
-      .forEach(componentDoUpdate);
+      .map(this.componentManager.get)
+      .forEach(this.updateComponent);
   }
+
+  private updateComponent = (o: IComponent) => o.update(this, o);
 
   public toString = () => {
     return JSON.stringify({
@@ -166,10 +169,14 @@ class SystemManager implements ISystemManager {
       config: this.config,
     }, null, '  ')
   };
-
-  static isSameEntity(a: IEntity, b: IEntity) {
-    return isSameEntity(a, b);
-  }
 }
 
 export default SystemManager;
+
+function groupEntityComponents<T>(entity: IEntity, components: IComponent[]) {
+  return components
+    .filter(o => o && o.entityId === entity.id)
+    .reduce((acc, val) => {
+      return { ...acc, ...val.state };
+    }, { id: entity.id }) as WithId<T>;
+}

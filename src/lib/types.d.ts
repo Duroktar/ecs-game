@@ -105,11 +105,17 @@ export interface IEntityComponents {
 export type IConfig         = IObjectConfig | IFileConfig;
 export type IConfigDefaults = PickOptionalProps<IObjectConfig>;
 
-export interface IObjectConfig {
+export interface IBasicConfig {
   name:     string;
   version:  string;
+}
+
+export interface IDevConfig {
   logging?: boolean;
   debug?:   boolean;
+}
+
+export interface IObjectConfig extends IBasicConfig, IDevConfig {
   screenSize?: {
     x: number;
     y: number;

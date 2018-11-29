@@ -9,9 +9,6 @@ export function createSystem({
 }: SystemArgs) {
 
   const system = new SystemManager({
-    components: [],
-    entities: [],
-  }, {
     name,
     version,
     logging,
