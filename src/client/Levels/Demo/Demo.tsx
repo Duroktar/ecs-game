@@ -34,8 +34,7 @@ export class Demo extends React.Component<LevelProps, State> {
 
     this.setState({ enemies, ready: true })
 
-    const onEnemyDeath = () => this.countDeath();
-    system.events.registerEvent('isDead:enemy', onEnemyDeath)
+    system.events.registerEvent('isDead:enemy', this.countDeath)
   }
 
   componentDidUpdate(nextProps: LevelProps, nextState: State) {
@@ -46,6 +45,11 @@ export class Demo extends React.Component<LevelProps, State> {
     if (nextState.enemiesDead === nextState.enemies.length) {
       this.onLevelComplete(this.props.system);
     }
+  }
+
+  componentWillUnmount() {
+    this.props.system.events
+      .unRegisterEvent('isDead:enemy', this.countDeath)
   }
 
   countDeath = () => {

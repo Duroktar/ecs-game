@@ -49,6 +49,11 @@ export class Game extends React.Component<Props, State> {
     this.handleBulletCollisions();
   }
 
+  componentWillUnmount() {
+    this.props.system.events.unRegisterEvent('isDead:enemy', this.onEnemyDeath)
+    this.props.system.events.unRegisterEvent('levelComplete', this.onLevelComplete)
+  }
+
   handleBulletCollisions = () => {
     const { bullet1, bullet2 } = this.props;
     if (bullet1.collisions!.length || bullet2.collisions!.length) {
