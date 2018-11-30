@@ -95,6 +95,8 @@ export interface IEventManager {
   registerEvent: (name: string, callback: AnonymousCB) => void;
   unRegisterEvent: (name: string, callback: AnonymousCB) => void;
 
+  emit: <T>(name: string, data?: T) => void;
+
   onUpdate: (component: IComponent) => void;
 
   onChange: (component: IComponent, eventName: string) => void;

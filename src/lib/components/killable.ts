@@ -28,7 +28,7 @@ export function killableFactory(system: ISystemManager) {
 
           if (!wasDeadBefore && isDeadNow) {
             // sad times
-            events.onChange!(component, 'isDead')
+            events.onChange!(component, 'isDead:enemy')
           }
 
           events.onUpdate && events.onUpdate!(component)

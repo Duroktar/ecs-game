@@ -7,7 +7,7 @@ import { Gui } from '../Layouts/Gui';
 
 import { ProjectileModel } from '../../game/Domain/projectile';
 import { Loader } from '../Levels/Loader';
-import { WithHealth } from '../../lib/components/killable';
+import { WithHealthState } from '../../lib/components/killable';
 import { WithPosition } from '../../lib/components/withPosition';
 import { IsLootable } from '../../lib/components/lootable';
 import { first } from '../../lib/utils';
@@ -37,7 +37,8 @@ export class Game extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    props.system.events.registerEvent('isDead', this.onEnemyDeath)
+    props.system.events.registerEvent('isDead:enemy', this.onEnemyDeath)
+    props.system.events.registerEvent('levelComplete', this.onLevelComplete)
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -63,11 +64,11 @@ export class Game extends React.Component<Props, State> {
 
       deadpool.forEach(oneOfUsAreSpecialSnowflakes);
 
-      [bullet1, bullet2].forEach(bullet => {
-        if (bullet.collisions!.length > 0) {
-          this.killEntity(bullet.id)
-        }
-      })
+      // [bullet1, bullet2].forEach(bullet => {
+      //   if (bullet.collisions!.length > 0) {
+      //     this.killEntity(bullet.id)
+      //   }
+      // })
     }
   }
 
@@ -76,7 +77,7 @@ export class Game extends React.Component<Props, State> {
       this.props.bullet1,
       this.props.bullet2,
     ].filter(model =>
-      model.health.value === 0 || !!model.offscreen,
+      !!model.offscreen,
     ))
   }
 
@@ -100,7 +101,7 @@ export class Game extends React.Component<Props, State> {
 
   killEntity = (id: number) => {
     const component = this.props.system
-      .getEntityComponent<WithHealth & WithPosition>({ id }, 'health');
+      .getEntityComponent<WithHealthState & WithPosition>({ id }, 'health');
 
     if (component === undefined) {
       return;
@@ -111,7 +112,7 @@ export class Game extends React.Component<Props, State> {
 
   reviveEntity = (entity: IEntity, health: number) => {
     const component = this.props.system
-      .getEntityComponent<WithHealth>(entity, 'health');
+      .getEntityComponent<WithHealthState>(entity, 'health');
 
     if (component === undefined) {
       return;
@@ -134,6 +135,10 @@ export class Game extends React.Component<Props, State> {
   
     const points = component.state.loot!.points;
     this.setState({ score: this.state.score + points })
+  }
+
+  onLevelComplete = (data: any) => {
+    alert('You did it!')
   }
 
   render() {

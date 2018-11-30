@@ -20,15 +20,19 @@ class EventManager implements IEventManager {
   public init = (config?: IBasicConfig) => null;
 
   public registerEvent = (name: string, callback: AnonymousCB) => {
-    this.emitter.on(name, callback)
+    this.emitter.addListener(name, callback)
   };
 
   public unRegisterEvent = (name: string, callback: AnonymousCB): void => {
     this.emitter.removeListener(name, callback);
   };
 
+  public emit = <T>(eventName: string, data?: T) => {
+    this.emitter.emit(eventName, data);
+  };
+
   public onUpdate = (component: IComponent) => {
-    this.emitter.emit(`updateComponent`, component);
+    this.emitter.emit('updateComponent', component);
   };
 
   public onChange = (component: IComponent, eventName: string): void => {

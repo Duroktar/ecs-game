@@ -11,10 +11,6 @@ export function createBullet(
   const entity = createProjectile(system, {
     name,
 
-    health: {
-      value: 0,
-    },
-
     momentum: {
       direction: {
         x: 0,

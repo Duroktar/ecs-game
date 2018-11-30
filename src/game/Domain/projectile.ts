@@ -1,6 +1,5 @@
 import { IEntity, ISystemManager, IComponent } from "../../lib/types";
-import { killableFactory,         WithHealth } from "../../lib/components/killable";
-import { withPositionFactory,          WithPosition } from "../../lib/components/withPosition";
+import { withPositionFactory,     WithPosition } from "../../lib/components/withPosition";
 import { withMomentumFactory,     WithMomentum } from "../../lib/components/withMomentum";
 import { withOffscreenFactory,    WithOffscreen } from "../../lib/components/withOffscreen";
 import { withGeometryFactory,     WithGeometry } from "../../lib/components/withGeometry";
@@ -13,7 +12,6 @@ export function createProjectile(
   options:  ProjectileBase,
 ): IEntity {
   const withName        = nameableFactory(system);
-  const withHealth      = killableFactory(system);
   const withPosition    = withPositionFactory(system);
   const withMomentum    = withMomentumFactory(system);
   const withOffscreen   = withOffscreenFactory(system);
@@ -24,9 +22,6 @@ export function createProjectile(
 
   system.registerComponent(
     withName(entity, options, system.events)
-  );
-  system.registerComponent(
-    withHealth(entity, options, system.events)
   );
   system.registerComponent(
     withPosition(entity, options, system.events)
@@ -47,7 +42,6 @@ export function createProjectile(
 }
 
 export type ProjectileBase =
-  WithHealth          &
   WithPosition        &
   WithMomentum        &
   WithGeometry        &

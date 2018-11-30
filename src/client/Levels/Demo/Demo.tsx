@@ -1,4 +1,4 @@
-import { IEntity } from '../../../lib/types';
+import { IEntity, AnonymousCB } from '../../../lib/types';
 import { LevelProps } from '../types';
 import * as React from 'react';
 
@@ -11,6 +11,8 @@ import { Level } from '../Base';
 interface State {
   enemies:          IEntity[];
   enemyPositions:   number[][];
+  enemiesDead:      number;
+  ready:            boolean;
 }
 
 export class Demo extends React.Component<LevelProps, State> {
@@ -19,7 +21,9 @@ export class Demo extends React.Component<LevelProps, State> {
     enemyPositions: [
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0],
-    ]
+    ],
+    enemiesDead: 0,
+    ready: false,
   }
 
   componentDidMount() {
@@ -28,8 +32,29 @@ export class Demo extends React.Component<LevelProps, State> {
 
     const enemies = loadLevel(system, enemyPositions);
 
-    this.setState({ enemies })
+    this.setState({ enemies, ready: true })
+
+    const onEnemyDeath = () => this.countDeath();
+    system.events.registerEvent('isDead:enemy', onEnemyDeath)
   }
+
+  componentDidUpdate(nextProps: LevelProps, nextState: State) {
+    if (!nextState.ready) {
+      return;
+    }
+
+    if (nextState.enemiesDead === nextState.enemies.length) {
+      this.onLevelComplete(this.props.system);
+    }
+  }
+
+  countDeath = () => {
+    this.setState(state => ({ enemiesDead: state.enemiesDead + 1 }))
+  }
+
+  onLevelComplete = once((system) => {
+    system.events.emit('levelComplete')
+  })
 
   render() {
     const {player, bullet1, bullet2, system} = this.props.state;
@@ -50,5 +75,16 @@ export class Demo extends React.Component<LevelProps, State> {
         ))}
       </Level>
     )
+  }
+}
+
+function once(fn: AnonymousCB) {
+  let called = false;
+  return (...args: any[]) => {
+    if (!called) {
+      called = true;
+      return fn(...args);
+    }
+    return undefined;
   }
 }
