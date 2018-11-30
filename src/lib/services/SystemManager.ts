@@ -82,6 +82,9 @@ class SystemManager implements ISystemManager {
     return this.componentManager.get(componentId);
   };
   public getComponentIdsForEntity = (entity: IEntity): Array<EntityIdType> => {
+    if(entity === undefined) {
+      return [];
+    }
     return values(this.entityComponents[entity.id]);
   };
   public getComponentFactory = (name: IComponentFactoryKey): IComponentFactory => {
@@ -89,10 +92,25 @@ class SystemManager implements ISystemManager {
   };
 
   public unRegisterEntity = (entityId: EntityIdType) => {
+    this.unRegisterComponentsForEntity(entityId);
+    this.deleteEntityComponents(entityId);
+    this.clearEntityComponentCache();
     this.entityManager.unRegisterEntity(entityId);
   };
   public unRegisterComponent = (entityId: EntityIdType) => {
     this.componentManager.unRegisterComponent(entityId);
+  };
+ 
+  private unRegisterComponentsForEntity = (entityId: EntityIdType) => {
+    const componentIds = this.getComponentIdsForEntity({ id: entityId });
+    componentIds.forEach(id => this.componentManager.unRegisterComponent(id));
+  };
+  private deleteEntityComponents = (entityId: EntityIdType) => {
+    delete this.entityComponents[entityId];
+  };
+  private clearEntityComponentCache = () => {
+    delete this.entityComponentCache;
+    this.entityComponentCache = {};
   };
 
   public getEntityComponent = <T>(entity: IEntity, componentName: string): IComponent<T> => {

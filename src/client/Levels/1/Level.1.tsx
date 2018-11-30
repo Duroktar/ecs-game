@@ -53,7 +53,11 @@ export class Level1 extends React.Component<LevelProps, State> {
 
   componentWillUnmount() {
     this.props.system.events
-      .unRegisterEvent('isDead:enemy', this.countDeath)
+      .unRegisterEvent('isDead:enemy', this.countDeath);
+    
+    this.state.enemies.forEach(o =>
+      this.props.system.unRegisterEntity(o.id)
+    );
   }
 
   countDeath = () => {

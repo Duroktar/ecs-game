@@ -70,7 +70,9 @@ export interface ISystemManager {
   init: (config?: IObjectConfig) => void;
 
   registerEntity:                 () => IEntity;
+  unRegisterEntity:               (entityId: EntityIdType) => void;
   registerComponent:              <T>(component: IComponent<T>) => IComponent<T>;
+  unRegisterComponent:            (entityId: EntityIdType) => void;
   getComponent:                   <T>(component: IComponent<T>) => IComponent<T>;
   getComponentById:               <T>(componentId: EntityIdType) => IComponent<T>;
   getComponentFactory:            (name: IComponentFactoryKey) => IComponentFactory;

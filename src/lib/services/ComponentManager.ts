@@ -11,7 +11,7 @@ const configDefaults = {
 class ComponentManager {
   public config:             IBasicConfig;
 
-  public components:        IComponent[];
+  public components:         IComponent[];
   private idGenerator:       IdGeneratorFunc;
 
   constructor(config: IBasicConfig) {
