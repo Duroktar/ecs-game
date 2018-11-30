@@ -8,7 +8,6 @@ export interface LevelProps {
   system:       ISystemManager;
   loadLevel:    LoaderFunc;
   state:        IGameState;
-  onEnemyDeath: (entity: IEntity) => void;
 }
 
 export type ILevels = typeof Levels;

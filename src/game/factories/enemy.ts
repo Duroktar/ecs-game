@@ -1,4 +1,4 @@
-import { ISystemManager, IVector, IDimensions, IComponent } from "../../lib/types";
+import { ISystemManager, IVector, IDimensions } from "../../lib/types";
 import { createMob } from "../Domain/mob";
 
 export function createEnemy(
@@ -29,11 +29,6 @@ export function createEnemy(
     loot: {
       points: 10,
     },
-  }, {
-    onChange: (component: IComponent, eventName: string) =>
-      console.log(`Event: ${eventName}`, component),
-
-    onUpdate: (component: IComponent) => null,
   });
 
   return entity;

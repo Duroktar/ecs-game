@@ -65,6 +65,7 @@ export interface ISystemManager {
   epoch:      number;
   input:      IInputManager;
   storage:    IStorageManager;
+  events:     IEventManager;
 
   init: (config?: IObjectConfig) => void;
 
@@ -86,6 +87,21 @@ export interface ISystemManager {
   toString: () => string;
 }
 
+export interface IEventManager {
+  config:        IBasicConfig;
+
+  init: (config?: IBasicConfig) => null;
+
+  registerEvent: (name: string, callback: AnonymousCB) => void;
+  unRegisterEvent: (name: string, callback: AnonymousCB) => void;
+
+  onUpdate: (component: IComponent) => void;
+
+  onChange: (component: IComponent, eventName: string) => void;
+}
+
+export type AnonymousCB = (...args: any) => void;
+
 export type ITypes =
   IEntity     |
   IComponent  |
@@ -103,8 +119,8 @@ export interface IEntityComponents {
   }
 }
 
-type IOnUpdateHandler = (component: IComponent) => void;
-type IOnChangeHandler = (component: IComponent, eventName: string) => void;
+export type IOnUpdateHandler = (component: IComponent) => void;
+export type IOnChangeHandler = (component: IComponent, eventName: string) => void;
 
 interface IComponentEvents {
   onUpdate: IOnUpdateHandler;

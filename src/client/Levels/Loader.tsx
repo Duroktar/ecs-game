@@ -17,7 +17,6 @@ interface Props {
 	currentLevel: ILevel;
 	state:    		IGameState;
 	system:   		ISystemManager;
-	onEnemyDeath: (entity: IEntity) => void;
 }
 
 export function Loader({
@@ -27,7 +26,6 @@ export function Loader({
   const ThisLevel = levels[rest.currentLevel];
   return (
 		<ThisLevel
-      onEnemyDeath={rest.onEnemyDeath}
       loadLevel={loadLevel}
 			{...rest}
 		/>

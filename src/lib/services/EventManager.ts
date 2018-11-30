@@ -1,10 +1,5 @@
-import { EntityIdType, IEntity, IdGeneratorFunc, IBasicConfig } from "../types";
-import { defaultIdGenerator, factory } from "../utils";
-
-interface IEntityManagerSerializableState {
-  config:   IBasicConfig,
-  entities: IEntity[],
-}
+import { IBasicConfig, IComponentEvents, IOnUpdateHandler, IOnChangeHandler, IComponent, IEventManager, AnonymousCB } from "../types";
+import {EventEmitter2} from 'eventemitter2';
 
 const configDefaults = {
   name: 'EventManager',
@@ -13,61 +8,32 @@ const configDefaults = {
   version: '1',
 }
 
-class EvntManager {
-  public config:              IBasicConfig;
-  public entities:           IEntity[];
-  private idGenerator:        IdGeneratorFunc;
+class EventManager implements IEventManager {
+  public config:        IBasicConfig;
+  public emitter:       EventEmitter2;
+ 
   constructor(config: IBasicConfig) {
     this.config      = { ...configDefaults, ...config };
-    this.entities    = [];
-    this.idGenerator = defaultIdGenerator();
+    this.emitter     = new EventEmitter2();
   }
 
   public init = (config?: IBasicConfig) => null;
 
-  public registerEntity = (): IEntity => {
-    const entityId = this.idGenerator().next()
-    const model    = factory<IEntity>({ id: entityId });
-    this.entities[entityId] = model;
-    return model;
+  public registerEvent = (name: string, callback: AnonymousCB) => {
+    this.emitter.on(name, callback)
   };
 
-  public unRegisterEntity = (entityId: EntityIdType): void => {
-    delete this.entities[entityId];
+  public unRegisterEvent = (name: string, callback: AnonymousCB): void => {
+    this.emitter.removeListener(name, callback);
   };
 
-  public get = (entity: IEntity | number) => {
-    const path = typeof entity === 'number' ? entity : entity.id;
-    return this.entities[path];
+  public onUpdate = (component: IComponent) => {
+    this.emitter.emit(`updateComponent`, component);
   };
 
-  public get getState(): IEntity[] {
-    return this.entities;
+  public onChange = (component: IComponent, eventName: string): void => {
+    this.emitter.emit(eventName, component);
   };
-
-  public getSerializableState = (): IEntityManagerSerializableState => {
-    const { config, entities } = this;
-    return {
-      config,
-      entities,
-    };
-  };
-
-  public loadHydratedState = (state: IEntityManagerSerializableState): void => {
-    this.config  = state.config;
-    this.entities = state.entities;
-  };
-
-  public toString = (): string => {
-    return JSON.stringify({
-      config:   this.config,
-      entities: this.entities,
-    }, null, '  ')
-  };
-
-  static isSameEntity(a: IEntity, b: IEntity): boolean {
-    return a.id === b.id;
-  }
 }
 
-export default EvntManager;
+export default EventManager;

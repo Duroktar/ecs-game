@@ -1,10 +1,11 @@
-import { IComponent, ISystem, ISystemManager, EntityIdType, IConfigDefaults, IEntity, IdGeneratorFunc, WithId, IEntityComponents, ISerializableState, IInputManager, IStorageManager, IObjectConfig, IComponentFactory, IComponentFactories, IComponentFactoryKey } from "../types";
+import { IComponent, ISystem, ISystemManager, EntityIdType, IConfigDefaults, IEntity, IdGeneratorFunc, WithId, IEntityComponents, ISerializableState, IInputManager, IStorageManager, IObjectConfig, IComponentFactory, IComponentFactories, IComponentFactoryKey, IEventManager } from "../types";
 import InputManager from "./InputManager";
 import StorageManager from "./StorageManager";
 import { defaultComponentFactories } from "../components";
 import { values, partialSetValue } from "../utils";
 import ComponentManager from "./ComponentManager";
 import EntityManager from "./EntityManager";
+import EventManager from "./EventManager";
 
 const configDefaults: IConfigDefaults = {
   debug: false,
@@ -16,6 +17,7 @@ class SystemManager implements ISystemManager {
   public config:                IObjectConfig;
   public input:                 IInputManager;
   public storage:               IStorageManager;
+  public events:                IEventManager;
   public epoch:                 number;
   private entityComponents:     IEntityComponents;
   private componentFactories:   IComponentFactories;
@@ -34,10 +36,11 @@ class SystemManager implements ISystemManager {
     this.config               = { ...configDefaults, ...config };
     this.input                = input ? input : new InputManager();
     this.storage              = storage ? storage : new StorageManager(this);
+    this.events               = new EventManager(config);
     this.epoch                = epochs ? epochs : 0;
-
+    
     this.componentFactories   = defaultComponentFactories;
-
+    
     this.entityManager        = new EntityManager(config);
     this.componentManager     = new ComponentManager(config);
     this.entityComponents     = {};

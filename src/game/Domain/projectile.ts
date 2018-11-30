@@ -1,4 +1,4 @@
-import { IEntity, ISystemManager, IComponent, IComponentEvents } from "../../lib/types";
+import { IEntity, ISystemManager, IComponent } from "../../lib/types";
 import { killableFactory,         WithHealth } from "../../lib/components/killable";
 import { withPositionFactory,          WithPosition } from "../../lib/components/withPosition";
 import { withMomentumFactory,     WithMomentum } from "../../lib/components/withMomentum";
@@ -6,13 +6,11 @@ import { withOffscreenFactory,    WithOffscreen } from "../../lib/components/wit
 import { withGeometryFactory,     WithGeometry } from "../../lib/components/withGeometry";
 import { withCollisionsFactory,   WithCollisions } from "../../lib/components/withCollisions";
 import { nameableFactory,         WithName } from "../../lib/components/nameable";
-import { defaultComponentEvents } from "../../lib/utils";
 
 
 export function createProjectile(
   system:   ISystemManager,
   options:  ProjectileBase,
-  events:   IComponentEvents = defaultComponentEvents(),
 ): IEntity {
   const withName        = nameableFactory(system);
   const withHealth      = killableFactory(system);
@@ -25,25 +23,25 @@ export function createProjectile(
   const entity = system.registerEntity();
 
   system.registerComponent(
-    withName(entity, options, events)
+    withName(entity, options, system.events)
   );
   system.registerComponent(
-    withHealth(entity, options, events)
+    withHealth(entity, options, system.events)
   );
   system.registerComponent(
-    withPosition(entity, options, events)
+    withPosition(entity, options, system.events)
   );
   system.registerComponent(
-    withGeometry(entity, options, events)
+    withGeometry(entity, options, system.events)
   );
   system.registerComponent(
-    withMomentum(entity, options, events)
+    withMomentum(entity, options, system.events)
   );
   system.registerComponent(
-    withCollisions(entity, options, events)
+    withCollisions(entity, options, system.events)
   );
   system.registerComponent(
-    withOffscreen(entity, options, events)
+    withOffscreen(entity, options, system.events)
   );
   return entity;
 }

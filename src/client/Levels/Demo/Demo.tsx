@@ -46,7 +46,6 @@ export class Demo extends React.Component<LevelProps, State> {
             key={entity.id}
             entity={entity}
             system={system}
-            onDeath={this.props.onEnemyDeath}
           />
         ))}
       </Level>

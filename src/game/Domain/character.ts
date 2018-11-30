@@ -1,4 +1,4 @@
-import { IEntity, ISystemManager, IComponentEvents } from "../../lib/types";
+import { IEntity, ISystemManager } from "../../lib/types";
 import { nameableFactory,           WithName } from "../../lib/components/nameable";
 import { killableFactory,           WithHealth } from "../../lib/components/killable";
 import { withPositionFactory,       WithPosition } from "../../lib/components/withPosition";
@@ -7,12 +7,10 @@ import { withGeometryFactory,       WithGeometry } from "../../lib/components/wi
 import { isCollidableFactory,       IsCollidable } from "../../lib/components/isCollidable";
 import { withBoundaryFactory,       WithBoundary } from "../../lib/components/withBoundary";
 import { withPlayerControlsFactory, WithPlayerControls } from "../../lib/components/withPlayerControls";
-import { defaultComponentEvents } from "../../lib/utils";
 
 export function createCharacter(
   system:   ISystemManager,
   options:  CharacterModel,
-  events:   IComponentEvents = defaultComponentEvents(),
 ): IEntity {
   const withName        = nameableFactory(system);
   const withHealth      = killableFactory(system);
@@ -26,32 +24,32 @@ export function createCharacter(
   const entity = system.registerEntity();
 
   system.registerComponent(
-    withName(entity, options, events)
+    withName(entity, options, system.events)
   );
   system.registerComponent(
-    withHealth(entity, options, events)
+    withHealth(entity, options, system.events)
   );
   system.registerComponent(
-    withPosition(entity, options, events)
+    withPosition(entity, options, system.events)
   );
   system.registerComponent(
-    withGeometry(entity, options, events)
+    withGeometry(entity, options, system.events)
   );
   system.registerComponent(
-    withAttack(entity, options, events)
+    withAttack(entity, options, system.events)
   );
   system.registerComponent(
-    isCollidable(entity, options, events)
+    isCollidable(entity, options, system.events)
   );
   system.registerComponent(
-    withBoundary(entity, options, events)
+    withBoundary(entity, options, system.events)
   );
   system.registerComponent(
     withControls(entity, {
       direction: options.direction,
       moving: options.moving,
       speed: options.speed,
-    }, events)
+    }, system.events)
   );
   return entity;
 }

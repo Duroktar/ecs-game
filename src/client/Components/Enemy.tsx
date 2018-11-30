@@ -26,7 +26,6 @@ const enemyFrames = [
 
 interface Props {
   model: MobModel & IOwned & IEntity;
-  onDeath?: (entity: MobModel) => void;
 }
 
 interface State {
@@ -70,7 +69,6 @@ export class Enemy extends React.Component<Props, State> {
       }
 
       this.runDeathAnimation(onFinishedAnimation);
-      this.props.onDeath!(this.props.model);
     }
   }
 

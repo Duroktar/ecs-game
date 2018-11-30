@@ -1,4 +1,4 @@
-import { ISystemManager, IVector, IEntity } from '../../lib/types';
+import { ISystemManager, IVector, IEntity, IComponent } from '../../lib/types';
 import { IGameState, IPointsLoot } from '../../game/types';
 import * as React from 'react';
 
@@ -33,6 +33,12 @@ export class Game extends React.Component<Props, State> {
     lives:    0,
     shots:    0,
     hits:     0,
+  }
+
+  constructor(props: Props) {
+    super(props);
+
+    props.system.events.registerEvent('isDead', this.onEnemyDeath)
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -119,9 +125,9 @@ export class Game extends React.Component<Props, State> {
     this.killEntity(deadId);
   }
 
-  onEnemyDeath = (entity: IEntity) => {
+  onEnemyDeath = (source: IComponent) => {
     const component = this.props.system
-      .getEntityComponent<IsLootable<IPointsLoot>>(entity, 'loot');
+      .getEntityComponent<IsLootable<IPointsLoot>>({ id: source.entityId }, 'loot');
 
     if (component === undefined) {
       return;
@@ -147,7 +153,6 @@ export class Game extends React.Component<Props, State> {
           currentLevel={'demo'}
           state={this.props}
           system={this.props.system}
-          onEnemyDeath={this.onEnemyDeath}
         />
       </Gui>
     )
