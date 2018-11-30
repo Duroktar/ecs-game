@@ -1,4 +1,4 @@
-import { ISystemManager, IVector, IEntity, IComponent } from '../../lib/types';
+import { IVector, IEntity, IComponent } from '../../lib/types';
 import { IGameState, IPointsLoot } from '../../game/types';
 import * as React from 'react';
 
@@ -14,7 +14,6 @@ import { first } from '../../lib/utils';
 
 
 interface Props extends IGameState {
-  // onPoints: (score: any) => void;
   restart:  () => void;
 }
 

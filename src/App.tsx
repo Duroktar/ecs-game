@@ -3,9 +3,9 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 import './App.style.css';
 
 import { DevScreen } from './client/Development/Dev';
-import { Intro } from './client/Screens/Intro';
-import { Menu } from './client/Screens/Menu';
-import { Game } from './client/Screens/Game';
+import { Intro } from './client/Containers/Intro';
+import { Menu } from './client/Containers/Menu';
+import { Game } from './client/Containers/Game';
 
 import { CharacterModel } from './game/Domain/character';
 import { ProjectileModel } from './game/Domain/projectile';
