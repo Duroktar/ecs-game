@@ -1,5 +1,6 @@
 import { createCharacter } from "../Domain/character";
 import { ISystemManager } from "../../lib/types";
+import { defaultBoundary } from "../../lib/utils";
 
 export function createPlayer(
   system: ISystemManager,
@@ -8,7 +9,9 @@ export function createPlayer(
 
   const playerEntity = createCharacter(system, {
     name,
-    health: 1,
+    health: {
+      value: 1,
+    },
     attackPower: 10,
     speed: {
       y: 0,
@@ -33,6 +36,8 @@ export function createPlayer(
     moving: false,
   
     attacking: false,
+
+    boundary: defaultBoundary
   });
 
   return playerEntity;

@@ -39,6 +39,7 @@ i {
     color: inherit;
     -webkit-filter: invert(100%);
     filter: invert(100%);
+    cursor: pointer;
 }
 
 i:active {
@@ -51,4 +52,9 @@ i:hover {
     color: inherit;
     -webkit-filter: invert(50%);
     filter: invert(50%);
+}
+
+.title {
+    display: block;
+    cursor: pointer;
 }

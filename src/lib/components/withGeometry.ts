@@ -1,4 +1,4 @@
-import { IComponent, ISystemManager, IVector, IEntity } from "../types";
+import { IComponent, ISystemManager, IVector, IEntity, IComponentEvents } from "../types";
 import { factory } from "../utils";
 
 const COMPONENT_NAMESPACE = 'geometry';
@@ -6,7 +6,7 @@ const COMPONENT_NAMESPACE = 'geometry';
 export type WithGeometry = { geometry: { width: number; height: number; } };
 
 export function withGeometryFactory(system: ISystemManager) {
-  return (entity: IEntity, state: WithGeometry, id = -1) => {
+  return (entity: IEntity, state: WithGeometry, events: IComponentEvents, id = -1) => {
     return system.registerComponent(
       factory<IComponent<WithGeometry>>({
         id,

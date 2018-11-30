@@ -1,4 +1,5 @@
 import { ISerializableState, IComponent, ISystemManager, IComponentFactoryInitializer, IStorageManager, IComponentFactory } from "../types";
+import { defaultComponentEvents } from "../utils";
 
 class StorageManager implements IStorageManager {
   constructor( 
@@ -53,7 +54,7 @@ class StorageManager implements IStorageManager {
       }
   
       const entity = { id: component.entityId }
-      return componentInitializer(entity, component.state, component.id);
+      return componentInitializer(entity, component.state, defaultComponentEvents(), component.id); // !!! HACK FIX ME TODO ACHTUNG
     });
   }
 }

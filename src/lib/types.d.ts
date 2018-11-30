@@ -33,7 +33,7 @@ export interface ISerializableState {
 }
 
 export type IComponentFactory            = (system: ISystemManager) => IComponentFactoryInitializer;
-export type IComponentFactoryInitializer = (entity: IEntity, args: any, id?: number) => IComponent;
+export type IComponentFactoryInitializer = (entity: IEntity, args: any, events: IComponentEvents, id?: number) => IComponent;
 
 export interface IComponentFactories {
   name:         IComponentFactory;
@@ -48,6 +48,7 @@ export interface IComponentFactories {
   collisions:   IComponentFactory;
   collidable:   IComponentFactory;
   loot:         IComponentFactory;
+  boundary:     IComponentFactory;
 }
 
 export type IComponentFactoryKey = keyof IComponentFactories;
@@ -100,6 +101,14 @@ export interface IEntityComponents {
   [key: string]: {
     [key: string]: EntityIdType;
   }
+}
+
+type IOnUpdateHandler = (component: IComponent) => void;
+type IOnChangeHandler = (component: IComponent, eventName: string) => void;
+
+interface IComponentEvents {
+  onUpdate: IOnUpdateHandler;
+  onChange: IOnChangeHandler;
 }
 
 export type IConfig         = IObjectConfig | IFileConfig;
@@ -200,3 +209,10 @@ export interface Bounds {
   top:      number;
   bottom:   number;
 }
+
+export type BoundedTouchingState = FromIndex<BoundedTouchingStateKeys, boolean>;
+
+export type BoundedTouchingStateKeys = IBoundedTouchingStateKeys & string;
+export type IBoundedTouchingStateKeys = 'top' | 'left' | 'right' | 'bottom';
+
+export type FromIndex<K extends string, T> = { [key in K]: T }

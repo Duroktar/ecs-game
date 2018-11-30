@@ -63,7 +63,7 @@ export class Enemy extends React.Component<Props, State> {
   }
 
   componentWillReceiveProps(nextProps: Props) {
-    if (this.props.model.health > 0 && nextProps.model.health === 0) {
+    if (!this.props.model.isDead && nextProps.model.isDead) {
 
       const onFinishedAnimation = () => {
         this.setState({ dead: true })

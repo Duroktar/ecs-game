@@ -37,7 +37,7 @@ class ComponentManager {
   };
 
   public get = <T>(component: IComponent<T> | number) => {
-    const path = typeof component === 'number' ? component : component.id;
+    const path = typeof component === 'number' ? component : component && component.id;
     return this.components[path];
   };
 

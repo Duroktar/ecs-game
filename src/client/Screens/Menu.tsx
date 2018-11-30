@@ -1,13 +1,10 @@
 import * as React from 'react';
 
 import { Gui } from '../Layouts/Gui';
+import StarField from '../Backgrounds/StarField';
 
 function Screen(props: any) {
-  return <div className="screen"></div>
-}
-
-function Background(props: any) {
-  return <div id="black-bg" className="screen"></div>
+  return <div className="screen menu"></div>
 }
 
 interface Props {
@@ -18,12 +15,12 @@ export class Menu extends React.Component<Props> {
   render() {
     return (
       <Gui
-        id="menu"
-        className="game-screen"
+        id="gui"
+        className="menu"
         score={0}
         credits={0}
         lives={0}
-        background={<Background />}
+        background={<StarField />}
       >
         <Screen id={0} />
       </Gui>

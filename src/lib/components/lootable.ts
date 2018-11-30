@@ -1,14 +1,14 @@
-import { IComponent, ISystemManager, IEntity } from "../types";
+import { IComponent, ISystemManager, IEntity, IComponentEvents } from "../types";
 import { factory, createSelector, createSetter } from "../utils";
 import { WithGeometry } from "./withGeometry";
-import { WithPosition } from "./moveable";
+import { WithPosition } from "./withPosition";
 
 const COMPONENT_NAMESPACE = 'loot';
 
 export type IsLootable<T extends any = {}> = { loot?: T; };
 
 export function lootableFactory<T>(system: ISystemManager) {
-  return (entity: IEntity, state: IsLootable<T>, id = -1) => {
+  return (entity: IEntity, state: IsLootable<T>, events: IComponentEvents, id = -1) => {
     return system.registerComponent(
       factory<IComponent<IsLootable<T>>>({
         id,

@@ -23,7 +23,7 @@ interface State {
 class App extends React.Component<{}, State> {
   private handler: any;
 
-  private player = createPlayer(system, 'Odin');
+  private player  = createPlayer(system, 'Odin');
   private bullet1 = createBullet(system, 'Bullet of Destiny');
   private bullet2 = createBullet(system, 'Bullet of Greater Truth');
 
@@ -92,16 +92,22 @@ class App extends React.Component<{}, State> {
     this.start();
   }
 
+  restart = () => {
+    window.location.reload();
+  }
+
   render() {
     return (
       <Router>
-        <div className="App">
+        <div className="App container with-title is-center is-dark">
+          <label className="title">Galaga.ts</label>
           <Route exact path="/" component={Intro} />
           <Route path="/menu" component={Menu} />
           <Route path="/game" render={(props) => {
             return (
               <Game
                 system={system}
+                restart={this.restart}
                 {...this.state}
                 {...props}
               />

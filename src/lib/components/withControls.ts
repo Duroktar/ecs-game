@@ -5,7 +5,7 @@ import { WithBoundary } from "./withBoundary";
 
 export type WithControls = { direction: IVector; moving: boolean; speed: IVector; };
 
-export function controllableFactory(system: ISystemManager) {
+export function withControlsFactory(system: ISystemManager) {
   return (entity: IEntity, state: WithControls, events: IComponentEvents, id = -1) => {
     return system.registerComponent(
       factory<IComponent<WithControls>>({
@@ -39,28 +39,14 @@ function handleHorizontalMovement(entity: IEntity, component: IControllableEntit
 
 function handleMovement(entity: IEntity, component: IControllableEntity, system: ISystemManager, direction: 'vertical' | 'horizontal' = 'horizontal') {
 
-  const key = direction === 'horizontal' ? 'x' : 'y';
-  const [neg, pos] = direction === 'horizontal'
-    ? [system.input.KeyCodes.LEFT, system.input.KeyCodes.RIGHT]
-    : [system.input.KeyCodes.UP,   system.input.KeyCodes.DOWN];
-
-  // const movement = system.getEntityComponent<WithPosition>(entity, 'position');
-
-  // const speed = component.state.speed[key];
-
-  if (system.input.keyPressed(pos)) {
-    component.state.direction[key] = 1;
-    // movement.state.position[key]  += 1 * speed;
-  } else
-  if (system.input.keyPressed(neg)) {
-    component.state.direction[key] = -1;
-    // movement.state.position[key]  -= 1 * speed;
-  } else {
-    component.state.direction[key] = 0;
-  }
-}
-
-function getNewPosition(entity: IEntity, component: IControllableEntity, system: ISystemManager, bounded: boolean) {
+  // if (positiveDirection(pos)) {
+  //   component.state.direction[key] = 1;
+  // } else
+  // if (negativeDirection(neg)) {
+  //   component.state.direction[key] = -1;
+  // } else {
+  //   component.state.direction[key] = 0;
+  // }
 }
 
 function handleMovingFlag(entity: IEntity, component: IControllableEntity, system: ISystemManager) {

@@ -8,15 +8,14 @@ import { Gui } from '../Layouts/Gui';
 import { ProjectileModel } from '../../game/Domain/projectile';
 import { Loader } from '../Levels/Loader';
 import { WithHealth } from '../../lib/components/killable';
-import { WithPosition } from '../../lib/components/moveable';
+import { WithPosition } from '../../lib/components/withPosition';
 import { IsLootable } from '../../lib/components/lootable';
 import { first } from '../../lib/utils';
 
 
 interface Props extends IGameState {
-  system:   ISystemManager;
-  children: React.ReactNode;
-  onPoints: (score: any) => void;
+  // onPoints: (score: any) => void;
+  restart:  () => void;
 }
 
 interface State {
@@ -27,7 +26,7 @@ interface State {
   lives:    number;
 }
 
-export class Game extends React.Component<IGameState, State> {
+export class Game extends React.Component<Props, State> {
   state = {
     score:    0,
     credits:  0,
@@ -72,7 +71,7 @@ export class Game extends React.Component<IGameState, State> {
       this.props.bullet1,
       this.props.bullet2,
     ].filter(model =>
-      model.health === 0 || !!model.offscreen,
+      model.health.value === 0 || !!model.offscreen,
     ))
   }
 
@@ -102,7 +101,7 @@ export class Game extends React.Component<IGameState, State> {
       return;
     }
 
-    component.state.health = 0;
+    component.state.health.value = 0;
   }
 
   reviveEntity = (entity: IEntity, health: number) => {
@@ -113,7 +112,7 @@ export class Game extends React.Component<IGameState, State> {
       return;
     }
   
-    component.state.health = health;
+    component.state.health.value = health;
   }
 
   isSparta = (deadId: number) => {
@@ -141,6 +140,7 @@ export class Game extends React.Component<IGameState, State> {
         score={score}
         credits={credits}
         lives={lives}
+        onRestart={this.props.restart}
         background={<StarField />}
       >
         <Loader

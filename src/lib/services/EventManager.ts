@@ -7,13 +7,13 @@ interface IEntityManagerSerializableState {
 }
 
 const configDefaults = {
-  name: 'EntityManager',
+  name: 'EventManager',
   debug: true,
   logging: true,
   version: '1',
 }
 
-class EntityManager {
+class EvntManager {
   public config:              IBasicConfig;
   public entities:           IEntity[];
   private idGenerator:        IdGeneratorFunc;
@@ -70,4 +70,4 @@ class EntityManager {
   }
 }
 
-export default EntityManager;
+export default EvntManager;

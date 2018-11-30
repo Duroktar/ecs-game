@@ -9,8 +9,8 @@
 }
 
 .gamescreen {
-    width: 100%;
-    height: 100%;
+    width: 800px;
+    height: 600px;
 }
 
 .layout {
@@ -33,8 +33,10 @@
 }
 
 .top.center {
-    position: inherit;
-    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    left: unset;
 }
 
 .right {

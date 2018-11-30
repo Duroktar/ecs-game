@@ -1,11 +1,11 @@
-import { IComponent, ISystemManager, IEntity } from "../types";
-import { WithPosition } from "./moveable";
+import { IComponent, ISystemManager, IEntity, IComponentEvents } from "../types";
+import { WithPosition } from "./withPosition";
 import { factory } from "../utils";
 
 export type WithOffscreen = { offscreen?: boolean; };
 
 export function withOffscreenFactory(system: ISystemManager) {
-  return (entity: IEntity, state: WithOffscreen & Partial<WithPosition>, id = -1) => {
+  return (entity: IEntity, state: WithOffscreen & Partial<WithPosition>, events: IComponentEvents, id = -1) => {
     return system.registerComponent(
       factory<IComponent<WithOffscreen>>({
         id,

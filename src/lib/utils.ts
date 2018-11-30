@@ -1,4 +1,4 @@
-import { ITypes, IEntity, IdGeneratorFunc, ISystem, IComponent } from "./types";
+import { ITypes, IEntity, IdGeneratorFunc, ISystem, IComponent, IComponentEvents } from "./types";
 
 export const pp = (obj: object | null | undefined) => JSON.stringify(obj, null, '  ')
 
@@ -59,6 +59,11 @@ export const defaultIdGenerator = (genesis: number = 0): IdGeneratorFunc => {
   return () => ({ next: () => epoch++ })
 }
 
+export const defaultComponentEvents = (): IComponentEvents => ({
+  onUpdate: (component: IComponent) => null,
+  onChange: (component: IComponent, eventName: string) => null,
+})
+
 export function partialSetValue(object: any) {
   return (path: (string | number)[], value: any) => setValue(object, path, value);
 }
@@ -97,6 +102,17 @@ export function getValue<T extends any>(object: T, path: string) {
   }
 
   return o;
+}
+
+export function keys<O>(o: O) {
+  return Object.keys(o) as (keyof O)[];
+}
+
+export const defaultBoundary = {
+  top:    0,
+  left:   0,
+  bottom: 600,
+  right:  800,
 }
 
 export enum KeysEnum {

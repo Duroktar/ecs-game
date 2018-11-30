@@ -1,4 +1,4 @@
-import { IComponent, ISystemManager, IEntity } from "../types";
+import { IComponent, ISystemManager, IEntity, IComponentEvents } from "../types";
 import { factory, createSelector, createSetter } from "../utils";
 
 const COMPONENT_NAMESPACE = 'attack';
@@ -6,7 +6,7 @@ const COMPONENT_NAMESPACE = 'attack';
 export type WithAttack = { attacking: boolean; attackPower: number; };
 
 export function combatableFactory(system: ISystemManager) {
-  return (entity: IEntity, state: WithAttack, id = -1) => {
+  return (entity: IEntity, state: WithAttack, events: IComponentEvents, id = -1) => {
     return system.registerComponent(
       factory<IComponent<WithAttack>>({
         id,

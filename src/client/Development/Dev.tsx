@@ -25,16 +25,29 @@ const EntityInspector = withEntity(props =>
 );
 
 export const DevScreen = (props: Props) => {
-  const [open, setOpen] = useState(true);
   const [entityId, setEntityId] = useState(0);
+
+  const [open, setOpen]         = useState(false);
+  const [dragging, setDrag]     = useState(false);
+
+  const setDragFalse = () => setDrag(false);
+  const setDragTrue  = () => setDrag(true);
+  const toggleOpen   = () => setOpen(!open);
+
+  const handleClick = () => {
+    dragging ? open : toggleOpen();
+    setDragFalse();
+  }
 
   return (
     <Draggable>
       <div id="devscreen" className={'container'}>
 
         <div id="header">
-          <span className="float-left"><h3>Devtools</h3></span>
-          <i id="close-x" className="icon close float-right" onClick={() => setOpen(!open)}></i>
+          <span className="float-left title" onMouseUp={handleClick} onMouseDown={setDragFalse} onMouseMove={setDragTrue}>
+            <h3>Devtools</h3>
+          </span>
+          <i id="close-x" className="icon close float-right" onClick={handleClick}></i>
         </div>
 
         <div className={classNames(!open && 'hidden')}>

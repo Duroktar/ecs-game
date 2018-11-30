@@ -26,5 +26,5 @@ function getStyles(props: Props): React.CSSProperties {
 }
 
 function cssDisplayValue(model: ProjectileModel) {
-  return (model.health === 0) ? 'none' : ''
+  return (model.health.value === 0) ? 'none' : ''
 }

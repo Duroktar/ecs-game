@@ -2,7 +2,7 @@ import { IComponent, ISystem, ISystemManager, EntityIdType, IConfigDefaults, IEn
 import InputManager from "./InputManager";
 import StorageManager from "./StorageManager";
 import { defaultComponentFactories } from "../components";
-import { isSameEntity, values, setValue, partialSetValue } from "../utils";
+import { values, partialSetValue } from "../utils";
 import ComponentManager from "./ComponentManager";
 import EntityManager from "./EntityManager";
 
@@ -102,20 +102,20 @@ class SystemManager implements ISystemManager {
       return this.entityComponentCache[cacheKey];
     }
 
-    const isValidComponent = (o: IComponent) => componentNames.indexOf(o.name) !== -1;
+    const isValidComponent = (component: IComponent) => componentNames.indexOf(component.name) !== -1;
 
-    const entities = this.system.entities.reduce((acc: EntityIdType[], entity) => {
-
+    const entities: EntityIdType[] = [];
+    
+    for (let i = 0; i < this.system.entities.length; i++) {
+      const entity = this.system.entities[i];
       const components = this.getComponentIdsForEntity(entity)
         .map(this.getComponentById)
         .filter(isValidComponent);
 
       if (components.length === componentNames.length) {
-        return acc.concat(entity.id);
+        entities.push(entity.id);
       }
-
-      return acc;
-    }, []);
+    }
 
     this.entityComponentCache[cacheKey] = entities;
 

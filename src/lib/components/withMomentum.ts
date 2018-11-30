@@ -1,5 +1,5 @@
-import { IComponent, ISystemManager, IVector, IEntity } from "../types";
-import { WithPosition } from "./moveable";
+import { IComponent, ISystemManager, IVector, IEntity, IComponentEvents } from "../types";
+import { WithPosition } from "./withPosition";
 import { factory, createSelector, createSetter } from "../utils";
 
 const COMPONENT_NAMESPACE = 'momentum';
@@ -7,7 +7,7 @@ const COMPONENT_NAMESPACE = 'momentum';
 export type WithMomentum = { momentum: { direction: IVector; speed: number; vertical?: boolean; horizontal?: boolean; } };
 
 export function withMomentumFactory(system: ISystemManager) {
-  return (entity: IEntity, state: WithMomentum, id = -1) => {
+  return (entity: IEntity, state: WithMomentum, events: IComponentEvents, id = -1) => {
     return system.registerComponent(
       factory<IComponent<WithMomentum>>({
         id,

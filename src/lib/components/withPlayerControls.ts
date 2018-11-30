@@ -3,12 +3,12 @@ import { WithPosition } from "./withPosition";
 import { factory } from "../utils";
 import { WithBoundary } from "./withBoundary";
 
-export type WithControls = { direction: IVector; moving: boolean; speed: IVector; };
+export type WithPlayerControls = { direction: IVector; moving: boolean; speed: IVector; };
 
-export function controllableFactory(system: ISystemManager) {
-  return (entity: IEntity, state: WithControls, events: IComponentEvents, id = -1) => {
+export function withPlayerControlsFactory(system: ISystemManager) {
+  return (entity: IEntity, state: WithPlayerControls, events: IComponentEvents, id = -1) => {
     return system.registerComponent(
-      factory<IComponent<WithControls>>({
+      factory<IComponent<WithPlayerControls>>({
         id,
         entityId: entity.id,
         name: 'controls',
@@ -17,7 +17,7 @@ export function controllableFactory(system: ISystemManager) {
           moving: state.moving,
           speed: state.speed,
         },
-        update: (system: ISystemManager, component: IControllableEntity) => {
+        update: (system: ISystemManager, component: IPlayerControllableEntity) => {
           handleVerticalMovement(entity, component, system);
           handleHorizontalMovement(entity, component, system);
           
@@ -27,26 +27,22 @@ export function controllableFactory(system: ISystemManager) {
   }
 }
 
-type IControllableEntity = IComponent<WithControls & Partial<WithPosition> & Partial<WithBoundary>>
+export type IPlayerControllableEntity = IComponent<WithPlayerControls & Partial<WithPosition> & Partial<WithBoundary>>
 
-function handleVerticalMovement(entity: IEntity, component: IControllableEntity, system: ISystemManager) {
+function handleVerticalMovement(entity: IEntity, component: IPlayerControllableEntity, system: ISystemManager) {
   handleMovement(entity, component, system, 'vertical');
 }
 
-function handleHorizontalMovement(entity: IEntity, component: IControllableEntity, system: ISystemManager) {
+function handleHorizontalMovement(entity: IEntity, component: IPlayerControllableEntity, system: ISystemManager) {
   handleMovement(entity, component, system);
 }
 
-function handleMovement(entity: IEntity, component: IControllableEntity, system: ISystemManager, direction: 'vertical' | 'horizontal' = 'horizontal') {
+function handleMovement(entity: IEntity, component: IPlayerControllableEntity, system: ISystemManager, direction: 'vertical' | 'horizontal' = 'horizontal') {
 
   const key = direction === 'horizontal' ? 'x' : 'y';
   const [neg, pos] = direction === 'horizontal'
     ? [system.input.KeyCodes.LEFT, system.input.KeyCodes.RIGHT]
     : [system.input.KeyCodes.UP,   system.input.KeyCodes.DOWN];
-
-  // const movement = system.getEntityComponent<WithPosition>(entity, 'position');
-
-  // const speed = component.state.speed[key];
 
   if (system.input.keyPressed(pos)) {
     component.state.direction[key] = 1;
@@ -60,10 +56,7 @@ function handleMovement(entity: IEntity, component: IControllableEntity, system:
   }
 }
 
-function getNewPosition(entity: IEntity, component: IControllableEntity, system: ISystemManager, bounded: boolean) {
-}
-
-function handleMovingFlag(entity: IEntity, component: IControllableEntity, system: ISystemManager) {
+function handleMovingFlag(entity: IEntity, component: IPlayerControllableEntity, system: ISystemManager) {
   const {x, y} = component.state.direction;
   if (x === 0 && y === 0) {
     component.state.moving = false;

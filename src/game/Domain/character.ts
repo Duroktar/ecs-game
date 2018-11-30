@@ -1,47 +1,57 @@
-import { IEntity, ISystemManager } from "../../lib/types";
-import { nameableFactory,       WithName } from "../../lib/components/nameable";
-import { killableFactory,       WithHealth } from "../../lib/components/killable";
-import { movableFactory,        WithPosition } from "../../lib/components/moveable";
-import { controllableFactory,   WithControls } from "../../lib/components/controllable";
-import { combatableFactory,     WithAttack } from "../../lib/components/combatable";
-import { withGeometryFactory,   WithGeometry } from "../../lib/components/withGeometry";
-import { isCollidableFactory,   IsCollidable } from "../../lib/components/isCollidable";
+import { IEntity, ISystemManager, IComponentEvents } from "../../lib/types";
+import { nameableFactory,           WithName } from "../../lib/components/nameable";
+import { killableFactory,           WithHealth } from "../../lib/components/killable";
+import { withPositionFactory,       WithPosition } from "../../lib/components/withPosition";
+import { combatableFactory,         WithAttack } from "../../lib/components/combatable";
+import { withGeometryFactory,       WithGeometry } from "../../lib/components/withGeometry";
+import { isCollidableFactory,       IsCollidable } from "../../lib/components/isCollidable";
+import { withBoundaryFactory,       WithBoundary } from "../../lib/components/withBoundary";
+import { withPlayerControlsFactory, WithPlayerControls } from "../../lib/components/withPlayerControls";
+import { defaultComponentEvents } from "../../lib/utils";
 
-export function createCharacter(system: ISystemManager, options: CharacterModel): IEntity {
+export function createCharacter(
+  system:   ISystemManager,
+  options:  CharacterModel,
+  events:   IComponentEvents = defaultComponentEvents(),
+): IEntity {
   const withName        = nameableFactory(system);
   const withHealth      = killableFactory(system);
-  const withPosition    = movableFactory(system);
-  const withControls    = controllableFactory(system);
+  const withPosition    = withPositionFactory(system);
+  const withControls    = withPlayerControlsFactory(system);
   const withAttack      = combatableFactory(system);
   const withGeometry    = withGeometryFactory(system);
   const isCollidable    = isCollidableFactory(system);
+  const withBoundary    = withBoundaryFactory(system);
 
   const entity = system.registerEntity();
 
   system.registerComponent(
-    withName(entity, options)
+    withName(entity, options, events)
   );
   system.registerComponent(
-    withHealth(entity, options)
+    withHealth(entity, options, events)
   );
   system.registerComponent(
-    withPosition(entity, options)
+    withPosition(entity, options, events)
   );
   system.registerComponent(
-    withGeometry(entity, options)
+    withGeometry(entity, options, events)
   );
   system.registerComponent(
-    withAttack(entity, options)
+    withAttack(entity, options, events)
   );
   system.registerComponent(
-    isCollidable(entity, options)
+    isCollidable(entity, options, events)
+  );
+  system.registerComponent(
+    withBoundary(entity, options, events)
   );
   system.registerComponent(
     withControls(entity, {
       direction: options.direction,
       moving: options.moving,
       speed: options.speed,
-    })
+    }, events)
   );
   return entity;
 }
@@ -50,7 +60,8 @@ export type CharacterModel =
   WithName          &
   WithHealth        &
   WithPosition      &
-  WithControls      &
   WithGeometry      &
   WithAttack        &
-  IsCollidable;
+  WithBoundary      &
+  IsCollidable      &
+  WithPlayerControls;

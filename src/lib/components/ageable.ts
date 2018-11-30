@@ -1,11 +1,11 @@
+import { IComponent, ISystemManager, IEntity, IComponentEvents } from "../types";
 import { factory } from "../utils";
-import { IComponent, ISystemManager, IEntity } from "../types";
 
 export type WithAge = { age: number };
 
 export function ageableFactory(system: ISystemManager) {
   let GAME_YEAR = 2 * 1000;
-  return (entity: IEntity, state: WithAge, id = -1) => {
+  return (entity: IEntity, state: WithAge, events: IComponentEvents, id = -1) => {
     return system.registerComponent(
       factory<IComponent<WithAge>>({
         id,

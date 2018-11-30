@@ -1,14 +1,14 @@
-import { IComponent, ISystemManager, IEntity, EntityIdType, Bounds, IVector, IDimensions } from "../types";
+import { IComponent, ISystemManager, IEntity, EntityIdType, Bounds, IVector, IDimensions, IComponentEvents } from "../types";
 import { factory, createSelector, createSetter } from "../utils";
 import { WithGeometry } from "./withGeometry";
-import { WithPosition } from "./moveable";
+import { WithPosition } from "./withPosition";
 
 const COMPONENT_NAMESPACE = 'collisions';
 
 export type WithCollisions = { collisions?: EntityIdType[]; };
 
 export function withCollisionsFactory(system: ISystemManager) {
-  return (entity: IEntity, state: WithCollisions, id = -1) => {
+  return (entity: IEntity, state: WithCollisions, events: IComponentEvents, id = -1) => {
     return system.registerComponent(
       factory<IComponent<WithCollisions>>({
         id,
