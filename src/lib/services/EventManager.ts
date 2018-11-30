@@ -1,4 +1,4 @@
-import { IBasicConfig, IComponentEvents, IOnUpdateHandler, IOnChangeHandler, IComponent, IEventManager, AnonymousCB } from "../types";
+import { IBasicConfig, IComponentEvents, IOnUpdateHandler, IOnChangeHandler, IComponent, IEventManager, AnonymousCB, IEntity } from "../types";
 import {EventEmitter2} from 'eventemitter2';
 
 const configDefaults = {
@@ -31,12 +31,12 @@ class EventManager implements IEventManager {
     this.emitter.emit(eventName, data);
   };
 
-  public onUpdate = (component: IComponent) => {
-    this.emitter.emit('updateComponent', component);
+  public onUpdate = (component: IComponent, entity: IEntity) => {
+    this.emitter.emit('updateComponent', component, entity);
   };
 
-  public onChange = (component: IComponent, eventName: string): void => {
-    this.emitter.emit(eventName, component);
+  public onChange = (eventName: string, component: IComponent, entity: IEntity): void => {
+    this.emitter.emit(eventName, component, entity);
   };
 }
 

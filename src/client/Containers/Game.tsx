@@ -12,6 +12,8 @@ import { WithPosition } from '../../lib/components/withPosition';
 import { IsLootable } from '../../lib/components/lootable';
 import { first, pp } from '../../lib/utils';
 import { ILevel } from '../Levels/types';
+import { ON_LEVEL_COMPLETE, ON_ENEMY_DEATH, ON_COLLISION } from '../../events';
+import { WithCollisions } from '../../lib/components/withCollisions';
 
 
 interface Props extends IGameState {
@@ -40,23 +42,23 @@ export class Game extends React.Component<Props, State> {
     completed:          [],
     currentLevel:       'level1' as ILevel,
   }
-
+  
   componentDidMount() {
-    this.props.system.events.registerEvent('isDead:enemy', this.onEnemyDeath)
-    this.props.system.events.registerEvent('levelComplete', this.onLevelComplete)
+    this.props.system.events.registerEvent(ON_COLLISION,      this.handleBulletCollisions)
+    this.props.system.events.registerEvent(ON_ENEMY_DEATH,    this.handleEnemyDeath)
+    this.props.system.events.registerEvent(ON_LEVEL_COMPLETE, this.handleLevelComplete)
   }
 
   componentWillReceiveProps(nextProps: Props) {
     if (!this.props.player.attacking && nextProps.player.attacking) {
       this.fireBullet(this.props.player.position);
     }
-
-    this.handleBulletCollisions();
   }
 
   componentWillUnmount() {
-    this.props.system.events.unRegisterEvent('isDead:enemy', this.onEnemyDeath)
-    this.props.system.events.unRegisterEvent('levelComplete', this.onLevelComplete)
+    this.props.system.events.unRegisterEvent(ON_COLLISION,      this.handleBulletCollisions)
+    this.props.system.events.unRegisterEvent(ON_ENEMY_DEATH,    this.handleEnemyDeath)
+    this.props.system.events.unRegisterEvent(ON_LEVEL_COMPLETE, this.handleLevelComplete)
   }
 
   handleBulletCollisions = () => {
@@ -127,7 +129,7 @@ export class Game extends React.Component<Props, State> {
     this.killEntity(deadId);
   }
 
-  onEnemyDeath = (source: IComponent) => {
+  handleEnemyDeath = (source: IComponent) => {
     const component = this.props.system
       .getEntityComponent<IsLootable<IPointsLoot>>({ id: source.entityId }, 'loot');
 
@@ -143,7 +145,7 @@ export class Game extends React.Component<Props, State> {
     }))
   }
 
-  onLevelComplete = (level: string | number) => {
+  handleLevelComplete = (level: string | number) => {
     this.setState(state => ({
       complete: true,
       completed: state.completed.concat(level),

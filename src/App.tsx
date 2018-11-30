@@ -67,7 +67,11 @@ class App extends React.Component<{}, State> {
   start = () => {
     this.stop();
 
-    this.handler = requestAnimationFrame(this.start);
+    this._update();
+  }
+
+  _update = () => {
+    this.handler = requestAnimationFrame(this._update);
 
     this.tick();
   }

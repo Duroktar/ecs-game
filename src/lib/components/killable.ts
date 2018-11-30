@@ -28,10 +28,10 @@ export function killableFactory(system: ISystemManager) {
 
           if (!wasDeadBefore && isDeadNow) {
             // sad times
-            events.onChange!(component, 'isDead:enemy')
+            events.onChange!('isDead:enemy', component, entity)
           }
 
-          events.onUpdate && events.onUpdate!(component)
+          events.onUpdate && events.onUpdate!(component, entity)
         },
       }))
   }

@@ -23,9 +23,9 @@ export class Demo extends React.Component<LevelProps, State> {
     enemies: [] as IEntity[],
     enemyPositions: [
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+      [0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+      [0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0],
+      [0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0],
     ],
     enemiesDead: 0,
     ready: false,

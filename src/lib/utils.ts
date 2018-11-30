@@ -60,8 +60,8 @@ export const defaultIdGenerator = (genesis: number = 0): IdGeneratorFunc => {
 }
 
 export const defaultComponentEvents = (): IComponentEvents => ({
-  onUpdate: (component: IComponent) => null,
-  onChange: (component: IComponent, eventName: string) => null,
+  onUpdate: (component: IComponent, entity: IEntity) => null,
+  onChange: (eventName: string, component: IComponent, entity: IEntity) => null,
 })
 
 export function partialSetValue(object: any) {

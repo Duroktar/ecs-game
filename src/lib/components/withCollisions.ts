@@ -2,6 +2,7 @@ import { IComponent, ISystemManager, IEntity, EntityIdType, Bounds, IVector, IDi
 import { factory, createSelector, createSetter } from "../utils";
 import { WithGeometry } from "./withGeometry";
 import { WithPosition } from "./withPosition";
+import { ON_COLLISION } from "../../events";
 
 const COMPONENT_NAMESPACE = 'collisions';
 
@@ -16,7 +17,7 @@ export function withCollisionsFactory(system: ISystemManager) {
         name: COMPONENT_NAMESPACE,
         state: { collisions: state.collisions || [] },
         update: (system: ISystemManager, component: ICollidableEntity) => {
-          handleCollisions(component, system);
+          handleCollisions(entity, component, system, events);
         },
       }))
   }
@@ -24,7 +25,7 @@ export function withCollisionsFactory(system: ISystemManager) {
 
 type ICollidableEntity = IComponent<WithCollisions & WithGeometry & WithPosition>
 
-function handleCollisions(component: ICollidableEntity, system: ISystemManager) {
+function handleCollisions(entity: IEntity, component: ICollidableEntity, system: ISystemManager, events: IComponentEvents) {
   const position = system.getEntityModel<WithGeometry & WithPosition>({ id: component.entityId });
 
   const collidableEntities = system
@@ -43,7 +44,15 @@ function handleCollisions(component: ICollidableEntity, system: ISystemManager) 
     }
   });
 
+  const lastCollisions = component.state.collisions
+    ? component.state.collisions.map(o => o)
+    : [];
+
   component.state.collisions = collisions;
+
+  if (new Set(lastCollisions) !== new Set(collisions) && collisions.length > 0) {
+    events.onChange(ON_COLLISION, component, entity);
+  }
 }
 
 export const selectCollidableState = createSelector<ICollidableEntity>(COMPONENT_NAMESPACE);

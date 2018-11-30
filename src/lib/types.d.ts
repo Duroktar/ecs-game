@@ -89,7 +89,7 @@ export interface ISystemManager {
   toString: () => string;
 }
 
-export interface IEventManager {
+export interface IEventManager extends IComponentEvents {
   config:        IBasicConfig;
 
   init: (config?: IBasicConfig) => null;
@@ -99,9 +99,9 @@ export interface IEventManager {
 
   emit: <T>(name: string, data?: T) => void;
 
-  onUpdate: (component: IComponent) => void;
+  onUpdate: (component: IComponent, entity: IEntity) => void;
 
-  onChange: (component: IComponent, eventName: string) => void;
+  onChange: (eventName: string, component: IComponent, entity: IEntity) => void;
 }
 
 export type AnonymousCB = (...args: any) => void;
@@ -123,8 +123,8 @@ export interface IEntityComponents {
   }
 }
 
-export type IOnUpdateHandler = (component: IComponent) => void;
-export type IOnChangeHandler = (component: IComponent, eventName: string) => void;
+export type IOnUpdateHandler = (component: IComponent, entity: IEntity) => void;
+export type IOnChangeHandler = (eventName: string, component: IComponent, entity: IEntity) => void;
 
 interface IComponentEvents {
   onUpdate: IOnUpdateHandler;

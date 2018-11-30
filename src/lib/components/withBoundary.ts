@@ -16,7 +16,7 @@ export function withBoundaryFactory(system: ISystemManager) {
         name: COMPONENT_NAMESPACE,
         state: { boundary: state.boundary || defaultBoundary },
         update: (system: ISystemManager, component: IBoundedEntity) => {
-          handleBoundaries(component, system, events);
+          handleBoundaries(entity, component, system, events);
         },
       }))
   }
@@ -24,7 +24,7 @@ export function withBoundaryFactory(system: ISystemManager) {
 
 type IBoundedEntity = IComponent<WithGeometry & WithPosition & WithBoundary>
 
-function handleBoundaries(component: IBoundedEntity, system: ISystemManager, events: IComponentEvents) {
+function handleBoundaries(entity: IEntity, component: IBoundedEntity, system: ISystemManager, events: IComponentEvents) {
 
   const boundedEntities = system
     .getEntitiesByComponentTypes(['geometry', 'position', 'boundary'])
@@ -37,7 +37,7 @@ function handleBoundaries(component: IBoundedEntity, system: ISystemManager, eve
     const breakingOut = breakingBounds(ownBounds, otherBounds);
 
     if (any(breakingOut)) {
-      events.onChange(component, 'boundary')
+      events.onChange('boundary', component, entity)
     }
   });
 }
