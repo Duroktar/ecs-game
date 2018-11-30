@@ -9,6 +9,7 @@ import { ISystemManager } from '../../lib/types';
 interface Props {
   id:         string;
   className?: string;
+  level?:     string | number;
   lives:      number;
   score:      number;
   credits:    number;
@@ -24,6 +25,7 @@ export function Gui(props: Props) {
       className={props.className}
       topLeft={<Lives value={props.lives} />}
       topCenter={<HighScore value={props.score} />}
+      topRight={props.level ? <p>Level: {props.level}</p> : null}
       bottomLeft={<Credits value={props.credits} />}
       background={props.background}
       bottomRight={<button className="btn is-success" onClick={props.onRestart}>Restart</button>}

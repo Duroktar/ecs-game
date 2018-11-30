@@ -1,1 +1,1 @@
-export { Loader } from './Loader';
+export { Loader, Levels, humanizedLevelNames } from './Loader';

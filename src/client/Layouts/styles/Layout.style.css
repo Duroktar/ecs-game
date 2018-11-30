@@ -13,6 +13,11 @@
     height: 600px;
 }
 
+.complete {
+    width:  400px;
+    height: 300px;
+}
+
 .layout {
     position: absolute;
 }

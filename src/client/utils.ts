@@ -10,19 +10,20 @@ export function loadLevel(system: ISystemManager, enemyPositions: number[][]): I
 
   for (const row of enemyPositions) {
     for (const item of row) {
-      if (item === 0) { continue; }
-
-      const geometry = {
-        width:    64,
-        height:   16,
+      if (item !== 0) {
+        const geometry = {
+          width:    64,
+          height:   64,
+        }
+  
+        const position = {
+          x:    x * geometry.width,
+          y:    y * geometry.height,
+        }
+  
+        enemies.push(createEnemy(system, JSON.stringify(position), position, geometry));
       }
 
-      const position = {
-        x:    x * geometry.width,
-        y:    y * geometry.height,
-      }
-
-      enemies.push(createEnemy(system, JSON.stringify(position), position, geometry));
       x++;
     }
     x = 0;

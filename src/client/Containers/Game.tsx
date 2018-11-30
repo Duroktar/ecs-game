@@ -6,11 +6,12 @@ import StarField from '../Backgrounds/StarField';
 import { Gui } from '../Layouts/Gui';
 
 import { ProjectileModel } from '../../game/Domain/projectile';
-import { Loader } from '../Levels/Loader';
+import { Loader, Levels, humanizedLevelNames } from '../Levels/Loader';
 import { WithHealthState } from '../../lib/components/killable';
 import { WithPosition } from '../../lib/components/withPosition';
 import { IsLootable } from '../../lib/components/lootable';
-import { first } from '../../lib/utils';
+import { first, pp } from '../../lib/utils';
+import { ILevel } from '../Levels/types';
 
 
 interface Props extends IGameState {
@@ -18,27 +19,31 @@ interface Props extends IGameState {
 }
 
 interface State {
-  shots:    number;
-  hits:     number;
-  score:    number;
-  credits:  number;
-  lives:    number;
+  shots:          number;
+  hits:           number;
+  score:          number;
+  credits:        number;
+  lives:          number;
+  complete:       boolean;
+  completed:      (string | number)[];
+  currentLevel:   ILevel;
 }
 
 export class Game extends React.Component<Props, State> {
   state = {
-    score:    0,
-    credits:  0,
-    lives:    0,
-    shots:    0,
-    hits:     0,
+    score:              0,
+    credits:            1,
+    lives:              3,
+    shots:              0,
+    hits:               0,
+    complete:           false,
+    completed:          [],
+    currentLevel:       'level1' as ILevel,
   }
 
-  constructor(props: Props) {
-    super(props);
-
-    props.system.events.registerEvent('isDead:enemy', this.onEnemyDeath)
-    props.system.events.registerEvent('levelComplete', this.onLevelComplete)
+  componentDidMount() {
+    this.props.system.events.registerEvent('isDead:enemy', this.onEnemyDeath)
+    this.props.system.events.registerEvent('levelComplete', this.onLevelComplete)
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -68,12 +73,6 @@ export class Game extends React.Component<Props, State> {
       const oneOfUsAreSpecialSnowflakes = this.isSparta;
 
       deadpool.forEach(oneOfUsAreSpecialSnowflakes);
-
-      // [bullet1, bullet2].forEach(bullet => {
-      //   if (bullet.collisions!.length > 0) {
-      //     this.killEntity(bullet.id)
-      //   }
-      // })
     }
   }
 
@@ -81,9 +80,7 @@ export class Game extends React.Component<Props, State> {
     return first([
       this.props.bullet1,
       this.props.bullet2,
-    ].filter(model =>
-      !!model.offscreen,
-    ))
+    ].filter(model => !!model.offscreen ))
   }
 
   fireBullet = (pos: IVector) => {
@@ -139,19 +136,36 @@ export class Game extends React.Component<Props, State> {
     }
   
     const points = component.state.loot!.points;
-    this.setState({ score: this.state.score + points })
+
+    this.setState(state => ({
+      score: state.score + points,
+      hits: state.hits + 1,
+    }))
   }
 
-  onLevelComplete = (data: any) => {
-    alert('You did it!')
+  onLevelComplete = (level: string | number) => {
+    this.setState(state => ({
+      complete: true,
+      completed: state.completed.concat(level),
+    }));
+  }
+
+  onNextLevel = () => {
+    const currentLevel = this.state.currentLevel;
+    const nextLevel = Levels[currentLevel].next;
+    this.setState({ currentLevel: 'demo' })
+    setTimeout(() => {
+      this.setState({ currentLevel: nextLevel as ILevel, complete: false })
+    }, 5)
   }
 
   render() {
-    const {score, credits, lives} = this.state;
+    const {currentLevel, score, credits, lives} = this.state;
     return (
       <Gui
         id="gui"
         className="game"
+        level={humanizedLevelNames[currentLevel]}
         score={score}
         credits={credits}
         lives={lives}
@@ -159,10 +173,19 @@ export class Game extends React.Component<Props, State> {
         background={<StarField />}
       >
         <Loader
-          currentLevel={'demo'}
+          currentLevel={currentLevel}
           state={this.props}
           system={this.props.system}
         />
+        <div className="center-content">
+          {this.state.complete ? (
+            <div className="complete container with-title is-center is-dark">
+              <label className="title">Level Complete</label>
+              <pre>{pp(this.state)}</pre>
+              <button className="btn is-primary" onClick={this.onNextLevel}>Next Level</button>
+            </div>
+          ) : null}
+        </div>
       </Gui>
     )
   }

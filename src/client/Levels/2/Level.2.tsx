@@ -18,18 +18,17 @@ interface State {
   ready:            boolean;
 }
 
-export class Demo extends React.Component<LevelProps, State> {
+export class Level2 extends React.Component<LevelProps, State> {
   state = {
     enemies: [] as IEntity[],
     enemyPositions: [
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0],
       [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0],
     ],
     enemiesDead: 0,
     ready: false,
-    levelId: 'Demo',
+    levelId: '2',
   }
 
   componentDidMount() {

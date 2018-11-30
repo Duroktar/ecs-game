@@ -1,4 +1,4 @@
-import { ITypes, IEntity, IdGeneratorFunc, ISystem, IComponent, IComponentEvents } from "./types";
+import { ITypes, IEntity, IdGeneratorFunc, ISystem, IComponent, IComponentEvents, AnonymousCB } from "./types";
 
 export const pp = (obj: object | null | undefined) => JSON.stringify(obj, null, '  ')
 
@@ -108,6 +108,16 @@ export function keys<O>(o: O) {
   return Object.keys(o) as (keyof O)[];
 }
 
+export function once(fn: AnonymousCB) {
+  let called = false;
+  return (...args: any[]) => {
+    if (!called) {
+      called = true;
+      return fn(...args);
+    }
+    return undefined;
+  }
+}
 export const defaultBoundary = {
   top:    0,
   left:   0,
