@@ -1,1 +1,2 @@
-export { Loader, Levels, humanizedLevelNames } from './Loader';
+export { Levels, humanizedLevelNames } from './Directory';
+export { Loader } from './Loader';

@@ -1,6 +1,6 @@
 import { ISystemManager, IEntity } from "../../lib/types";
 import { IGameState } from "../../game/types";
-import { Levels } from "./Loader";
+import { Levels } from "./Directory";
 
 export type LoaderFunc = (system: ISystemManager, enemyPositions: number[][]) => IEntity[];
 

@@ -3,13 +3,13 @@ import { withPositionFactory,     WithPosition } from "../../lib/components/with
 import { withMomentumFactory,     WithMomentum } from "../../lib/components/withMomentum";
 import { withOffscreenFactory,    WithOffscreen } from "../../lib/components/withOffscreen";
 import { withGeometryFactory,     WithGeometry } from "../../lib/components/withGeometry";
-import { withCollisionsFactory,   WithCollisions } from "../../lib/components/withCollisions";
+import { withCollisionsFactory,   WithCollisionArgs, WithCollisions } from "../../lib/components/withCollisions";
 import { nameableFactory,         WithName } from "../../lib/components/nameable";
 
 
 export function createProjectile(
   system:   ISystemManager,
-  options:  ProjectileBase,
+  options:  ProjectileBaseArgs,
 ): IEntity {
   const withName        = nameableFactory(system);
   const withPosition    = withPositionFactory(system);
@@ -41,6 +41,14 @@ export function createProjectile(
   return entity;
 }
 
+export type ProjectileBaseArgs =
+  WithPosition        &
+  WithMomentum        &
+  WithGeometry        &
+  WithCollisionArgs   &
+  WithName            &
+  WithOffscreen;
+
 export type ProjectileBase =
   WithPosition        &
   WithMomentum        &
@@ -49,7 +57,6 @@ export type ProjectileBase =
   WithName            &
   WithOffscreen;
 
-export type ProjectileModel =
-  IComponent          &
+export type ProjectileModel = 
+  IComponent &
   ProjectileBase;
-  

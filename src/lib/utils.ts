@@ -1,4 +1,4 @@
-import { ITypes, IEntity, IdGeneratorFunc, ISystem, IComponent, IComponentEvents, AnonymousCB } from "./types";
+import { ITypes, IEntity, IdGeneratorFunc, ISystem, IComponent, IComponentEvents, AnonymousCB, EntityIdType } from "./types";
 
 export const pp = (obj: object | null | undefined) => JSON.stringify(obj, null, '  ')
 
@@ -40,6 +40,10 @@ export function hasState(path: string, state: any) {
 
 export function factory<T extends ITypes>(config: T): T {
   return config;
+}
+
+export function mkEntity(id: EntityIdType): IEntity {
+  return { id };
 }
 
 export function isSameEntity(a: IEntity, b: IEntity) {

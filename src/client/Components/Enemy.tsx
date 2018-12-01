@@ -115,7 +115,7 @@ export class Enemy extends React.Component<Props, State> {
       height:             '64px',
       left:               dead ? -9999 : this.props.model.position.x,
       top:                dead ? -9999 : this.props.model.position.y,
-      display:            cssDisplayValue(this.state.dead),
+      display:            cssDisplayValue(dead),
     }
   
     return (

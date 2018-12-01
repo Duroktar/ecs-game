@@ -6,12 +6,13 @@ import { ON_COLLISION } from "../../events";
 
 const COMPONENT_NAMESPACE = 'collisions';
 
-export type WithCollisions = { collisions?: EntityIdType[]; };
+export type WithCollisionArgs = Partial<WithCollisions>;
+export type WithCollisions = { collisions: EntityIdType[]; };
 
 export function withCollisionsFactory(system: ISystemManager) {
-  return (entity: IEntity, state: WithCollisions, events: IComponentEvents, id = -1) => {
+  return (entity: IEntity, state: WithCollisionArgs, events: IComponentEvents, id = -1) => {
     return system.registerComponent(
-      factory<IComponent<WithCollisions>>({
+      factory<IComponent<WithCollisionArgs>>({
         id,
         entityId: entity.id,
         name: COMPONENT_NAMESPACE,

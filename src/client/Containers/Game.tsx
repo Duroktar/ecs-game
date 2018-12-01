@@ -1,20 +1,21 @@
 import { IVector, IEntity, IComponent } from '../../lib/types';
 import { IGameState, IPointsLoot } from '../../game/types';
+import { ILevel } from '../Levels/types';
 import * as React from 'react';
 
 import StarField from '../Backgrounds/StarField';
 import { Gui } from '../Layouts/Gui';
 
 import { ProjectileModel } from '../../game/Domain/projectile';
-import { Loader, Levels, humanizedLevelNames } from '../Levels/Loader';
 import { WithHealthState } from '../../lib/components/killable';
-import { WithPosition } from '../../lib/components/withPosition';
 import { IsLootable } from '../../lib/components/lootable';
-import { first, pp } from '../../lib/utils';
-import { ILevel } from '../Levels/types';
-import { ON_LEVEL_COMPLETE, ON_ENEMY_DEATH, ON_COLLISION, ON_START_GAME, ON_GAME_OVER } from '../../events';
-import { WithCollisions } from '../../lib/components/withCollisions';
+
+import { Loader, Levels, humanizedLevelNames } from '../Levels';
 import { LevelSummary } from '../Components/LevelSummary';
+
+import { first, mkEntity } from '../../lib/utils';
+
+import { ON_LEVEL_COMPLETE, ON_ENEMY_DEATH, ON_COLLISION, ON_GAME_OVER } from '../../events';
 
 
 interface Props extends IGameState {
@@ -66,18 +67,16 @@ export class Game extends React.Component<Props, State> {
 
   handleBulletCollisions = (): void => {
     const { bullet1, bullet2 } = this.props;
-    if (bullet1.collisions!.length || bullet2.collisions!.length) {
+    if (bullet1.collisions.length || bullet2.collisions.length) {
 
       const collisions = [ 
-        ...bullet1.collisions!, 
-        ...bullet2.collisions!,
+        ...bullet1.collisions, 
+        ...bullet2.collisions,
       ];
 
-      const deadpool = new Set(collisions);
+      const deadpool = [...new Set(collisions)].map(mkEntity);
 
-      const oneOfUsAreSpecialSnowflakes = this.isSparta;
-
-      deadpool.forEach(oneOfUsAreSpecialSnowflakes);
+      deadpool.forEach(this.killEntity);
     }
   }
 
@@ -103,12 +102,12 @@ export class Game extends React.Component<Props, State> {
     this.setState(state => ({
       ...state,
       shots: state.shots + 1,
-    }))
+    }));
   }
 
-  killEntity = (id: number) => {
+  killEntity = (entity: IEntity) => {
     const component = this.props.system
-      .getEntityComponent<WithHealthState & WithPosition>({ id }, 'health');
+      .getEntityComponent<WithHealthState>(entity, 'health');
 
     if (component === undefined) {
       return;
@@ -128,10 +127,6 @@ export class Game extends React.Component<Props, State> {
     component.state.health.value = health;
   }
 
-  isSparta = (deadId: number): void => {
-    this.killEntity(deadId);
-  }
-
   handleEnemyDeath = (source: IComponent): void => {
     const component = this.props.system
       .getEntityComponent<IsLootable<IPointsLoot>>({ id: source.entityId }, 'loot');
@@ -145,7 +140,7 @@ export class Game extends React.Component<Props, State> {
     this.setState(state => ({
       score: state.score + points,
       hits: state.hits + 1,
-    }))
+    }));
   }
 
   handleLevelComplete = (level: string | number): void => {
@@ -158,7 +153,7 @@ export class Game extends React.Component<Props, State> {
   handleGameOver = (): void => {
     setTimeout(() => {
       window.location.assign('/end');
-    }, 10)
+    }, 10);
   }
 
   startNewGame = (): void => {
@@ -170,7 +165,7 @@ export class Game extends React.Component<Props, State> {
     const nextLevel = Levels[currentLevel].next;
     setTimeout(() => {
       this.setState({ currentLevel: nextLevel as ILevel, complete: false })
-    }, 5)
+    }, 5);
   }
 
   render() {
