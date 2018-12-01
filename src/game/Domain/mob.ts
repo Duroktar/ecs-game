@@ -1,10 +1,11 @@
 import { IEntity, ISystemManager } from "../../lib/types";
-import { nameableFactory,     WithName } from "../../lib/components/nameable";
-import { killableFactory,     WithHealthState } from "../../lib/components/killable";
-import { withPositionFactory,      WithPosition } from "../../lib/components/withPosition";
-import { withGeometryFactory, WithGeometry } from "../../lib/components/withGeometry";
-import { isCollidableFactory, IsCollidable } from "../../lib/components/isCollidable";
-import { lootableFactory,     IsLootable } from "../../lib/components/lootable";
+import { nameableFactory,       WithName } from "../../lib/components/nameable";
+import { killableFactory,       WithHealthState } from "../../lib/components/killable";
+import { withPositionFactory,   WithPosition } from "../../lib/components/withPosition";
+import { withGeometryFactory,   WithGeometry } from "../../lib/components/withGeometry";
+import { withRandomWalkFactory, WithRandomWalkArgs } from "../../lib/components/withRandomWalk";
+import { isCollidableFactory,   IsCollidable } from "../../lib/components/isCollidable";
+import { lootableFactory,       IsLootable } from "../../lib/components/lootable";
 import { IPointsLoot } from "../types";
 
 
@@ -12,12 +13,13 @@ export function createMob(
   system:   ISystemManager,
   options:  MobModel,
 ): IEntity {
-  const withName     = nameableFactory(system);
-  const withHealth   = killableFactory(system);
-  const withPosition = withPositionFactory(system);
-  const withGeometry = withGeometryFactory(system);
-  const isCollidable = isCollidableFactory(system);
-  const isLootable   = lootableFactory<IPointsLoot>(system);
+  const withName        = nameableFactory(system);
+  const withHealth      = killableFactory(system);
+  const withPosition    = withPositionFactory(system);
+  const withGeometry    = withGeometryFactory(system);
+  const withRandomWalk  = withRandomWalkFactory(system);
+  const isCollidable    = isCollidableFactory(system);
+  const isLootable      = lootableFactory<IPointsLoot>(system);
 
   const entity = system.registerEntity();
 
@@ -37,6 +39,9 @@ export function createMob(
     isCollidable(entity, options, system.events)
   );
   system.registerComponent(
+    withRandomWalk(entity, options, system.events)
+  );
+  system.registerComponent(
     isLootable(entity, options, system.events)
   );
   return entity;
@@ -47,5 +52,6 @@ export type MobModel =
   WithHealthState         &
   WithGeometry            &
   WithPosition            &
+  WithRandomWalkArgs      &
   IsLootable<IPointsLoot> &
   IsCollidable;

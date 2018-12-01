@@ -118,6 +118,44 @@ export function once(fn: AnonymousCB) {
     return undefined;
   }
 }
+
+export const clamp = (min: number, max: number, num: number) => {
+  return num < min ? min : num > max ? max : num;
+}
+
+export const ifStateProp = (obj: any) => {
+  return obj && obj.state !== undefined;
+}
+export function boxMullerRandomGeneratorFactory() {
+  let phase:      number = 0;
+  let random:     () => number;
+  let x1:         number;
+  let x2:         number;
+  let w:          number;
+  let z:          number;
+
+  random = Math.random;
+
+  return function () {
+      if (!phase) {
+          do {
+              x1 = 2.0 * random() - 1.0;
+              x2 = 2.0 * random() - 1.0;
+              w = x1 * x1 + x2 * x2;
+          } while (w >= 1.0);
+
+          w = Math.sqrt((-2.0 * Math.log(w)) / w);
+          z = x1 * w;
+      } else {
+          z = x2 * w;
+      }
+
+      phase ^= 1;
+
+      return z;
+  }
+};
+
 export const defaultBoundary = {
   top:    0,
   left:   0,

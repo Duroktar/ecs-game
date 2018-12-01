@@ -46,11 +46,9 @@ function handleMovement(entity: IEntity, component: IPlayerControllableEntity, s
 
   if (system.input.keyPressed(pos)) {
     component.state.direction[key] = 1;
-    // movement.state.position[key]  += 1 * speed;
   } else
   if (system.input.keyPressed(neg)) {
     component.state.direction[key] = -1;
-    // movement.state.position[key]  -= 1 * speed;
   } else {
     component.state.direction[key] = 0;
   }

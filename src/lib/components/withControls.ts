@@ -39,14 +39,19 @@ function handleHorizontalMovement(entity: IEntity, component: IControllableEntit
 
 function handleMovement(entity: IEntity, component: IControllableEntity, system: ISystemManager, direction: 'vertical' | 'horizontal' = 'horizontal') {
 
-  // if (positiveDirection(pos)) {
-  //   component.state.direction[key] = 1;
-  // } else
-  // if (negativeDirection(neg)) {
-  //   component.state.direction[key] = -1;
-  // } else {
-  //   component.state.direction[key] = 0;
-  // }
+  const key = direction === 'horizontal' ? 'x' : 'y';
+  const [neg, pos] = direction === 'horizontal'
+    ? [system.input.KeyCodes.LEFT, system.input.KeyCodes.RIGHT]
+    : [system.input.KeyCodes.UP,   system.input.KeyCodes.DOWN];
+
+  if (system.input.keyPressed(pos)) {
+    component.state.direction[key] = 1;
+  } else
+  if (system.input.keyPressed(neg)) {
+    component.state.direction[key] = -1;
+  } else {
+    component.state.direction[key] = 0;
+  }
 }
 
 function handleMovingFlag(entity: IEntity, component: IControllableEntity, system: ISystemManager) {

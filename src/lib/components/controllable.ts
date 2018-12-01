@@ -44,23 +44,14 @@ function handleMovement(entity: IEntity, component: IControllableEntity, system:
     ? [system.input.KeyCodes.LEFT, system.input.KeyCodes.RIGHT]
     : [system.input.KeyCodes.UP,   system.input.KeyCodes.DOWN];
 
-  // const movement = system.getEntityComponent<WithPosition>(entity, 'position');
-
-  // const speed = component.state.speed[key];
-
   if (system.input.keyPressed(pos)) {
     component.state.direction[key] = 1;
-    // movement.state.position[key]  += 1 * speed;
   } else
   if (system.input.keyPressed(neg)) {
     component.state.direction[key] = -1;
-    // movement.state.position[key]  -= 1 * speed;
   } else {
     component.state.direction[key] = 0;
   }
-}
-
-function getNewPosition(entity: IEntity, component: IControllableEntity, system: ISystemManager, bounded: boolean) {
 }
 
 function handleMovingFlag(entity: IEntity, component: IControllableEntity, system: ISystemManager) {

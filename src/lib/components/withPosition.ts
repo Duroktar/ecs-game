@@ -1,5 +1,5 @@
 import { IComponent, ISystemManager, IVector, IEntity, IComponentEvents } from "../types";
-import { factory, createSelector, createSetter } from "../utils";
+import { factory, createSelector, createSetter, clamp, ifStateProp } from "../utils";
 import { WithControls } from "./controllable";
 import { WithBoundary } from "./withBoundary";
 import { WithGeometry } from "./withGeometry";
@@ -54,12 +54,3 @@ function handleMovementState(entity: IEntity, system: ISystemManager, component:
 
 export const selectPositionState = createSelector<WithPosition>(COMPONENT_NAMESPACE);
 export const setPositionState    = createSetter<WithPosition>(selectPositionState);
-
-
-const clamp = (min: number, max: number, num: number) => {
-  return num < min ? min : num > max ? max : num;
-}
-
-const ifStateProp = (obj: any) => {
-  return obj && obj.state !== undefined;
-}

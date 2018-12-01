@@ -158,7 +158,7 @@ export class Game extends React.Component<Props, State> {
   handleGameOver = (): void => {
     setTimeout(() => {
       window.location.assign('/end');
-    }, 1000)
+    }, 100)
   }
 
   startNewGame = (): void => {
