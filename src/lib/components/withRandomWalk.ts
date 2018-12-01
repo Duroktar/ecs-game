@@ -1,13 +1,18 @@
 import { IComponent, ISystemManager, IVector, IEntity, IComponentEvents } from "../types";
 import { WithPosition } from "./withPosition";
-import { factory, boxMullerRandomGeneratorFactory, clamp } from "../utils";
+import { factory, boxMullerRandomGeneratorFactory, clamp, throttle } from "../utils";
 
 export type WithRandomWalkArgs = { direction?: IVector; moving?: boolean; speed?: IVector; };
 export type WithRandomWalk = { direction: IVector; moving: boolean; speed: IVector; };
 
+const JITTER = 400;
+
 export function withRandomWalkFactory(system: ISystemManager) {
   return (entity: IEntity, state: WithRandomWalkArgs, events: IComponentEvents, id = -1) => {
-    const randomWalkGenerator = boxMullerRandomGeneratorFactory();
+
+    const randomWalkGeneratorX = throttle<number>(boxMullerRandomGeneratorFactory(), JITTER);
+    const randomWalkGeneratorY = throttle<number>(boxMullerRandomGeneratorFactory(), JITTER);
+
     return system.registerComponent(
       factory<IComponent<WithRandomWalk>>({
         id,
@@ -16,10 +21,10 @@ export function withRandomWalkFactory(system: ISystemManager) {
         state: {
           direction: state.direction || { x: 0, y: 0 },
           moving: state.moving || true,
-          speed: state.speed || { x: 3, y: 6 },
+          speed: state.speed || { x: 2, y: 1.65 },
         },
         update: (system: ISystemManager, component: IWithRandomWalkEntity) => {
-          handleMovement(entity, component, system, events, randomWalkGenerator);
+          handleMovement(entity, component, system, events, randomWalkGeneratorX, randomWalkGeneratorY);
 
           handleMovingFlag(entity, component, system, events);
         },
@@ -28,11 +33,12 @@ export function withRandomWalkFactory(system: ISystemManager) {
 }
 
 type IWithRandomWalkEntity = IComponent<WithRandomWalk & Partial<WithPosition>>;
+type RNGFunc = (...args: any[]) => number;
 
-function handleMovement(entity: IEntity, component: IWithRandomWalkEntity, system: ISystemManager, events: IComponentEvents, randomWalkGenerator: () => number) {
+function handleMovement(entity: IEntity, component: IWithRandomWalkEntity, system: ISystemManager, events: IComponentEvents, randomWalkGeneratorX: RNGFunc, randomWalkGeneratorY: RNGFunc) {
 
-  const deltaX = randomWalkGenerator();
-  const deltaY = randomWalkGenerator();
+  const deltaX = randomWalkGeneratorX();
+  const deltaY = randomWalkGeneratorY();
 
   component.state.direction.x = clamp(-1, 1, deltaX);
 

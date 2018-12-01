@@ -156,6 +156,30 @@ export function boxMullerRandomGeneratorFactory() {
   }
 };
 
+/**
+ * limits your function to be called at most every W milliseconds, where W is wait.
+ * Calls over W get dropped.
+ * Thanks to Pat Migliaccio.
+ * see https://medium.com/@pat_migliaccio/rate-limiting-throttling-consecutive-function-calls-with-queues-4c9de7106acc
+ * @param fn
+ * @param wait
+ * @example let throttledFunc = throttle(myFunc,500);
+ */
+export function throttle<T>(fn: Function, wait: number){
+  let isCalled = false;
+  let last: T;
+  return function(...args: any[]): T {
+    if (!isCalled){
+      last = fn(...args);
+      isCalled = true;
+      setTimeout(function(){
+        isCalled = false;
+      }, wait)
+    }
+    return last;
+  };
+}
+
 export const defaultBoundary = {
   top:    0,
   left:   0,

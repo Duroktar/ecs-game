@@ -1,5 +1,6 @@
 import { ISystemManager, IVector, IDimensions } from "../../lib/types";
 import { createMob } from "../Domain/mob";
+import { defaultBoundary } from "../../lib/utils";
 
 export function createEnemy(
     system:     ISystemManager,
@@ -29,6 +30,8 @@ export function createEnemy(
     loot: {
       points: 10,
     },
+
+    boundary: defaultBoundary,
   });
 
   return entity;
