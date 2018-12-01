@@ -1,18 +1,18 @@
 import * as React from 'react';
 import './styles/StarField.style.css';
-import './styles/Logo.style.css';
+import './styles/GameOver.style.css';
 
-export function StarFieldLogo() {
+export function GameOver() {
   return (
     <div id="starfield" className="background">
       <div id="stars"></div>
       <div id="stars2"></div>
       <div id="stars3"></div>
-      <div id="logo-container" className="slide-up">
-        <div id="logo"></div>
+      <div id="gameover-container" className="slide-up">
+        <div id="gameover"></div>
       </div>
     </div>
   );
 }
 
-export default StarFieldLogo;
+export default GameOver;

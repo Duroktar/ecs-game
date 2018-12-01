@@ -2,12 +2,13 @@ import * as React from 'react';
 import {useEffect, useState} from 'react';
 
 import { Gui } from '../Layouts/Gui';
-import StarFieldLogo from '../Backgrounds/NewGame';
 import { classNames } from '../Development/Dev';
 import { IGameState } from '../../game/types';
 import { Keyboard } from '../../extern/Keyboard';
 import { ISystemManager } from '../../lib/types';
 import { ON_START_GAME } from '../../events';
+import GameOver from '../Backgrounds/GameOver';
+import { withEnterKeyEffect } from '../hooks/withEnterKeyEffect';
 
 interface ScreenProps {
   id:       string | number;
@@ -21,20 +22,14 @@ function Screen(props: ScreenProps) {
     setTimeout(() => setReady(true), 3000)
   });
 
-  useEffect(() => {
-    const enterKeyHandler = (e: KeyboardEvent) => {
-      if (e.keyCode === Keyboard.ENTER) {
-        props.system.events.emit(ON_START_GAME);
-      }
-    }
-
-    document.addEventListener('keypress', enterKeyHandler)
-  });
+  withEnterKeyEffect(() => {
+    window.location.assign('/game');
+  })
 
   return (
     <div className="screen menu">
       <div id="press-enter" className="center-content">
-        <p className={classNames(!ready && 'hidden', 'fade-in')}>Press Enter</p>
+        <p className={classNames(!ready && 'hidden', 'fade-in')}>Press Enter to Play Again</p>
       </div>
     </div>
   )
@@ -43,15 +38,15 @@ function Screen(props: ScreenProps) {
 interface Props extends IGameState {
 }
 
-export function Menu(props: Props) {
+export function Outro(props: Props) {
   return (
     <Gui
       id="gui"
-      className="menu"
+      className="gameover"
       score={0}
       credits={0}
       lives={0}
-      background={<StarFieldLogo />}
+      background={<GameOver />}
     >
       <Screen id={0} system={props.system} />
     </Gui>

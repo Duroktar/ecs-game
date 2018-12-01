@@ -12,8 +12,9 @@ import { WithPosition } from '../../lib/components/withPosition';
 import { IsLootable } from '../../lib/components/lootable';
 import { first, pp } from '../../lib/utils';
 import { ILevel } from '../Levels/types';
-import { ON_LEVEL_COMPLETE, ON_ENEMY_DEATH, ON_COLLISION, ON_START_GAME } from '../../events';
+import { ON_LEVEL_COMPLETE, ON_ENEMY_DEATH, ON_COLLISION, ON_START_GAME, ON_GAME_OVER } from '../../events';
 import { WithCollisions } from '../../lib/components/withCollisions';
+import { LevelSummary } from '../Components/LevelSummary';
 
 
 interface Props extends IGameState {
@@ -47,6 +48,7 @@ export class Game extends React.Component<Props, State> {
     this.props.system.events.registerEvent(ON_COLLISION,      this.handleBulletCollisions)
     this.props.system.events.registerEvent(ON_ENEMY_DEATH,    this.handleEnemyDeath)
     this.props.system.events.registerEvent(ON_LEVEL_COMPLETE, this.handleLevelComplete)
+    this.props.system.events.registerEvent(ON_GAME_OVER,      this.handleGameOver)
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -59,9 +61,10 @@ export class Game extends React.Component<Props, State> {
     this.props.system.events.unRegisterEvent(ON_COLLISION,      this.handleBulletCollisions)
     this.props.system.events.unRegisterEvent(ON_ENEMY_DEATH,    this.handleEnemyDeath)
     this.props.system.events.unRegisterEvent(ON_LEVEL_COMPLETE, this.handleLevelComplete)
+    this.props.system.events.unRegisterEvent(ON_GAME_OVER,      this.handleGameOver)
   }
 
-  handleBulletCollisions = () => {
+  handleBulletCollisions = (): void => {
     const { bullet1, bullet2 } = this.props;
     if (bullet1.collisions!.length || bullet2.collisions!.length) {
 
@@ -85,7 +88,7 @@ export class Game extends React.Component<Props, State> {
     ].filter(model => !!model.offscreen ))
   }
 
-  fireBullet = (pos: IVector) => {
+  fireBullet = (pos: IVector): void => {
     const bullet = this.getBullet();
 
     if (!bullet) {
@@ -114,7 +117,7 @@ export class Game extends React.Component<Props, State> {
     component.state.health.value = 0;
   }
 
-  reviveEntity = (entity: IEntity, health: number) => {
+  reviveEntity = (entity: IEntity, health: number): void => {
     const component = this.props.system
       .getEntityComponent<WithHealthState>(entity, 'health');
 
@@ -125,11 +128,11 @@ export class Game extends React.Component<Props, State> {
     component.state.health.value = health;
   }
 
-  isSparta = (deadId: number) => {
+  isSparta = (deadId: number): void => {
     this.killEntity(deadId);
   }
 
-  handleEnemyDeath = (source: IComponent) => {
+  handleEnemyDeath = (source: IComponent): void => {
     const component = this.props.system
       .getEntityComponent<IsLootable<IPointsLoot>>({ id: source.entityId }, 'loot');
 
@@ -145,21 +148,26 @@ export class Game extends React.Component<Props, State> {
     }))
   }
 
-  handleLevelComplete = (level: string | number) => {
+  handleLevelComplete = (level: string | number): void => {
     this.setState(state => ({
       complete: true,
       completed: state.completed.concat(level),
     }));
   }
 
-  startNewGame = () => {
+  handleGameOver = (): void => {
+    setTimeout(() => {
+      window.location.assign('/end');
+    }, 1000)
+  }
+
+  startNewGame = (): void => {
     setTimeout(() => this.setState({ currentLevel: 'level1' }), 5);
   }
 
-  onNextLevel = () => {
+  onNextLevel = (): void => {
     const currentLevel = this.state.currentLevel;
     const nextLevel = Levels[currentLevel].next;
-    this.setState({ currentLevel: 'demo' });
     setTimeout(() => {
       this.setState({ currentLevel: nextLevel as ILevel, complete: false })
     }, 5)
@@ -185,11 +193,11 @@ export class Game extends React.Component<Props, State> {
         />
         <div className="center-content">
           {this.state.complete ? (
-            <div className="complete container with-title is-center is-dark">
-              <label className="title">Level Complete</label>
-              <pre>{pp(this.state)}</pre>
-              <button className="btn is-primary" onClick={this.onNextLevel}>Next Level</button>
-            </div>
+            <LevelSummary
+              currentLevel={currentLevel}
+              state={this.state}
+              onNextLevel={this.onNextLevel}
+            />
           ) : null}
         </div>
       </Gui>

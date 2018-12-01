@@ -13,6 +13,7 @@ import { system } from './game';
 import { createPlayer } from './game/factories/player';
 import { createBullet } from './game/factories/bullet';
 import { ON_START_GAME } from './events';
+import { Outro } from './client/Containers/Outro';
 
 interface State {
   epoch:    number;
@@ -127,6 +128,15 @@ class App extends React.Component<{}, State> {
               <Game
                 system={system}
                 restart={this.restart}
+                {...this.state}
+                {...props}
+              />
+            )
+          }} />
+          <Route path="/end" render={(props) => {
+            return (
+              <Outro
+                system={system}
                 {...this.state}
                 {...props}
               />

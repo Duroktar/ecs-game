@@ -9,7 +9,7 @@ import { Bullet } from '../../Components/Bullet';
 import { Level } from '../Base';
 
 import { once } from '../../../lib/utils';
-import { ON_ENEMY_DEATH, ON_LEVEL_COMPLETE } from '../../../events';
+import { ON_ENEMY_DEATH, ON_GAME_OVER } from '../../../events';
 
 interface State {
   enemies:          IEntity[];
@@ -71,7 +71,7 @@ export class Level3 extends React.Component<LevelProps, State> {
   }
 
   onLevelComplete = once((system: ISystemManager, level: number | string) => {
-    system.events.emit(ON_LEVEL_COMPLETE, level)
+    system.events.emit(ON_GAME_OVER, level)
   })
 
   render() {
