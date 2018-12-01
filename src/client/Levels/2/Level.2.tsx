@@ -9,6 +9,7 @@ import { Bullet } from '../../Components/Bullet';
 import { Level } from '../Base';
 
 import { once } from '../../../lib/utils';
+import { ON_ENEMY_DEATH, ON_LEVEL_COMPLETE } from '../../../events';
 
 interface State {
   enemies:          IEntity[];
@@ -39,7 +40,7 @@ export class Level2 extends React.Component<LevelProps, State> {
 
     this.setState({ enemies, ready: true })
 
-    system.events.registerEvent('isDead:enemy', this.countDeath)
+    system.events.registerEvent(ON_ENEMY_DEATH, this.countDeath)
   }
 
   componentDidUpdate(nextProps: LevelProps, nextState: State) {
@@ -54,7 +55,7 @@ export class Level2 extends React.Component<LevelProps, State> {
 
   componentWillUnmount() {
     this.props.system.events
-      .unRegisterEvent('isDead:enemy', this.countDeath);
+      .unRegisterEvent(ON_ENEMY_DEATH, this.countDeath);
     
     this.state.enemies.forEach(o =>
       this.props.system.unRegisterEntity(o.id)
@@ -68,7 +69,7 @@ export class Level2 extends React.Component<LevelProps, State> {
   }
 
   onLevelComplete = once((system: ISystemManager, level: number | string) => {
-    system.events.emit('levelComplete', level)
+    system.events.emit(ON_LEVEL_COMPLETE, level)
   })
 
   render() {

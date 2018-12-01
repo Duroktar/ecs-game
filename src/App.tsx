@@ -12,6 +12,7 @@ import { ProjectileModel } from './game/Domain/projectile';
 import { system } from './game';
 import { createPlayer } from './game/factories/player';
 import { createBullet } from './game/factories/bullet';
+import { ON_START_GAME } from './events';
 
 interface State {
   epoch:    number;
@@ -35,12 +36,14 @@ class App extends React.Component<{}, State> {
   }
 
   componentDidMount() {
+    system.events.registerEvent(ON_START_GAME, this.startNewGame)
     this.moUntWOrld();
 
     this.start();
   }
 
   componentWillUnmount() {
+    system.events.unRegisterEvent(ON_START_GAME, this.startNewGame)
     this.stop();
 
     delete this.handler;
@@ -62,6 +65,10 @@ class App extends React.Component<{}, State> {
       bullet1: system.getEntityModel<ProjectileModel>(this.bullet1),
       bullet2: system.getEntityModel<ProjectileModel>(this.bullet2),
     }));
+  }
+
+  startNewGame = () => {
+    window.location.assign('/game')
   }
 
   start = () => {
@@ -106,7 +113,15 @@ class App extends React.Component<{}, State> {
         <div className="App container with-title is-center is-dark">
           <label className="title">Galaga.ts</label>
           <Route exact path="/" component={Intro} />
-          <Route path="/menu" component={Menu} />
+          <Route path="/menu" render={(props) => {
+            return (
+              <Menu
+                system={system}
+                {...this.state}
+                {...props}
+              />
+            )
+          }} />
           <Route path="/game" render={(props) => {
             return (
               <Game

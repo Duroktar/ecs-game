@@ -8,6 +8,7 @@ import { Level1 } from './1/Level.1';
 import { loadLevel } from '../utils';
 import { Level2 } from './2/Level.2';
 import { Level3 } from './3/Level.3';
+import { End } from './End/End';
 
 export const Levels = {
 	demo: 		{
@@ -24,15 +25,20 @@ export const Levels = {
   },
 	level3: 	{
     level: Level3,
+    next: 'end',
+  },
+	end: 	{
+    level: End,
     next: 'demo',
   },
 }
 
 export const humanizedLevelNames = {
-  demo: 'Demo',
+  demo:   'Demo',
   level1: '1',
   level2: '2',
   level3: '3',
+  end:    'End',
 }
 
 interface Props {

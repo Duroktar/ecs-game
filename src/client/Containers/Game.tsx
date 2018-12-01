@@ -12,7 +12,7 @@ import { WithPosition } from '../../lib/components/withPosition';
 import { IsLootable } from '../../lib/components/lootable';
 import { first, pp } from '../../lib/utils';
 import { ILevel } from '../Levels/types';
-import { ON_LEVEL_COMPLETE, ON_ENEMY_DEATH, ON_COLLISION } from '../../events';
+import { ON_LEVEL_COMPLETE, ON_ENEMY_DEATH, ON_COLLISION, ON_START_GAME } from '../../events';
 import { WithCollisions } from '../../lib/components/withCollisions';
 
 
@@ -152,10 +152,14 @@ export class Game extends React.Component<Props, State> {
     }));
   }
 
+  startNewGame = () => {
+    setTimeout(() => this.setState({ currentLevel: 'level1' }), 5);
+  }
+
   onNextLevel = () => {
     const currentLevel = this.state.currentLevel;
     const nextLevel = Levels[currentLevel].next;
-    this.setState({ currentLevel: 'demo' })
+    this.setState({ currentLevel: 'demo' });
     setTimeout(() => {
       this.setState({ currentLevel: nextLevel as ILevel, complete: false })
     }, 5)
