@@ -32,7 +32,6 @@ export function Gui(props: Props) {
       bottomLeft={<Credits value={props.credits} />}
       background={props.background}
       bottomRight={<RestartButton onClick={props.onRestart} />}
-      after={<div className="overlay">AV-1</div>}
     >
       {props.children}
     </Layout>

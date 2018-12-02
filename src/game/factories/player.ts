@@ -14,9 +14,12 @@ export function createPlayer(
     texture: SpriteTextureIds.Player,
 
     health: {
-      value: 1,
+      value: 100,
+      immortal: true,
     },
+
     attackPower: 10,
+
     speed: {
       y: 0,
       x: 6,

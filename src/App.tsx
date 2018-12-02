@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import './App.style.css';
+import './FontGlow.style.css';
 
 import { DevScreen } from './client/Development/Dev';
 

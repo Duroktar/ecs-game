@@ -16,11 +16,14 @@ body {
   justify-content: center;
   align-content: center;
   align-items: center;
+}
+
+.absolute-fit {
   position: absolute;
   top: 0;
+  bottom: 0;
   left: 0;
   right: 0;
-  bottom: 0;
 }
 
 .flex {

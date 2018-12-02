@@ -30,7 +30,14 @@ export function Outro(props: IGameState) {
 
   useEffect(() => {
     const serialized = getQueryParams(window.location.search);
-    setFinalScore(JSON.parse((serialized && serialized.final) || {}));
+
+    if (serialized && typeof serialized.final === 'string') {
+      try {
+        setFinalScore(JSON.parse(serialized.final));
+      } catch (e) {
+        // meh
+      }
+    }
 
     setTimeout(() => setReady(true), 3000)
   });

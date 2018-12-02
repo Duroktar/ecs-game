@@ -5,5 +5,7 @@ interface Props {
 }
 
 export function LevelStatus(props: Props) {
-  return <p>Level: {props.value}</p>
+  return props.value
+    ? <p>{`Level: ${props.value}`}</p>
+    : null;
 }

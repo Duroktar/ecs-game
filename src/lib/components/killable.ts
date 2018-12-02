@@ -7,10 +7,11 @@ const COMPONENT_NAMESPACE = 'health';
 export interface WithHealth {
   health: {
     value: number;
+    immortal?: boolean;
   };
 };
 
-export type WithHealthState = WithHealth & { isDead?: boolean };
+export type WithHealthState = WithHealth & { isDead?: boolean; };
 
 export function killableFactory(system: ISystemManager) {
   return (entity: IEntity, state: WithHealthState, events: IComponentEvents, id: number = -1) => {
@@ -22,6 +23,10 @@ export function killableFactory(system: ISystemManager) {
         state: { health: state.health, isDead: state.isDead },
         update: (system: ISystemManager, component: IComponent<WithHealthState>) => {
 
+          if (component.state.health.immortal) {
+            return;
+          }
+
           const wasDeadBefore = component.state.isDead;
           const isDeadNow = !(component.state.health.value > 0);
 
@@ -31,8 +36,6 @@ export function killableFactory(system: ISystemManager) {
             // sad times
             events.onChange!(ON_ENEMY_DEATH, component, entity)
           }
-
-          events.onUpdate && events.onUpdate!(component, entity)
         },
       }))
   }

@@ -1,9 +1,10 @@
-import * as React from 'react';
-import { withEnterKeyEffect } from '../hooks/withEnterKeyEffect';
-import { pp } from '../../lib/utils';
+import { ICurrentGameState } from '../../game/types';
 import { ILevel } from '../Levels/types';
+import * as React from 'react';
+
+import { withEnterKeyEffect } from '../hooks/withEnterKeyEffect';
+
 import { humanizedLevelNames } from '../Levels';
-import { IGameState, ICurrentGameState } from '../../game/types';
 
 interface Props {
   currentLevel: ILevel;

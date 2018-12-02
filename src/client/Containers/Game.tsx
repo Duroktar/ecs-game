@@ -182,15 +182,15 @@ export class Game extends React.Component<Props, ICurrentGameState> {
           state={this.props}
           system={this.props.system}
         />
-        <div className="center-content">
-          {this.state.complete ? (
+        {this.state.complete ? (
+          <div className="center-content absolute-fit">
             <LevelSummary
               currentLevel={currentLevel}
               state={this.state}
               onNextLevel={this.onNextLevel}
             />
-          ) : null}
-        </div>
+          </div>
+        ) : null}
       </Gui>
     )
   }

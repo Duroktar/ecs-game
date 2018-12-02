@@ -37,9 +37,12 @@ export function Menu(props: IGameState) {
     >
       <div className="screen menu">
         <div id="press-enter" className="center-content">
-          <p className={classNames(!ready && 'hidden', 'fade-in')}>Press Enter</p>
+          <p className={classNames(!ready && 'hidden', 'fade-in', 'neon', 'retro-red')} onMouseUp={handleStartGame}>
+            <span>Press Enter</span>
+          </p>
         </div>
       </div>
+      <div className="overlay">AV-1</div>
     </Gui>
   )
 }

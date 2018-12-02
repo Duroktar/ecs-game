@@ -1,6 +1,7 @@
 import { IComponent, ISystemManager, IVector, IEntity, IComponentEvents } from "../types";
 import { WithPosition } from "./withPosition";
 import { factory, createSelector, createSetter } from "../utils";
+import { WithOffscreen } from "./withOffscreen";
 
 const COMPONENT_NAMESPACE = 'momentum';
 
@@ -28,6 +29,11 @@ type IWithMomentumEntity = IComponent<WithMomentum & Partial<WithPosition>>
 
 function handleMovement(entity: IEntity, component: IWithMomentumEntity, system: ISystemManager) {
   const {state: { position }} = system.getEntityComponent<WithPosition>(entity, 'position');
+  const {state: { offscreen }} = system.getEntityComponent<WithOffscreen>(entity, 'offscreen');
+
+  if (offscreen) {
+    return;
+  }
 
   const { momentum: { direction, speed } } = component.state;
 
