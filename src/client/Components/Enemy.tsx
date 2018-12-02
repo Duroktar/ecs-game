@@ -1,4 +1,4 @@
-import { IOwned, IEntity } from '../../lib/types';
+import { IOwned, IEntity, ISystemManager, EntityIdType } from '../../lib/types';
 import * as React from 'react';
 
 import ShipSprite from '../../assets/enemy/enemy-ship.png';
@@ -12,10 +12,12 @@ import Explosion5 from '../../assets/enemy/enemy-explosion-05.png';
 
 import { MobModel } from '../../game/Domain/mob';
 import { withEntity } from '../Hoc/withEntity';
+import { withAnimationState, different } from '../hooks/withAnimationState';
 
 const fr = (id: number, duration: number) => ({ id, duration });
 
 const enemyFrames = [
+  ShipSprite,
   Explosion0,
   Explosion1,
   Explosion2,
@@ -26,102 +28,51 @@ const enemyFrames = [
 
 interface Props {
   model: MobModel & IOwned & IEntity;
+  system: ISystemManager;
 }
 
-interface State {
-  animations:     IAnimations;
-  currentFrame:   number | null;
-  dead:           boolean;
-}
-
-interface IFrame {
-  id:         number;
-  duration:   number;
-}
-
-interface IAnimations {
-  death: IFrame[];
-}
-
-export class Enemy extends React.Component<Props, State> {
-  private timers: NodeJS.Timer[] = [];
-
-  state: State = {
-    dead: false,
-    currentFrame: null,
+export function Enemy(props: Props) {
+  const [hidden, setHidden] = React.useState(() => false)
+  const [dead, setDead] = React.useState(() => false)
+  const {currentFrame, setCurrentAnimation} = withAnimationState({
     animations: {
+      normal: [
+        fr(0, 0)
+      ],
       death: [
-        fr(0, 0),
-        fr(1, 100),
+        fr(1, 0),
         fr(2, 100),
         fr(3, 100),
         fr(4, 100),
-        fr(5, 75),
+        fr(5, 100),
+        fr(6, 75),
       ],
-    }
+    },
+    currentAnimation: 'normal',
+    frames: enemyFrames,
+    onFinished: () => setHidden(true)
+  });
+
+  if (!hidden && !dead && props.model.isDead) {
+    setCurrentAnimation('death');
+    setDead(true);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
-    if (!this.props.model.isDead && nextProps.model.isDead) {
-
-      const onFinishedAnimation = () => {
-        this.setState({ dead: true })
-      }
-
-      this.runDeathAnimation(onFinishedAnimation);
-    }
+  const styles: React.CSSProperties = {
+    position:           'absolute',
+    backgroundImage:    `url(${currentFrame})`,
+    backgroundSize:     'contain',
+    backgroundPosition: 'center',
+    width:              '64px',
+    height:             '64px',
+    left:               hidden ? -9999 : props.model.position.x,
+    top:                hidden ? -9999 : props.model.position.y,
+    display:            cssDisplayValue(hidden),
   }
 
-  componentWillUnmount() {
-    if (this.timers) {
-      this.timers.forEach(timer => clearTimeout(timer))
-    }
-  }
-
-  runDeathAnimation = (onFinished: () => void) => {
-    let buffer: number = 0;
-    this.state.animations.death.forEach(({ id, duration }) => {
-      this.queueFrame(id, buffer);
-      buffer += duration;
-    })
-    this.timers.push(setTimeout(onFinished, buffer));
-  }
-
-  queueFrame = (frame: number, when: number) => {
-    const setFrame = (fr: number) => {
-      this.setState({ currentFrame: fr });
-    }
-
-    this.timers.push(setTimeout(() => setFrame(frame), when));
-  }
-
-  render() {
-    const {currentFrame, dead} = this.state;
-
-    const getFrame = (frame: number) => {
-      return enemyFrames[frame]
-    }
-
-    const imageUri = (currentFrame === null)
-      ? ShipSprite
-      : getFrame(currentFrame);
-
-    const styles: React.CSSProperties = {
-      position:           'absolute',
-      backgroundImage:    `url(${imageUri})`,
-      backgroundSize:     'contain',
-      backgroundPosition: 'center',
-      width:              '64px',
-      height:             '64px',
-      left:               dead ? -9999 : this.props.model.position.x,
-      top:                dead ? -9999 : this.props.model.position.y,
-      display:            cssDisplayValue(dead),
-    }
-  
-    return (
-      <div id="enemy" className="sprite" style={styles} />
-    )
-  }
+  return (
+    <div id="enemy" className="sprite" style={styles} />
+  )
 }
 
 export const ConnectedEnemy = withEntity<MobModel>(Enemy)

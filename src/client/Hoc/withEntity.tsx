@@ -9,7 +9,7 @@ interface WithEntityProps {
   onDeath?:   (entity: IEntity) => void;
 }
 
-type IModelType<P> = { model: WithComponentMeta<P> };
+type IModelType<P> = { model: WithComponentMeta<P>; system: ISystemManager };
 
 export const withEntity = <P extends MobModel | CharacterModel> (
     Component: React.ComponentType<IModelType<P>>,
@@ -17,7 +17,7 @@ export const withEntity = <P extends MobModel | CharacterModel> (
   function WithEntity(props: WithEntityProps) {
     const { entity, system, ...rest } = props;
     const model = system.getEntityModel<P>(props.entity);
-    return <Component {...rest} model={model} />;
+    return <Component {...rest} model={model} system={system} />;
   };
 
   return WithEntity;

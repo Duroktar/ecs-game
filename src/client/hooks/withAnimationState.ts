@@ -1,10 +1,10 @@
 import {useState} from 'react';
 
 
-export const withAnimationState = (props: Props) => {
-  const [animations, setAnimations] = useState(props.animations)
-  const [currentFrame, setCurrentFrame] = useState(props.currentFrame)
-  const [currentAnimation, setCurrentAnimation] = useState(props.currentAnimation)
+export const withAnimationState = (options: WithAnimationOptions) => {
+  const [animations, setAnimations] = useState(options.animations)
+  const [currentFrame, setCurrentFrame] = useState(options.currentFrame || 0)
+  const [currentAnimation, setCurrentAnimation] = useState(options.currentAnimation)
   const [timers, setTimers] = useState<NodeJS.Timer[]>([])
 
   const queueFrame = (frame: number, when: number) => {
@@ -13,29 +13,33 @@ export const withAnimationState = (props: Props) => {
     timers.push(setTimeout(() => setFrame(frame), when));
   }
 
-  if (different(props.currentAnimation, currentAnimation)) {
+  const getFrame = (frameIndex: number) => {
+    return options.frames[frameIndex]
+  }
+
+  if (different(options.currentAnimation, currentAnimation)) {
     let buffer: number = 0;
 
-    setCurrentAnimation(props.currentAnimation);
+    setCurrentAnimation(options.currentAnimation);
 
-    animations[props.currentAnimation].forEach(({ id, duration }) => {
+    animations[currentAnimation].forEach(({ id, duration }) => {
       queueFrame(id, buffer);
       buffer += duration;
     })
-
-    const timer = setTimeout(props.onFinished, buffer);
+    
+    const timer = setTimeout(options.onFinished, buffer);
     setTimers(timers.concat(timer));
   }
 
-  return { currentFrame };
+  return { currentFrame: getFrame(currentFrame), setCurrentAnimation };
 }
 
-interface Props {
+export interface WithAnimationOptions {
   animations:       IAnimations;
-  currentFrame:     number | null;
   currentAnimation: keyof IAnimations;
-  dead:             boolean;
   onFinished:       (...args: any[]) => void;
+  frames:           string[];
+  currentFrame?:    number;
 }
 
 interface IFrame {

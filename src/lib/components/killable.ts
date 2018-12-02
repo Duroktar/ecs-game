@@ -12,13 +12,13 @@ export interface WithHealth {
 export type WithHealthState = WithHealth & { isDead?: boolean };
 
 export function killableFactory(system: ISystemManager) {
-  return (entity: IEntity, state: WithHealth, events: IComponentEvents, id: number = -1) => {
+  return (entity: IEntity, state: WithHealthState, events: IComponentEvents, id: number = -1) => {
     return system.registerComponent(
       factory<IComponent<WithHealthState>>({
         id,
         name: COMPONENT_NAMESPACE,
         entityId: entity.id,
-        state: { health: state.health, isDead: state.health.value > 0 },
+        state: { health: state.health, isDead: state.isDead },
         update: (system: ISystemManager, component: IComponent<WithHealthState>) => {
 
           const wasDeadBefore = component.state.isDead;
