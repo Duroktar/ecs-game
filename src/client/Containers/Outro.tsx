@@ -8,9 +8,17 @@ import GameOver from '../Backgrounds/GameOver';
 import { classNames } from '../Development/Dev';
 import { withEnterKeyEffect } from '../hooks/withEnterKeyEffect';
 
+interface FinalScore {
+  score:    number;
+  hits:     number;
+  shots:    number;
+  lives:    number;
+  credits:  number;
+}
 
 export function Outro(props: IGameState) {
   const [ready, setReady] = useState(false);
+  const [final, setFinalScore] = useState<FinalScore>({} as FinalScore);
 
   function handleStartNewGame() {
     window.location.assign('/game');
@@ -21,6 +29,9 @@ export function Outro(props: IGameState) {
   }
 
   useEffect(() => {
+    const serialized = getQueryParams(window.location.search);
+    setFinalScore(JSON.parse((serialized && serialized.final) || {}));
+
     setTimeout(() => setReady(true), 3000)
   });
 
@@ -32,9 +43,9 @@ export function Outro(props: IGameState) {
     <Gui
       id="gui"
       className="gameover"
-      score={0}
-      credits={0}
-      lives={0}
+      score={final.score}
+      credits={final.credits}
+      lives={final.lives}
       background={<GameOver />}
       onRestart={handleRestartGame}
     >
@@ -47,4 +58,18 @@ export function Outro(props: IGameState) {
       </div>
     </Gui>
   )
+}
+
+function getQueryParams(qs: string) {
+  const searchString = qs.split('+').join(' ');
+
+  let params: any = {};
+  let tokens: RegExpExecArray | null;
+  const re = /[?&]?([^=]+)=([^&]*)/g;
+
+  while (tokens = re.exec(searchString)) {
+      params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+  }
+
+  return params;
 }

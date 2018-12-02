@@ -2,19 +2,20 @@ import * as React from 'react';
 import "./styles/Layout.style.css";
 
 interface Props {
-  id?:           string;
-  className?:    string;
-  topLeft?:      React.ReactNode;
-  topCenter?:    React.ReactNode;
-  topRight?:     React.ReactNode;
-  middleLeft?:   React.ReactNode;
-  middleCenter?: React.ReactNode;
-  middleRight?:  React.ReactNode;
-  bottomLeft?:   React.ReactNode;
-  bottomCenter?: React.ReactNode;
-  bottomRight?:  React.ReactNode;
-  background?:   React.ReactNode;
-  children:      React.ReactNode;
+  id?:            string;
+  className?:     string;
+  topLeft?:       React.ReactNode;
+  topCenter?:     React.ReactNode;
+  topRight?:      React.ReactNode;
+  middleLeft?:    React.ReactNode;
+  middleCenter?:  React.ReactNode;
+  middleRight?:   React.ReactNode;
+  bottomLeft?:    React.ReactNode;
+  bottomCenter?:  React.ReactNode;
+  bottomRight?:   React.ReactNode;
+  background?:    React.ReactNode;
+  children:       React.ReactNode;
+  after?:         React.ReactNode;
 }
 
 export function Layout(props: Props) {
@@ -31,6 +32,7 @@ export function Layout(props: Props) {
       <div className="bottom right">{props.bottomRight}</div>
       <div className="background">{props.background}</div>
       <div className="gamescreen">{props.children}</div>
+      {props.after}
     </div>
   )
 }

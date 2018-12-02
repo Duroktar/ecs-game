@@ -142,7 +142,13 @@ export class Game extends React.Component<Props, ICurrentGameState> {
 
   handleGameOver = (): void => {
     setTimeout(() => {
-      window.location.assign('/end');
+      window.location.assign(`/end?final=${JSON.stringify({
+        score:    this.state.score,
+        hits:     this.state.hits,
+        shots:    this.state.shots,
+        lives:    this.state.lives,
+        credits:  this.state.credits,
+      })}`);
     }, 10);
   }
 
