@@ -4,7 +4,8 @@ import { Layout } from "./Base";
 import { Lives } from "../Components/Lives";
 import { HighScore } from "../Components/HighScore";
 import { Credits } from "../Components/Credits";
-import { ISystemManager } from '../../lib/types';
+import { LevelStatus } from '../Components/LevelStatus';
+import { RestartButton } from '../Components/RestartButton';
 
 interface Props {
   id:         string;
@@ -15,7 +16,7 @@ interface Props {
   credits:    number;
   background: React.ReactNode;
   children:   React.ReactNode;
-  onRestart?: () => void;
+  onRestart: () => void;
 }
 
 export function Gui(props: Props) {
@@ -25,10 +26,10 @@ export function Gui(props: Props) {
       className={props.className}
       topLeft={<Lives value={props.lives} />}
       topCenter={<HighScore value={props.score} />}
-      topRight={props.level ? <p>Level: {props.level}</p> : null}
+      topRight={<LevelStatus value={props.level} />}
       bottomLeft={<Credits value={props.credits} />}
       background={props.background}
-      bottomRight={<button className="btn is-success" onClick={props.onRestart}>Restart</button>}
+      bottomRight={<RestartButton onClick={props.onRestart} />}
     >
       {props.children}
     </Layout>

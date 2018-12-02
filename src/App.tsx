@@ -109,7 +109,7 @@ class App extends React.Component<{}, State> {
   }
 
   restart = () => {
-    window.location.reload();
+    window.location.assign('/menu');
   }
 
   render() {
@@ -118,7 +118,13 @@ class App extends React.Component<{}, State> {
         <div className="App container with-title is-center is-dark">
           <label className="title">Galaga.ts</label>
 
-          <Route exact path="/" component={Intro} />
+          <Route exact path="/" render={(props) =>
+            <Intro
+              onPlayerInput={this.startNewGame}
+              {...this.state}
+              {...props}
+            />
+          } />
 
           <Route path="/menu" render={(props) =>
             <Menu

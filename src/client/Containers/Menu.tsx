@@ -13,12 +13,16 @@ import { ON_START_GAME } from '../../events';
 export function Menu(props: IGameState) {
   const [ready, setReady] = useState(false);
 
+  function handleStartGame() {
+    props.system.events.emit(ON_START_GAME);
+  }
+
   useEffect(() => {
-    setTimeout(() => setReady(true), 3000)
+    setTimeout(() => setReady(true), 3000);
   });
 
   withEnterKeyEffect(() =>
-    props.system.events.emit(ON_START_GAME)
+    handleStartGame()
   );
 
   return (
@@ -29,6 +33,7 @@ export function Menu(props: IGameState) {
       credits={0}
       lives={0}
       background={<StarFieldLogo />}
+      onRestart={handleStartGame}
     >
       <div className="screen menu">
         <div id="press-enter" className="center-content">

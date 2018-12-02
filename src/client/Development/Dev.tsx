@@ -1,4 +1,4 @@
-import { IEntity, ISystemManager, IEntityModel, IFactoryComponent } from '../../lib/types';
+import { ISystemManager, IFactoryComponent } from '../../lib/types';
 import * as React from 'react';
 import './styles/Dev.style.css';
 
@@ -95,19 +95,6 @@ function Buttons(props: Props) {
     </>
   )
 }
-
-function entityRenderer(entity: IEntity, system: ISystemManager): JSX.Element {
-  return <pre key={entity.id}>{pp(system.getEntityModel(entity))}</pre>;
-}
-  
-function EntityList(props: EntityListProps): JSX.Element {
-  const { system } = props;
-  return (<>
-    {system.system.entities.map((o: any) => entityRenderer(o, system))}
-  </>)
-}
-
-type EntityListProps = { system: ISystemManager };
 
 export function classNames(...classes: (string | boolean | undefined | null)[]) {
   return classes.filter(o => typeof o === 'string').join(' ');

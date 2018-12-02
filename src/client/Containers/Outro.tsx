@@ -12,12 +12,20 @@ import { withEnterKeyEffect } from '../hooks/withEnterKeyEffect';
 export function Outro(props: IGameState) {
   const [ready, setReady] = useState(false);
 
+  function handleStartNewGame() {
+    window.location.assign('/game');
+  }
+
+  function handleRestartGame() {
+    window.location.assign('/menu');
+  }
+
   useEffect(() => {
     setTimeout(() => setReady(true), 3000)
   });
 
   withEnterKeyEffect(() => {
-    window.location.assign('/game');
+    handleStartNewGame();
   })
 
   return (
@@ -28,6 +36,7 @@ export function Outro(props: IGameState) {
       credits={0}
       lives={0}
       background={<GameOver />}
+      onRestart={handleRestartGame}
     >
       <div className="screen menu">
         <div id="press-enter" className="center-content">
