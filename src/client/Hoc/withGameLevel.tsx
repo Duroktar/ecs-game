@@ -2,7 +2,7 @@ import * as React from 'react';
 import { IEntity, ISystemManager } from '../../lib/types';
 import { LevelProps } from '../Levels/types';
 import { Level } from '../Levels/Base';
-import { Player } from '../Components/Player';
+import { ConnectedPlayer } from '../Components/Player';
 import { Bullet } from '../Components/Bullet';
 import { ConnectedEnemy } from '../Components/Enemy';
 import { once } from '../../lib/utils';
@@ -72,7 +72,7 @@ export const withGameLevel = (
       return (
         <Level>
     
-          <Player model={player}/>
+          <ConnectedPlayer entity={player} system={system} />
     
           <Bullet model={bullet1} />
           <Bullet model={bullet2} />

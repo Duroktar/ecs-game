@@ -2,19 +2,15 @@ import {useState} from 'react';
 
 
 export const withAnimationState = (options: WithAnimationOptions) => {
-  const [animations, setAnimations] = useState(options.animations)
-  const [currentFrame, setCurrentFrame] = useState(options.currentFrame || 0)
-  const [currentAnimation, setCurrentAnimation] = useState(options.currentAnimation)
+  const [animations, setAnimations] = useState(options.animations);
+  const [currentFrame, setCurrentFrame] = useState(options.currentFrame || getDefaultFrame(options));
+  const [currentAnimation, setCurrentAnimation] = useState(options.currentAnimation);
   const [timers, setTimers] = useState<NodeJS.Timer[]>([])
 
-  const queueFrame = (frame: number, when: number) => {
-    const setFrame = (fr: number) => setCurrentFrame(fr);
+  function queueFrame(frame: string, when: number) {
+    const setFrame = (fr: string) => setCurrentFrame(fr);
 
     timers.push(setTimeout(() => setFrame(frame), when));
-  }
-
-  const getFrame = (frameIndex: number) => {
-    return options.frames[frameIndex]
   }
 
   if (different(options.currentAnimation, currentAnimation)) {
@@ -22,8 +18,8 @@ export const withAnimationState = (options: WithAnimationOptions) => {
 
     setCurrentAnimation(options.currentAnimation);
 
-    animations[currentAnimation].forEach(({ id, duration }) => {
-      queueFrame(id, buffer);
+    animations[currentAnimation].forEach(({ frame, duration }) => {
+      queueFrame(frame, buffer);
       buffer += duration;
     })
     
@@ -31,19 +27,18 @@ export const withAnimationState = (options: WithAnimationOptions) => {
     setTimers(timers.concat(timer));
   }
 
-  return { currentFrame: getFrame(currentFrame), setCurrentAnimation };
+  return { currentFrame, setCurrentAnimation };
 }
 
 export interface WithAnimationOptions {
   animations:       IAnimations;
   currentAnimation: keyof IAnimations;
   onFinished:       (...args: any[]) => void;
-  frames:           string[];
-  currentFrame?:    number;
+  currentFrame?:    string;
 }
 
 interface IFrame {
-  id:         number;
+  frame:      string;
   duration:   number;
 }
 
@@ -54,4 +49,10 @@ interface IAnimations {
 
 export function different<T>(a: T, b: T) {
   return a !== b;
+}
+
+export const fr = (frame: string, duration: number) => ({ frame, duration });
+
+export function getDefaultFrame(options: WithAnimationOptions): string {
+  return options.animations[options.currentAnimation][0].frame;
 }

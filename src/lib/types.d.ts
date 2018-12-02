@@ -115,7 +115,7 @@ export type ITypes =
   IFactoryComponent;
 
 export type WithId<T>            = T & IEntity;
-export type WithComponentMeta<T> = IOwned & WithId<T>;
+export type WithComponentMeta<T> = WithId<T> & IOwned;
 
 export interface IEntityComponents {
   [key: string]: {

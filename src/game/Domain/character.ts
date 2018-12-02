@@ -1,6 +1,6 @@
 import { IEntity, ISystemManager } from "../../lib/types";
 import { nameableFactory,           WithName } from "../../lib/components/nameable";
-import { killableFactory,           WithHealth } from "../../lib/components/killable";
+import { killableFactory,           WithHealth, WithHealthState } from "../../lib/components/killable";
 import { withPositionFactory,       WithPosition, WithPositionState } from "../../lib/components/withPosition";
 import { combatableFactory,         WithAttack } from "../../lib/components/combatable";
 import { withGeometryFactory,       WithGeometry } from "../../lib/components/withGeometry";
@@ -66,7 +66,7 @@ export type CharacterModelArgs =
 
 export type CharacterModel =
   WithName          &
-  WithHealth        &
+  WithHealthState   &
   WithPositionState &
   WithGeometry      &
   WithAttack        &

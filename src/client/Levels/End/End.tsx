@@ -1,19 +1,16 @@
 import { LevelProps } from '../types';
 import * as React from 'react';
 
-import { Player } from '../../Components/Player';
+import { ConnectedPlayer } from '../../Components/Player';
 
 import { Level } from '../Base';
 
-interface State {}
 
-export class End extends React.Component<LevelProps, State> {
-  render() {
-    const {player} = this.props.state;
-    return (
-      <Level>
-        <Player model={player}/>
-      </Level>
-    )
-  }
+export function End(props: LevelProps) {
+  const {player, system} = props.state;
+  return (
+    <Level>
+      <ConnectedPlayer entity={player} system={system} />
+    </Level>
+  )
 }
