@@ -15,10 +15,10 @@ export function Bullet(props: Props) {
 function getStyles(props: Props): React.CSSProperties {
   return {
     position:     'absolute',
-    border:       'solid white 2px',
+    outline:      '1px solid white',
     borderRadius: '25%',
     height:       '32px',
-    width:        '0px', 
+    width:        '0px',
     left:         props.model.position.x + 30,
     top:          props.model.position.y,
     display:      cssDisplayValue(props.model),
