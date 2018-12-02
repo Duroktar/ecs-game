@@ -49,6 +49,7 @@ export interface IComponentFactories {
   collidable:   IComponentFactory;
   loot:         IComponentFactory;
   boundary:     IComponentFactory;
+  texture:      IComponentFactory;
 }
 
 export type IComponentFactoryKey = keyof IComponentFactories;

@@ -9,6 +9,7 @@ import { withWarpAroundPositionFactory, WithPosition } from "../../lib/component
 import { IPointsLoot } from "../types";
 import { withBoundaryFactory, WithBoundary } from "../../lib/components/withBoundary";
 import { WithPositionState } from "../../lib/components/withPosition";
+import { withTextureFactory, WithTexture } from "../../lib/components/withTexture";
 
 
 export function createMob(
@@ -19,6 +20,7 @@ export function createMob(
   const withHealth      = killableFactory(system);
   const withPosition    = withWarpAroundPositionFactory(system);
   const withGeometry    = withGeometryFactory(system);
+  const withTexture     = withTextureFactory(system);
   const withRandomWalk  = withRandomWalkFactory(system);
   const isCollidable    = isCollidableFactory(system);
   const withBoundary    = withBoundaryFactory(system);
@@ -33,10 +35,13 @@ export function createMob(
     withHealth(entity, options, system.events)
   );
   system.registerComponent(
+    withPosition(entity, options, system.events)
+  );
+  system.registerComponent(
     withGeometry(entity, options, system.events)
   );
   system.registerComponent(
-    withPosition(entity, options, system.events)
+    withTexture(entity, options, system.events)
   );
   system.registerComponent(
     withBoundary(entity, options, system.events)
@@ -56,8 +61,9 @@ export function createMob(
 export type MobModelArgs =
   WithName                &
   WithHealthState         &
-  WithGeometry            &
   WithPosition            &
+  WithGeometry            &
+  WithTexture             &
   WithBoundary            &
   WithRandomWalkArgs      &
   IsLootable<IPointsLoot> &
@@ -66,8 +72,9 @@ export type MobModelArgs =
 export type MobModel =
   WithName                &
   WithHealthState         &
-  WithGeometry            &
   WithPositionState       &
+  WithGeometry            &
+  WithTexture             &
   WithBoundary            &
   WithRandomWalkArgs      &
   IsLootable<IPointsLoot> &

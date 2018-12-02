@@ -1,16 +1,18 @@
 import { ISystemManager, IEntity } from "../lib/types";
 import { MouseEvent } from "react";
 import { createEnemy } from "../game/factories/enemy";
+import { withTexture } from "./Hoc/withTexture";
+import { ILoadedEnemy } from "./Levels/types";
 
-export function loadLevel(system: ISystemManager, enemyPositions: number[][]): IEntity[] {
-  let enemies: IEntity[] = [];
+export function loadLevel(system: ISystemManager, enemyPositions: number[][]): ILoadedEnemy[] {
+  let enemies: ILoadedEnemy[] = [];
 
   let x: number = 0;
   let y: number = 0;
 
   for (const row of enemyPositions) {
-    for (const item of row) {
-      if (item !== 0) {
+    for (const enemyTypeId of row) {
+      if (enemyTypeId !== 0) {
         const geometry = {
           width:    64,
           height:   64,
@@ -21,7 +23,11 @@ export function loadLevel(system: ISystemManager, enemyPositions: number[][]): I
           y:    y * geometry.height,
         }
   
-        enemies.push(createEnemy(system, JSON.stringify(position), position, geometry));
+        const entity = createEnemy(system, enemyTypeId, JSON.stringify(position), position, geometry)
+        enemies.push({
+          component: withTexture(enemyTypeId),
+          entity,
+        });
       }
 
       x++;

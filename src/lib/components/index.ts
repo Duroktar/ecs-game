@@ -12,6 +12,7 @@ import { withMomentumFactory } from "./withMomentum";
 import { withOffscreenFactory } from "./withOffscreen";
 import { lootableFactory } from "./lootable";
 import { withBoundaryFactory } from "./withBoundary";
+import { withTextureFactory } from "./withTexture";
 
 export const defaultComponentFactories: IComponentFactories = {
   name:         nameableFactory,
@@ -27,6 +28,7 @@ export const defaultComponentFactories: IComponentFactories = {
   geometry:     withGeometryFactory,
   loot:         lootableFactory,
   boundary:     withBoundaryFactory,
+  texture:      withTextureFactory,
 }
 
 export function getComponentFactory<T extends IComponentFactoryKey>(name: T): IComponentFactories[T] {

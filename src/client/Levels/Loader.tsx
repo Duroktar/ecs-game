@@ -3,7 +3,7 @@ import { IGameState } from '../../game/types';
 import { ILevels, ILevel } from './types';
 import * as React from 'react';
 
-import { Levels, getNextLevel, getThisLevel } from './Directory';
+import { Levels, getThisLevel } from './Directory';
 import { loadLevel } from '../utils';
 
 interface Props {

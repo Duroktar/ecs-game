@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ProjectileModel } from '../../game/Domain/projectile';
+import { ProjectileModel } from '../../../game/Domain/projectile';
 
 interface Props {
   model: ProjectileModel;

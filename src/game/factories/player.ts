@@ -1,14 +1,18 @@
 import { createCharacter } from "../Domain/character";
 import { ISystemManager } from "../../lib/types";
 import { defaultBoundary } from "../../lib/utils";
+import { SpriteTextureIds } from "../catalogue";
 
 export function createPlayer(
-  system: ISystemManager,
-  name: string = 'player 1',
+  system:           ISystemManager,
+  name:             string = 'player 1',
 ) {
 
   const playerEntity = createCharacter(system, {
     name,
+
+    texture: SpriteTextureIds.Player,
+
     health: {
       value: 1,
     },

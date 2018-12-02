@@ -1,8 +1,14 @@
 import { ISystemManager, IEntity } from "../../lib/types";
 import { IGameState } from "../../game/types";
 import { Levels } from "./Directory";
+import { WithTextureProps } from "../Hoc/withTexture";
 
-export type LoaderFunc = (system: ISystemManager, enemyPositions: number[][]) => IEntity[];
+export type LoaderFunc = (system: ISystemManager, enemyPositions: number[][]) => ILoadedEnemy[];
+
+export type ILoadedEnemy = {
+  entity: IEntity;
+  component: React.ComponentType<WithTextureProps>;
+};
 
 export interface LevelProps {
   system:       ISystemManager;

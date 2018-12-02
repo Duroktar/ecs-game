@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { IEntity, ISystemManager } from '../../lib/types';
-import { LevelProps } from '../Levels/types';
+import { ISystemManager } from '../../lib/types';
+import { LevelProps, ILoadedEnemy } from '../Levels/types';
 import { Level } from '../Levels/Base';
-import { ConnectedPlayer } from '../Components/Player';
-import { Bullet } from '../Components/Bullet';
-import { ConnectedEnemy } from '../Components/Enemy';
+import { ConnectedPlayer } from '../Containers/Player/Player';
+import { Bullet } from '../Containers/Weapons/Bullet';
 import { once } from '../../lib/utils';
 import { ON_ENEMY_DEATH, ON_LEVEL_COMPLETE } from '../../events';
 
@@ -22,7 +21,7 @@ export const withGameLevel = (
       enemyPositions: options.enemyPositions,
       levelId: options.levelId,
       
-      enemies: [] as IEntity[],
+      enemies: [] as ILoadedEnemy[],
       enemiesDead: 0,
       ready: false,
     }
@@ -53,7 +52,7 @@ export const withGameLevel = (
         .unRegisterEvent(ON_ENEMY_DEATH, this.countDeath);
       
       this.state.enemies.forEach(o =>
-        this.props.system.unRegisterEntity(o.id)
+        this.props.system.unRegisterEntity(o.entity.id)
       );
     }
   
@@ -77,13 +76,17 @@ export const withGameLevel = (
           <Bullet model={bullet1} />
           <Bullet model={bullet2} />
     
-          {this.state.enemies.map((entity: IEntity) => (
-            <ConnectedEnemy
-              key={entity.id}
-              entity={entity}
-              system={system}
-            />
-          ))}
+          {this.state.enemies.map((enemy: ILoadedEnemy) => {
+            const ConnectedEnemy = enemy.component;
+            return (
+              <ConnectedEnemy
+                key={enemy.entity.id}
+                entity={enemy.entity}
+                system={system}
+              />
+            )
+          })
+        }
         </Level>
       )
     }
@@ -91,7 +94,7 @@ export const withGameLevel = (
 }
 
 interface State {
-  enemies:          IEntity[];
+  enemies:          ILoadedEnemy[];
   enemyPositions:   number[][];
   enemiesDead:      number;
   levelId:          string | number;

@@ -1,7 +1,7 @@
 import { LevelProps } from '../types';
 import * as React from 'react';
 
-import { ConnectedPlayer } from '../../Components/Player';
+import { ConnectedPlayer } from '../../Containers/Player/Player';
 
 import { Level } from '../Base';
 

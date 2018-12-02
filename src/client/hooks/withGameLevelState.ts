@@ -5,11 +5,12 @@ import { loadLevel } from '../utils';
 
 import { once } from '../../lib/utils';
 import { ON_ENEMY_DEATH, ON_LEVEL_COMPLETE } from '../../events';
+import { ILoadedEnemy } from '../Levels/types';
 
 
 export const withGameLevelState = (options: WithGameLevelStateOptions) => {
   const [ready, setReady] = useState(false);
-  const [enemies, setEnemies] = useState([] as IEntity[]);
+  const [enemies, setEnemies] = useState([] as ILoadedEnemy[]);
   const [enemiesDead, setEnemiesDead] = useState(0);
 
   const onLevelComplete = (system: ISystemManager, level: number | string) => {
@@ -37,7 +38,7 @@ export const withGameLevelState = (options: WithGameLevelStateOptions) => {
         .unRegisterEvent(ON_ENEMY_DEATH, countDeath);
       
       enemies.forEach(o => options.system
-        .unRegisterEntity(o.id)
+        .unRegisterEntity(o.entity.id)
       );
     }
   })

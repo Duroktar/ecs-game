@@ -7,6 +7,7 @@ import { withGeometryFactory,       WithGeometry } from "../../lib/components/wi
 import { isCollidableFactory,       IsCollidable } from "../../lib/components/isCollidable";
 import { withBoundaryFactory,       WithBoundary } from "../../lib/components/withBoundary";
 import { withPlayerControlsFactory, WithPlayerControls } from "../../lib/components/withPlayerControls";
+import { withTextureFactory, WithTexture } from "../../lib/components/withTexture";
 
 export function createCharacter(
   system:   ISystemManager,
@@ -18,6 +19,7 @@ export function createCharacter(
   const withControls    = withPlayerControlsFactory(system);
   const withAttack      = combatableFactory(system);
   const withGeometry    = withGeometryFactory(system);
+  const withTexture     = withTextureFactory(system);
   const isCollidable    = isCollidableFactory(system);
   const withBoundary    = withBoundaryFactory(system);
 
@@ -34,6 +36,9 @@ export function createCharacter(
   );
   system.registerComponent(
     withGeometry(entity, options, system.events)
+  );
+  system.registerComponent(
+    withTexture(entity, options, system.events)
   );
   system.registerComponent(
     withAttack(entity, options, system.events)
@@ -59,6 +64,7 @@ export type CharacterModelArgs =
   WithHealth        &
   WithPosition      &
   WithGeometry      &
+  WithTexture       &
   WithAttack        &
   WithBoundary      &
   IsCollidable      &
@@ -69,6 +75,7 @@ export type CharacterModel =
   WithHealthState   &
   WithPositionState &
   WithGeometry      &
+  WithTexture       &
   WithAttack        &
   WithBoundary      &
   IsCollidable      &

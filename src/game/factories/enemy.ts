@@ -1,17 +1,20 @@
 import { ISystemManager, IVector, IDimensions } from "../../lib/types";
 import { createMob } from "../Domain/mob";
 import { defaultBoundary } from "../../lib/utils";
+import { SpriteTextureIds } from "../catalogue";
 
 export function createEnemy(
-    system:     ISystemManager,
-    name:       string,
-    position?:  IVector,
-    geometry?:  IDimensions,
-    // sprite?: string,
+    system:           ISystemManager,
+    textureId:        number,
+    name:             string,
+    position?:        IVector,
+    geometry?:        IDimensions,
 ) {
 
   const entity = createMob(system, {
     name,
+
+    texture: textureId,
 
     controls: {
       disabled: true,
