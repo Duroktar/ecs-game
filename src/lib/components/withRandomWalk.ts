@@ -2,16 +2,27 @@ import { IComponent, ISystemManager, IVector, IEntity, IComponentEvents } from "
 import { WithPosition } from "./withPosition";
 import { factory, boxMullerRandomGeneratorFactory, clamp, throttle } from "../utils";
 
-export type WithRandomWalkArgs = { direction?: IVector; moving?: boolean; speed?: IVector; };
-export type WithRandomWalk = { direction: IVector; moving: boolean; speed: IVector; };
+export type WithRandomWalkArgs = { controls?: Partial<WithRandomWalk> };
+export type WithRandomWalk = { direction: IVector; moving: boolean; speed: IVector; disabled: boolean; jitter: number; };
 
-const JITTER = 400;
+const defaults = { direction: { x: 0, y: 0 }, moving: true, speed: { x: 2, y: 1.65 }, disabled: false, jitter: 400 }
 
 export function withRandomWalkFactory(system: ISystemManager) {
   return (entity: IEntity, state: WithRandomWalkArgs, events: IComponentEvents, id = -1) => {
 
-    const randomWalkGeneratorX = throttle<number>(boxMullerRandomGeneratorFactory(), JITTER);
-    const randomWalkGeneratorY = throttle<number>(boxMullerRandomGeneratorFactory(), JITTER);
+    const options = state.controls || defaults;
+
+    let jitter: number = options.jitter || defaults.jitter;
+    let randomWalkGeneratorX: () => number;
+    let randomWalkGeneratorY: () => number;
+
+    const setJitter = (level?: number) => {
+      jitter = level || defaults.jitter;
+      randomWalkGeneratorX = throttle<number>(boxMullerRandomGeneratorFactory(), jitter);
+      randomWalkGeneratorY = throttle<number>(boxMullerRandomGeneratorFactory(), jitter);
+    }
+
+    setJitter(jitter);
 
     return system.registerComponent(
       factory<IComponent<WithRandomWalk>>({
@@ -19,14 +30,23 @@ export function withRandomWalkFactory(system: ISystemManager) {
         entityId: entity.id,
         name: 'controls',
         state: {
-          direction: state.direction || { x: 0, y: 0 },
-          moving: state.moving || true,
-          speed: state.speed || { x: 2, y: 1.65 },
+          direction: options.direction || { x: 0, y: 0 },
+          moving: options.moving || true,
+          speed: options.speed || { x: 2, y: 1.65 },
+          disabled: options.disabled || false,
+          jitter,
         },
         update: (system: ISystemManager, component: IWithRandomWalkEntity) => {
-          handleMovement(entity, component, system, events, randomWalkGeneratorX, randomWalkGeneratorY);
 
-          handleMovingFlag(entity, component, system, events);
+          if (component.state.jitter !== jitter) {
+            setJitter(jitter);
+          }
+
+          if (!component.state.disabled) {
+            handleMovement(entity, component, system, events, randomWalkGeneratorX, randomWalkGeneratorY);
+  
+            handleMovingFlag(entity, component, system, events);
+          }
         },
       }))
   }

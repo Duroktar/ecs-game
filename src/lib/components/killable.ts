@@ -1,5 +1,6 @@
 import { IComponent, ISystemManager, IEntity, IComponentEvents } from "../types";
 import { factory, createSelector, createSetter, defaultComponentEvents } from "../utils";
+import { ON_ENEMY_DEATH } from "../../events";
 
 const COMPONENT_NAMESPACE = 'health';
 
@@ -28,7 +29,7 @@ export function killableFactory(system: ISystemManager) {
 
           if (!wasDeadBefore && isDeadNow) {
             // sad times
-            events.onChange!('isDead:enemy', component, entity)
+            events.onChange!(ON_ENEMY_DEATH, component, entity)
           }
 
           events.onUpdate && events.onUpdate!(component, entity)

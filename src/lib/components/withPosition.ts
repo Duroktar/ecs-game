@@ -7,23 +7,25 @@ import { WithGeometry } from "./withGeometry";
 const COMPONENT_NAMESPACE = 'position';
 
 export type WithPosition = { position: IVector; }
+export type WithCenter = { center: IVector; }
+export type WithPositionState = WithPosition & WithCenter;
 
 export function withPositionFactory(system: ISystemManager) {
   return (entity: IEntity, state: WithPosition, events: IComponentEvents, id = -1) => {
     return system.registerComponent(
-      factory<IComponent<WithPosition>>({
+      factory<IComponent<WithPositionState>>({
         id,
         name: COMPONENT_NAMESPACE,
         entityId: entity.id,
-        state: { position: state.position },
-        update: (system: ISystemManager, component: IComponent<WithPosition>) => {
+        state: { position: { ...state.position }, center: { ...state.position } },
+        update: (system: ISystemManager, component: IComponent<WithPositionState>) => {
           handleMovementState(entity, system, component, events);
         },
       }))
     }
   }
   
-function handleMovementState(entity: IEntity, system: ISystemManager, component: IComponent<WithPosition>, events: IComponentEvents) {
+function handleMovementState(entity: IEntity, system: ISystemManager, component: IComponent<WithPositionState>, events: IComponentEvents) {
 
   const controls = system.getEntityComponent<WithControls>(entity, 'controls');
 
@@ -49,6 +51,10 @@ function handleMovementState(entity: IEntity, system: ISystemManager, component:
 
     component.state.position.x = clampedX;
     component.state.position.y = clampedY;
+
+    component.state.center.x = component.state.position.x - width / 2;
+    component.state.center.y = component.state.position.y - height / 2;
+
   }
 };
 

@@ -1,4 +1,4 @@
-import { IOwned, IEntity, ISystemManager, EntityIdType } from '../../lib/types';
+import { IOwned, IEntity, ISystemManager } from '../../lib/types';
 import * as React from 'react';
 
 import ShipSprite from '../../assets/enemy/enemy-ship.png';
@@ -12,7 +12,7 @@ import Explosion5 from '../../assets/enemy/enemy-explosion-05.png';
 
 import { MobModel } from '../../game/Domain/mob';
 import { withEntity } from '../Hoc/withEntity';
-import { withAnimationState, different } from '../hooks/withAnimationState';
+import { withAnimationState } from '../hooks/withAnimationState';
 
 const fr = (id: number, duration: number) => ({ id, duration });
 

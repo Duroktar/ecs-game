@@ -8,11 +8,12 @@ import { lootableFactory,               IsLootable } from "../../lib/components/
 import { withWarpAroundPositionFactory, WithPosition } from "../../lib/components/withWrapAroundPosition";
 import { IPointsLoot } from "../types";
 import { withBoundaryFactory, WithBoundary } from "../../lib/components/withBoundary";
+import { WithPositionState } from "../../lib/components/withPosition";
 
 
 export function createMob(
   system:   ISystemManager,
-  options:  MobModel,
+  options:  MobModelArgs,
 ): IEntity {
   const withName        = nameableFactory(system);
   const withHealth      = killableFactory(system);
@@ -52,11 +53,21 @@ export function createMob(
   return entity;
 }
 
-export type MobModel =
+export type MobModelArgs =
   WithName                &
   WithHealthState         &
   WithGeometry            &
   WithPosition            &
+  WithBoundary            &
+  WithRandomWalkArgs      &
+  IsLootable<IPointsLoot> &
+  IsCollidable;
+
+export type MobModel =
+  WithName                &
+  WithHealthState         &
+  WithGeometry            &
+  WithPositionState       &
   WithBoundary            &
   WithRandomWalkArgs      &
   IsLootable<IPointsLoot> &

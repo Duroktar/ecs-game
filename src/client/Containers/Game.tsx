@@ -10,12 +10,13 @@ import { ProjectileModel } from '../../game/Domain/projectile';
 import { WithHealthState } from '../../lib/components/killable';
 import { IsLootable } from '../../lib/components/lootable';
 
-import { Loader, Levels, humanizedLevelNames } from '../Levels';
+import { Loader, humanizedLevelNames } from '../Levels';
 import { LevelSummary } from '../Components/LevelSummary';
 
 import { first, mkEntity } from '../../lib/utils';
 
 import { ON_LEVEL_COMPLETE, ON_ENEMY_DEATH, ON_COLLISION, ON_GAME_OVER } from '../../events';
+import { getNextLevel } from '../Levels/Directory';
 
 
 interface Props extends IGameState {
@@ -44,7 +45,7 @@ export class Game extends React.Component<Props, State> {
     completed:          [],
     currentLevel:       'level1' as ILevel,
   }
-  
+
   componentDidMount() {
     this.props.system.events.registerEvent(ON_COLLISION,      this.handleBulletCollisions)
     this.props.system.events.registerEvent(ON_ENEMY_DEATH,    this.handleEnemyDeath)
@@ -54,7 +55,7 @@ export class Game extends React.Component<Props, State> {
 
   componentWillReceiveProps(nextProps: Props) {
     if (!this.props.player.attacking && nextProps.player.attacking) {
-      this.fireBullet(this.props.player.position);
+      this.fireBullet(this.props.player.center);
     }
   }
 
@@ -95,7 +96,7 @@ export class Game extends React.Component<Props, State> {
     }
 
     bullet.position.x = pos.x;
-    bullet.position.y = pos.y - 40;
+    bullet.position.y = pos.y;
 
     this.reviveEntity(bullet, 1);
 
@@ -162,7 +163,7 @@ export class Game extends React.Component<Props, State> {
 
   onNextLevel = (): void => {
     const currentLevel = this.state.currentLevel;
-    const nextLevel = Levels[currentLevel].next;
+    const nextLevel = getNextLevel(currentLevel);
     setTimeout(() => {
       this.setState({ currentLevel: nextLevel as ILevel, complete: false })
     }, 5);

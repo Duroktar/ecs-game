@@ -17,8 +17,8 @@ export function Player(props: Props) {
     backgroundImage:    `url(${ShipSprite})`,
     backgroundSize:     'contain',
     backgroundPosition: 'center',
-    left:               props.model.position.x,
-    top:                props.model.position.y,
+    left:               props.model.position.x - 32,
+    top:                props.model.position.y - 32,
     width:              '64px',
     height:             '64px',
   }

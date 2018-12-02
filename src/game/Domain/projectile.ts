@@ -1,5 +1,5 @@
 import { IEntity, ISystemManager, IComponent } from "../../lib/types";
-import { withPositionFactory,     WithPosition } from "../../lib/components/withPosition";
+import { withPositionFactory,     WithPosition, WithPositionState } from "../../lib/components/withPosition";
 import { withMomentumFactory,     WithMomentum } from "../../lib/components/withMomentum";
 import { withOffscreenFactory,    WithOffscreen } from "../../lib/components/withOffscreen";
 import { withGeometryFactory,     WithGeometry } from "../../lib/components/withGeometry";

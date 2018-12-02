@@ -13,6 +13,10 @@ export function createEnemy(
   const entity = createMob(system, {
     name,
 
+    controls: {
+      disabled: true,
+    },
+
     health: {
       value: 1,
     },
@@ -32,6 +36,7 @@ export function createEnemy(
     },
 
     boundary: defaultBoundary,
+
   });
 
   return entity;

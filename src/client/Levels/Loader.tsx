@@ -3,7 +3,7 @@ import { IGameState } from '../../game/types';
 import { ILevels, ILevel } from './types';
 import * as React from 'react';
 
-import { Levels, getNextLevel } from './Directory';
+import { Levels, getNextLevel, getThisLevel } from './Directory';
 import { loadLevel } from '../utils';
 
 interface Props {
@@ -17,14 +17,14 @@ export function Loader({
 	levels = Levels,
 	...rest
 }: Props) {
-  const GameLevel = getNextLevel(rest.currentLevel);
+  const GameLevel = getThisLevel(rest.currentLevel);
 
   if (GameLevel === undefined) {
     return null;
   }
 
   return (
-		<GameLevel.level
+		<GameLevel
       loadLevel={loadLevel}
 			{...rest}
 		/>

@@ -3,17 +3,21 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 import './App.style.css';
 
 import { DevScreen } from './client/Development/Dev';
+
 import { Intro } from './client/Containers/Intro';
 import { Menu } from './client/Containers/Menu';
 import { Game } from './client/Containers/Game';
+import { Outro } from './client/Containers/Outro';
 
 import { CharacterModel } from './game/Domain/character';
 import { ProjectileModel } from './game/Domain/projectile';
-import { system } from './game';
+
 import { createPlayer } from './game/factories/player';
 import { createBullet } from './game/factories/bullet';
+
+import { system } from './game';
+
 import { ON_START_GAME } from './events';
-import { Outro } from './client/Containers/Outro';
 
 interface State {
   epoch:    number;
@@ -23,7 +27,7 @@ interface State {
 }
 
 class App extends React.Component<{}, State> {
-  private handler: any;
+  private handler: number | undefined;
 
   private player  = createPlayer(system, 'Odin');
   private bullet1 = createBullet(system, 'Bullet of Destiny');
@@ -38,6 +42,7 @@ class App extends React.Component<{}, State> {
 
   componentDidMount() {
     system.events.registerEvent(ON_START_GAME, this.startNewGame)
+
     this.moUntWOrld();
 
     this.start();
@@ -45,6 +50,7 @@ class App extends React.Component<{}, State> {
 
   componentWillUnmount() {
     system.events.unRegisterEvent(ON_START_GAME, this.startNewGame)
+
     this.stop();
 
     delete this.handler;
@@ -85,9 +91,7 @@ class App extends React.Component<{}, State> {
   }
 
   stop = () => {
-    if (this.handler) {
-      cancelAnimationFrame(this.handler);
-    }
+    if (this.handler) cancelAnimationFrame(this.handler);
   }
 
   save = () => {
@@ -113,35 +117,33 @@ class App extends React.Component<{}, State> {
       <Router>
         <div className="App container with-title is-center is-dark">
           <label className="title">Galaga.ts</label>
+
           <Route exact path="/" component={Intro} />
-          <Route path="/menu" render={(props) => {
-            return (
-              <Menu
-                system={system}
-                {...this.state}
-                {...props}
-              />
-            )
-          }} />
-          <Route path="/game" render={(props) => {
-            return (
-              <Game
-                system={system}
-                restart={this.restart}
-                {...this.state}
-                {...props}
-              />
-            )
-          }} />
-          <Route path="/end" render={(props) => {
-            return (
-              <Outro
-                system={system}
-                {...this.state}
-                {...props}
-              />
-            )
-          }} />
+
+          <Route path="/menu" render={(props) =>
+            <Menu
+              system={system}
+              {...this.state}
+              {...props}
+            />
+          } />
+
+          <Route path="/game" render={(props) =>
+            <Game
+              system={system}
+              restart={this.restart}
+              {...this.state}
+              {...props}
+            />
+          } />
+
+          <Route path="/end" render={(props) =>
+            <Outro
+              system={system}
+              {...this.state}
+              {...props}
+            />
+          } />
 
           <DevScreen
             system={system}

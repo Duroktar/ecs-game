@@ -36,6 +36,10 @@ export const humanizedLevelNames = {
   end:    'End',
 }
 
+export function getThisLevel(current: ILevel, directory: ILevels = Levels) {
+  return directory[current].level;
+}
+
 export function getNextLevel(current: ILevel, directory: ILevels = Levels) {
-  return directory[directory[current].next as ILevel];
+  return directory[current].next as ILevel;
 }
