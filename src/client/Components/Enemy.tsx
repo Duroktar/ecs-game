@@ -26,6 +26,20 @@ const enemyFrames = [
   Explosion5,
 ]
 
+const enemyAnimations = {
+  normal: [
+    fr(0, 0)
+  ],
+  death: [
+    fr(1, 0),
+    fr(2, 100),
+    fr(3, 100),
+    fr(4, 100),
+    fr(5, 100),
+    fr(6, 75),
+  ],
+}
+
 interface Props {
   model: MobModel & IOwned & IEntity;
   system: ISystemManager;
@@ -33,24 +47,13 @@ interface Props {
 
 export function Enemy(props: Props) {
   const [hidden, setHidden] = React.useState(() => false)
-  const [dead, setDead] = React.useState(() => false)
+  const [dead, setDead]     = React.useState(() => false)
+
   const {currentFrame, setCurrentAnimation} = withAnimationState({
-    animations: {
-      normal: [
-        fr(0, 0)
-      ],
-      death: [
-        fr(1, 0),
-        fr(2, 100),
-        fr(3, 100),
-        fr(4, 100),
-        fr(5, 100),
-        fr(6, 75),
-      ],
-    },
+    animations: enemyAnimations,
     currentAnimation: 'normal',
-    frames: enemyFrames,
-    onFinished: () => setHidden(true)
+    frames:           enemyFrames,
+    onFinished:       () => setHidden(true)
   });
 
   if (!hidden && !dead && props.model.isDead) {

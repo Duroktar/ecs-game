@@ -1,21 +1,15 @@
+import { IGameState } from '../../game/types';
 import * as React from 'react';
 import {useEffect, useState} from 'react';
 
 import { Gui } from '../Layouts/Gui';
-import { classNames } from '../Development/Dev';
-import { IGameState } from '../../game/types';
-import { Keyboard } from '../../extern/Keyboard';
-import { ISystemManager } from '../../lib/types';
-import { ON_START_GAME } from '../../events';
 import GameOver from '../Backgrounds/GameOver';
+
+import { classNames } from '../Development/Dev';
 import { withEnterKeyEffect } from '../hooks/withEnterKeyEffect';
 
-interface ScreenProps {
-  id:       string | number;
-  system:   ISystemManager;
-}
 
-function Screen(props: ScreenProps) {
+export function Outro(props: IGameState) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -27,19 +21,6 @@ function Screen(props: ScreenProps) {
   })
 
   return (
-    <div className="screen menu">
-      <div id="press-enter" className="center-content">
-        <p className={classNames(!ready && 'hidden', 'fade-in')}>Press Enter to Play Again</p>
-      </div>
-    </div>
-  )
-}
-
-interface Props extends IGameState {
-}
-
-export function Outro(props: Props) {
-  return (
     <Gui
       id="gui"
       className="gameover"
@@ -48,7 +29,13 @@ export function Outro(props: Props) {
       lives={0}
       background={<GameOver />}
     >
-      <Screen id={0} system={props.system} />
+      <div className="screen menu">
+        <div id="press-enter" className="center-content">
+          <p className={classNames(!ready && 'hidden', 'fade-in')}>
+            Press Enter to Play Again
+          </p>
+        </div>
+      </div>
     </Gui>
   )
 }
