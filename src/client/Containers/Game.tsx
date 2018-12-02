@@ -20,7 +20,7 @@ import { getNextLevel } from '../Levels/Directory';
 
 
 interface Props extends IGameState {
-  restart:  () => void;
+  onRestart:  () => void;
 }
 
 interface State {
@@ -179,7 +179,7 @@ export class Game extends React.Component<Props, State> {
         score={score}
         credits={credits}
         lives={lives}
-        onRestart={this.props.restart}
+        onRestart={this.props.onRestart}
         background={<StarField />}
       >
         <Loader

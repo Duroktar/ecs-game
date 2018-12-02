@@ -137,7 +137,7 @@ class App extends React.Component<{}, State> {
           <Route path="/game" render={(props) =>
             <Game
               system={system}
-              restart={this.restart}
+              onRestart={this.restart}
               {...this.state}
               {...props}
             />
