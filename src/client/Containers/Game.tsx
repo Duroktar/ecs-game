@@ -1,5 +1,5 @@
 import { IVector, IEntity, IComponent } from '../../lib/types';
-import { IGameState, IPointsLoot } from '../../game/types';
+import { IGameState, IPointsLoot, ICurrentGameState } from '../../game/types';
 import { ILevel } from '../Levels/types';
 import * as React from 'react';
 
@@ -23,18 +23,7 @@ interface Props extends IGameState {
   onRestart:  () => void;
 }
 
-interface State {
-  shots:          number;
-  hits:           number;
-  score:          number;
-  credits:        number;
-  lives:          number;
-  complete:       boolean;
-  completed:      (string | number)[];
-  currentLevel:   ILevel;
-}
-
-export class Game extends React.Component<Props, State> {
+export class Game extends React.Component<Props, ICurrentGameState> {
   state = {
     score:              0,
     credits:            1,
