@@ -7,6 +7,7 @@ import GameOver from '../Backgrounds/GameOver';
 
 import { classNames } from '../Development/Dev';
 import { withEnterKeyEffect } from '../hooks/withEnterKeyEffect';
+import { Songs } from '../../game/catalogue';
 
 interface FinalScore {
   score:    number;
@@ -27,6 +28,13 @@ export function Outro(props: IGameState) {
   function handleRestartGame() {
     window.location.assign('/menu');
   }
+
+  useEffect(() => {
+    props.system.audio.playSong(Songs.END);
+    return () => {
+      props.system.audio.stopSong(Songs.END);
+    }
+  }, []);
 
   useEffect(() => {
     const serialized = getQueryParams(window.location.search);

@@ -11,6 +11,7 @@ const configDefaults = {
 class AudioManager implements IAudioManager {
   public config:            IBasicConfig;
   public sounds:            IAudioCollection;
+  public songs:             IAudioCollection;
 
   private soundFactory:     HowlStatic;
   private audioEngine:      HowlerGlobal;
@@ -18,6 +19,7 @@ class AudioManager implements IAudioManager {
   constructor(config: IBasicConfig) {
     this.config       = { ...configDefaults, ...config };
     this.sounds       = {};
+    this.songs        = {};
 
     this.soundFactory = Howl;
     this.audioEngine  = Howler;
@@ -30,8 +32,22 @@ class AudioManager implements IAudioManager {
   }
 
   public unRegisterSound(name: string) {
+    this.sounds[name].stop();
     this.sounds[name].unload();
     delete this.sounds[name];
+  }
+
+  public registerSong(name: string, options: IHowlProperties) {
+    this.songs[name] = new this.soundFactory({
+      loop: true,
+      ...options
+    });
+  }
+
+  public unRegisterSong(name: string) {
+    this.songs[name].stop();
+    this.songs[name].unload();
+    delete this.songs[name];
   }
 
   public playSound(name: string, sprite?: string | number) {
@@ -39,6 +55,30 @@ class AudioManager implements IAudioManager {
       this.sounds[name].play(sprite);
     } catch (e) {
       throw new Error(`[AudioManager:ERROR]: Sound: "${name}" not found..`)
+    }
+  }
+
+  public stopSound(name: string, id?: number) {
+    try {
+      this.sounds[name].stop(id)
+    } catch (e) {
+      throw new Error(`[AudioManager:ERROR]: Sound: "${name}" not found..`)
+    }
+  }
+
+  public playSong(name: string, sprite?: string | number) {
+    try {
+      this.songs[name].play(sprite);
+    } catch (e) {
+      throw new Error(`[AudioManager:ERROR]: Song: "${name}" not found..`)
+    }
+  }
+
+  public stopSong(name: string, id?: number) {
+    try {
+      this.songs[name].stop(id);
+    } catch (e) {
+      throw new Error(`[AudioManager:ERROR]: Song: "${name}" not found..`)
     }
   }
 

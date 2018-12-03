@@ -19,6 +19,8 @@ import { createBullet } from './game/factories/bullet';
 import { system } from './game';
 
 import { ON_START_GAME } from './events';
+import { keys } from './engine/utils';
+import { SfxLibrary, Songs, SongLibrary } from './game/catalogue';
 
 interface State {
   epoch:    number;
@@ -34,24 +36,32 @@ class App extends React.Component<{}, State> {
   private bullet1 = createBullet(system, 'Bullet of Destiny');
   private bullet2 = createBullet(system, 'Bullet of Greater Truth');
 
+  constructor(props: {}) {
+    super(props);
+
+    this.gameAudioInitialize();
+
+    system.events.registerEvent(ON_START_GAME, this.startNewGame)
+
+  }
+
   state = {
     epoch:   system.epoch,
     player:  system.getEntityModel<CharacterModel>(this.player),
     bullet1: system.getEntityModel<ProjectileModel>(this.bullet1),
     bullet2: system.getEntityModel<ProjectileModel>(this.bullet2),
   }
+  
 
   componentDidMount() {
-    system.events.registerEvent(ON_START_GAME, this.startNewGame)
-
     this.moUntWOrld();
 
     this.start();
-
-    system.audio.changeVolume(1.0);
   }
 
   componentWillUnmount() {
+    this.gameAudioCleanup();
+
     system.events.unRegisterEvent(ON_START_GAME, this.startNewGame)
 
     this.stop();
@@ -59,11 +69,30 @@ class App extends React.Component<{}, State> {
     delete this.handler;
   }
 
+  gameAudioInitialize = () => {
+
+    keys(SongLibrary).forEach((key: string | number) => {
+      system.audio.registerSong(`${key}`, { ...SongLibrary[key], volume: 0.6 })
+    });
+
+    keys(SfxLibrary).forEach((key: string | number) => {
+      system.audio.registerSound(`${key}`, { ...SfxLibrary[key], volume: 0.3 })
+    });
+  }
+
+  gameAudioCleanup = () => {
+
+    keys(SongLibrary).forEach((key: string | number) => {
+      system.audio.unRegisterSong(`${key}`)
+    });
+    
+    keys(SfxLibrary).forEach((key: string | number) => {
+      system.audio.unRegisterSound(`${key}`)
+    });
+  }
+
   moUntWOrld = () => {
-    this.setState(state => ({
-      ...state,
-      epoch: system.epoch,
-    }));
+    this.setState({ epoch: system.epoch });
   }
 
   tick = () => {
@@ -154,14 +183,14 @@ class App extends React.Component<{}, State> {
             />
           } />
 
-          <DevScreen
+          {null && <DevScreen
             system={system}
             onStart={this.start}
             onStop={this.stop}
             onTick={this.tick}
             onSave={this.save}
             onLoad={this.load}
-          />
+          />}
         </div>
       </Router>
     );

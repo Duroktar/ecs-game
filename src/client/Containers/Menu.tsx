@@ -5,9 +5,11 @@ import {useEffect, useState} from 'react';
 import { Gui } from '../Layouts/Gui';
 import StarFieldLogo from '../Backgrounds/NewGame';
 
-import { classNames } from '../Development/Dev';
 import { withEnterKeyEffect } from '../hooks/withEnterKeyEffect';
 import { ON_START_GAME } from '../../events';
+
+import { classNames } from '../Development/Dev';
+import { Songs, Sfx } from '../../game/catalogue';
 
 
 export function Menu(props: IGameState) {
@@ -21,8 +23,21 @@ export function Menu(props: IGameState) {
     setTimeout(() => setReady(true), 3000);
   });
 
-  withEnterKeyEffect(() =>
-    handleStartGame()
+  useEffect(() => {
+    props.system.audio.playSong(Songs.MENU);
+  }, []);
+
+  withEnterKeyEffect(() => {
+    props.system.audio.stopSong(Songs.MENU);
+
+    setTimeout(() => {
+      props.system.audio.playSound(Sfx.LEVEL_WIN);
+    }, 750);
+
+    setTimeout(() => {
+      handleStartGame();
+    }, 2000);
+  }
   );
 
   return (

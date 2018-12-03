@@ -17,6 +17,7 @@ import { first, mkEntity } from '../../engine/utils';
 
 import { ON_LEVEL_COMPLETE, ON_ENEMY_DEATH, ON_COLLISION, ON_GAME_OVER, ON_PLAYER_ATTACK } from '../../events';
 import { getNextLevel } from '../Levels/Directory';
+import { Sfx, Songs } from '../../game/catalogue';
 
 
 interface Props extends IGameState {
@@ -36,6 +37,7 @@ export class Game extends React.Component<Props, ICurrentGameState> {
   }
 
   componentDidMount() {
+    this.props.system.audio.playSong(Songs.GAME);
     this.props.system.events.registerEvent(ON_COLLISION,      this.handleBulletCollisions)
     this.props.system.events.registerEvent(ON_ENEMY_DEATH,    this.handleEnemyDeath)
     this.props.system.events.registerEvent(ON_LEVEL_COMPLETE, this.handleLevelComplete)
@@ -49,6 +51,7 @@ export class Game extends React.Component<Props, ICurrentGameState> {
   }
 
   componentWillUnmount() {
+    this.props.system.audio.stopSong(Songs.GAME);
     this.props.system.events.unRegisterEvent(ON_COLLISION,      this.handleBulletCollisions)
     this.props.system.events.unRegisterEvent(ON_ENEMY_DEATH,    this.handleEnemyDeath)
     this.props.system.events.unRegisterEvent(ON_LEVEL_COMPLETE, this.handleLevelComplete)
@@ -136,13 +139,32 @@ export class Game extends React.Component<Props, ICurrentGameState> {
   }
 
   handleLevelComplete = (level: string | number): void => {
-    this.setState(state => ({
-      complete: true,
-      completed: state.completed.concat(level),
-    }));
+    this.props.system.audio.stopSong(Songs.GAME);
+    
+    setTimeout(() => {
+      this.props.system.audio.playSound(Sfx.LEVEL_WIN);
+    }, 750);
+    
+    setTimeout(() => {
+      this.props.system.audio.playSong(Songs.SUMMARY);
+
+      this.setState(state => ({
+        complete: true,
+        completed: state.completed.concat(level),
+      }));
+    }, 1500);
   }
 
   handleGameOver = (): void => {
+
+    setTimeout(() => {
+      this.props.system.audio.playSound(Sfx.LEVEL_WIN);
+    }, 1500);
+
+    setTimeout(() => {
+      this.props.system.audio.playSound(Sfx.GAMEOVER);
+    }, 2250);
+
     setTimeout(() => {
       window.location.assign(`/end?final=${JSON.stringify({
         score:    this.state.score,
@@ -151,19 +173,32 @@ export class Game extends React.Component<Props, ICurrentGameState> {
         lives:    this.state.lives,
         credits:  this.state.credits,
       })}`);
-    }, 10);
+    }, 3000);
   }
 
   startNewGame = (): void => {
+    this.props.system.audio.playSound(Sfx.NEW_GAME);
+
     setTimeout(() => this.setState({ currentLevel: 'level1' }), 5);
   }
 
   onNextLevel = (): void => {
-    const currentLevel = this.state.currentLevel;
-    const nextLevel = getNextLevel(currentLevel);
+    this.props.system.audio.stopSong(Songs.SUMMARY);
+    
     setTimeout(() => {
+      this.props.system.audio.playSound(Sfx.NEXT_LEVEL);
+    }, 350);
+
+    setTimeout(() => {
+      const currentLevel = this.state.currentLevel;
+      const nextLevel = getNextLevel(currentLevel);
+
       this.setState({ currentLevel: nextLevel as ILevel, complete: false })
-    }, 5);
+    }, 1000);
+
+    setTimeout(() => {
+      this.props.system.audio.playSong(Songs.GAME);
+    }, 2000);
   }
 
   render() {

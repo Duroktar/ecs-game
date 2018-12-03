@@ -27,6 +27,7 @@ export const withSoundEffects = <T>(options: WithSoundEffectsOptions<T>) => {
 
       options.system.audio.registerSound(collectionKey, {
         src: [options.sounds[key]],
+        volume: 0.2,
       })
     })
 
