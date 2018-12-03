@@ -14,7 +14,10 @@ class EventManager implements IEventManager {
  
   constructor(config: IBasicConfig) {
     this.config      = { ...configDefaults, ...config };
-    this.emitter     = new EventEmitter2();
+    this.emitter     = new EventEmitter2({
+      delimiter:  ':',
+      wildcard:   true,
+    });
   }
 
   public init = (config?: IBasicConfig) => null;

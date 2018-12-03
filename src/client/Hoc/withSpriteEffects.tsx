@@ -6,30 +6,43 @@ import { CharacterModel } from '../../game/Domain/character';
 import { MobModel } from '../../game/Domain/mob';
 
 import { withAnimationState, WithAnimationOptions } from '../hooks/withAnimationState';
+import { withSoundEffects } from '../hooks/withSoundEffects';
+import { IAudioCollectionInitializer } from '../../engine/types';
 
 
-interface WithSpriteAnimationsOptions extends WithAnimationOptions {
+interface WithSpriteEffectsOptions extends WithAnimationOptions {
   elementId:          string;
+  sounds:             IAudioCollectionInitializer;
 }
 
 type HOCModelType = MobModel | CharacterModel;
 
+type ISpriteState = 'normal' | 'death';
 
-export function withSpriteAnimations<T extends HOCModelType>(
-  options: Omit<WithSpriteAnimationsOptions, 'onFinished'>
+export function withSpriteEffects<T extends HOCModelType>(
+  options: Omit<WithSpriteEffectsOptions, 'onFinished'>
 ): React.ComponentType<IModelType<T>> {
-  return function WithAnimationsHOC(props: IModelType<T>) {
+  return function WithSpriteEffectsHOC(props: IModelType<T>) {
     const [hidden, setHidden] = React.useState(() => false)
     const [dead, setDead]     = React.useState(() => false)
-  
-    const {currentFrame, setCurrentAnimation} = withAnimationState({
+
+    const {currentFrame, setCurrentState} = withAnimationState({
       animations:             options.animations,
-      currentAnimation:       options.currentAnimation || 'normal',
-      onFinished:             () => setHidden(true)
+      currentState:           options.currentState,
+
+      onFinished:             (state: ISpriteState) =>
+        { if (state === 'death') setHidden(true); }
     });
-  
+
+    withSoundEffects<T>({
+      entity:         props.model,
+      system:         props.system,
+      sounds:         options.sounds,
+    });
+
     if (!hidden && !dead && props.model.isDead) {
-      setCurrentAnimation('death');
+      setCurrentState('death');
+
       setDead(true);
     }
   

@@ -1,9 +1,9 @@
-import { ISystemManager, IEntity } from '../../lib/types';
+import { ISystemManager, IEntity } from '../../engine/types';
 import {useEffect, useState} from 'react';
 
 import { loadLevel } from '../utils';
 
-import { once } from '../../lib/utils';
+import { once } from '../../engine/utils';
 import { ON_ENEMY_DEATH, ON_LEVEL_COMPLETE } from '../../events';
 import { ILoadedEnemy } from '../Levels/types';
 

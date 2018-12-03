@@ -47,6 +47,8 @@ class App extends React.Component<{}, State> {
     this.moUntWOrld();
 
     this.start();
+
+    system.audio.changeVolume(1.0);
   }
 
   componentWillUnmount() {

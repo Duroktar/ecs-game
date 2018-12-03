@@ -1,15 +1,15 @@
-import { IEntity, ISystemManager } from "../../lib/types";
-import { nameableFactory,               WithName } from "../../lib/components/nameable";
-import { killableFactory,               WithHealthState } from "../../lib/components/killable";
-import { withGeometryFactory,           WithGeometry } from "../../lib/components/withGeometry";
-import { withRandomWalkFactory,         WithRandomWalkArgs } from "../../lib/components/withRandomWalk";
-import { isCollidableFactory,           IsCollidable } from "../../lib/components/isCollidable";
-import { lootableFactory,               IsLootable } from "../../lib/components/lootable";
-import { withWarpAroundPositionFactory, WithPosition } from "../../lib/components/withWrapAroundPosition";
+import { IEntity, ISystemManager } from "../../engine/types";
+import { nameableFactory,               WithName } from "../../engine/components/nameable";
+import { killableFactory,               WithHealthState } from "../../engine/components/killable";
+import { withGeometryFactory,           WithGeometry } from "../../engine/components/withGeometry";
+import { withRandomWalkFactory,         WithRandomWalkArgs } from "../../engine/components/withRandomWalk";
+import { isCollidableFactory,           IsCollidable } from "../../engine/components/isCollidable";
+import { lootableFactory,               IsLootable } from "../../engine/components/lootable";
+import { withWarpAroundPositionFactory, WithPosition } from "../../engine/components/withWrapAroundPosition";
 import { IPointsLoot } from "../types";
-import { withBoundaryFactory, WithBoundary } from "../../lib/components/withBoundary";
-import { WithPositionState } from "../../lib/components/withPosition";
-import { withTextureFactory, WithTexture } from "../../lib/components/withTexture";
+import { withBoundaryFactory, WithBoundary } from "../../engine/components/withBoundary";
+import { WithPositionState } from "../../engine/components/withPosition";
+import { withTextureFactory, WithTexture } from "../../engine/components/withTexture";
 
 
 export function createMob(

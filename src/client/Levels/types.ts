@@ -1,4 +1,4 @@
-import { ISystemManager, IEntity } from "../../lib/types";
+import { ISystemManager, IEntity } from "../../engine/types";
 import { IGameState } from "../../game/types";
 import { Levels } from "./Directory";
 import { WithTextureProps } from "../Hoc/withTexture";

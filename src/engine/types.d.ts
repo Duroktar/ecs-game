@@ -1,5 +1,6 @@
 import { Keyboard } from "../extern/Keyboard";
 import { KeysEnum } from "./utils";
+import AudioManager from "./services/AudioManager";
 
 export interface IEntity {
   id: EntityIdType;
@@ -67,6 +68,7 @@ export interface ISystemManager {
   input:      IInputManager;
   storage:    IStorageManager;
   events:     IEventManager;
+  audio:      IAudioManager;
 
   init: (config?: IObjectConfig) => void;
 
@@ -103,6 +105,26 @@ export interface IEventManager extends IComponentEvents {
   onUpdate: (component: IComponent, entity: IEntity) => void;
 
   onChange: (eventName: string, component: IComponent, entity: IEntity) => void;
+}
+
+export interface IAudioManager {
+  config:                   IBasicConfig;
+  sounds:                   { [key: string]: Howl };
+  registerSound:            (name: string, options: IHowlProperties) => void;
+  unRegisterSound:          (name: string) => void;
+  playSound:                (name: string, sprite?: string | number) => void;
+  registerListener:         (name: string, event: string, callback: (soundId: number) => void) => void;
+  registerOnceListener:     (name: string, event: string, callback: (soundId: number) => void) => void;
+  unRegisterListener:       (name: string, event: string, callback: (soundId: number) => void) => void;
+  changeVolume:             (volume: number) => void;
+}
+
+export interface IAudioCollection {
+  [key: string]: Howl;
+}
+
+export interface IAudioCollectionInitializer {
+  [key: string]: string;
 }
 
 export type AnonymousCB = (...args: any) => void;

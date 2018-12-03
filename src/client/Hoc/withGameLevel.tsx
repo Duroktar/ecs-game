@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { ISystemManager } from '../../lib/types';
+import { ISystemManager } from '../../engine/types';
 import { LevelProps, ILoadedEnemy } from '../Levels/types';
 import { Level } from '../Levels/Base';
 import { ConnectedPlayer } from '../Containers/Player/Player';
 import { Bullet } from '../Containers/Weapons/Bullet';
-import { once } from '../../lib/utils';
+import { once } from '../../engine/utils';
 import { ON_ENEMY_DEATH, ON_LEVEL_COMPLETE } from '../../events';
 
 interface WithGameLevelOptions {

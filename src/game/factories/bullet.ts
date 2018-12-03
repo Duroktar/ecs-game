@@ -1,4 +1,4 @@
-import { ISystemManager } from "../../lib/types";
+import { ISystemManager } from "../../engine/types";
 import { createProjectile } from "../Domain/projectile";
 
 export function createBullet(

@@ -1,4 +1,4 @@
-import { ISystemManager, IFactoryComponent } from '../../lib/types';
+import { ISystemManager, IFactoryComponent } from '../../engine/types';
 import * as React from 'react';
 import './styles/Dev.style.css';
 
@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Draggable from 'react-draggable';
 
-import { pp } from '../../lib/utils';
+import { pp } from '../../engine/utils';
 import { withBlur } from '../utils';
 import { withEntity } from '../Hoc/withEntity';
 import { FPS } from './FPS';

@@ -1,4 +1,4 @@
-import { ISystemManager, IEntity } from "../lib/types";
+import { ISystemManager } from "../engine/types";
 import { MouseEvent } from "react";
 import { createEnemy } from "../game/factories/enemy";
 import { withTexture } from "./Hoc/withTexture";
@@ -32,6 +32,7 @@ export function loadLevel(system: ISystemManager, enemyPositions: number[][]): I
 
       x++;
     }
+
     x = 0;
     y++;
   }

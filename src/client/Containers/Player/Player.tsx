@@ -1,33 +1,34 @@
 import { CharacterModel } from '../../../game/Domain/character';
 
 import { withEntity } from '../../Hoc/withEntity';
-import { withSpriteAnimations } from '../../Hoc/withSpriteAnimations';
+import { withSpriteEffects } from '../../Hoc/withSpriteEffects';
 import { fr } from '../../hooks/withAnimationState';
 
-import ShipSprite from '../../../assets/player/ship.png';
+import ShootSound from '../../../audio/Weapons/Cannon/sfx_wpn_cannon1.wav';
+import DeathSound from '../../../audio/Explosions/Long/sfx_exp_long1.wav';
 
-import Explosion1 from '../../../assets/player/explosion-1/explosion-1-01.png';
-import Explosion2 from '../../../assets/player/explosion-1/explosion-1-02.png';
-import Explosion3 from '../../../assets/player/explosion-1/explosion-1-03.png';
-import Explosion4 from '../../../assets/player/explosion-1/explosion-1-04.png';
-import Explosion5 from '../../../assets/player/explosion-1/explosion-1-05.png';
-
-
-export const AnimatedPlayer = withSpriteAnimations<CharacterModel>({
+export const AnimatedPlayer = withSpriteEffects<CharacterModel>({
   elementId: 'player',
+
+  currentState: 'normal',
+
   animations: {
     normal: [
-      fr(ShipSprite, 0)
+      fr(require('../../../assets/player/ship.png'), 0)
     ],
     death: [
-      fr(Explosion1, 0),
-      fr(Explosion2, 100),
-      fr(Explosion3, 100),
-      fr(Explosion4, 100),
-      fr(Explosion5, 75),
+      fr(require('../../../assets/player/explosion-1/explosion-1-01.png'), 0),
+      fr(require('../../../assets/player/explosion-1/explosion-1-02.png'), 100),
+      fr(require('../../../assets/player/explosion-1/explosion-1-03.png'), 100),
+      fr(require('../../../assets/player/explosion-1/explosion-1-04.png'), 100),
+      fr(require('../../../assets/player/explosion-1/explosion-1-05.png'), 75),
     ],
   },
-  currentAnimation: 'normal',
+
+  sounds: {
+    shoot: ShootSound,
+    death: DeathSound,
+  },
 });
 
 export const ConnectedPlayer = withEntity<CharacterModel>(AnimatedPlayer)

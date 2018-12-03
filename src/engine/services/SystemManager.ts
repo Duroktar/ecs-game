@@ -1,4 +1,4 @@
-import { IComponent, ISystem, ISystemManager, EntityIdType, IConfigDefaults, IEntity, IdGeneratorFunc, WithId, IEntityComponents, ISerializableState, IInputManager, IStorageManager, IObjectConfig, IComponentFactory, IComponentFactories, IComponentFactoryKey, IEventManager } from "../types";
+import { IComponent, ISystem, ISystemManager, EntityIdType, IConfigDefaults, IEntity, WithId, IEntityComponents, ISerializableState, IInputManager, IStorageManager, IObjectConfig, IComponentFactory, IComponentFactories, IComponentFactoryKey, IEventManager, IAudioManager } from "../types";
 import InputManager from "./InputManager";
 import StorageManager from "./StorageManager";
 import { defaultComponentFactories } from "../components";
@@ -6,6 +6,7 @@ import { values, partialSetValue } from "../utils";
 import ComponentManager from "./ComponentManager";
 import EntityManager from "./EntityManager";
 import EventManager from "./EventManager";
+import AudioManager from "./AudioManager";
 
 const configDefaults: IConfigDefaults = {
   debug: false,
@@ -18,25 +19,27 @@ class SystemManager implements ISystemManager {
   public input:                 IInputManager;
   public storage:               IStorageManager;
   public events:                IEventManager;
+  public audio:                 IAudioManager;
   public epoch:                 number;
+
   private entityComponents:     IEntityComponents;
   private componentFactories:   IComponentFactories;
   private entityManager:        EntityManager;
   private componentManager:     ComponentManager;
 
-  private entityComponentCache:       { [key: string]: number[] } = {};
-  private entityComponentSetter:      (path: (string | number)[], value: any) => void;
+  private entityComponentCache:   { [key: string]: number[] } = {};
+  private entityComponentSetter:  (path: (string | number)[], value: any) => void;
 
   constructor(
     config:              IObjectConfig,
     input?:              IInputManager,
-    storage?:            IStorageManager,
     epochs?:             number,
   ) {
     this.config               = { ...configDefaults, ...config };
     this.input                = input ? input : new InputManager();
-    this.storage              = storage ? storage : new StorageManager(this);
+    this.storage              = new StorageManager(this);
     this.events               = new EventManager(config);
+    this.audio                = new AudioManager(config);
     this.epoch                = epochs ? epochs : 0;
     
     this.componentFactories   = defaultComponentFactories;
@@ -69,10 +72,6 @@ class SystemManager implements ISystemManager {
     )
 
     return registered;
-  };
-
-  public getEntityModel = <T>(entity: IEntity): WithId<T> => {
-    return groupEntityComponents<T>(entity, this.system.components);
   };
 
   public getComponent = <T>(component: IComponent): IComponent<T> => {
@@ -116,6 +115,9 @@ class SystemManager implements ISystemManager {
   public getEntityComponent = <T>(entity: IEntity, componentName: string): IComponent<T> => {
     return this.getComponentById<T>(this.entityComponents[entity.id][componentName]);
   }
+  public getEntityModel = <T>(entity: IEntity): WithId<T> => {
+    return groupEntityComponents<T>(entity, this.system.components);
+  };
   public getEntitiesByComponentTypes = (componentNames: IComponentFactoryKey[]): EntityIdType[] => {
     const cacheKey = componentNames.join('-');
 
@@ -143,9 +145,22 @@ class SystemManager implements ISystemManager {
     return entities;
   }
 
-  public getState = (): ISystem => {
+  public step = () => {
+    this.input.update();
+    this.updateSystemEntities();
+    this.entityComponentCache = {};
+    this.epoch++;
     return this.system;
   };
+  private updateSystemEntities = (): void => {
+    this.system.entities.forEach(this.updateComponentsForEntity)
+  }
+  private updateComponentsForEntity = (entity: IEntity): void => {
+    this.getComponentIdsForEntity(entity)
+      .map(this.componentManager.get)
+      .forEach(this.updateComponent);
+  }
+  private updateComponent = (o: IComponent) => o.update(this, o);
 
   public getSerializableState = (): ISerializableState => {
     const { system, config, epoch, entityComponents } = this;
@@ -156,7 +171,6 @@ class SystemManager implements ISystemManager {
       entityComponents,
     };
   };
-
   public loadHydratedState = (state: ISerializableState) => {
     this.system = state.system;
     this.config = state.config;
@@ -164,25 +178,9 @@ class SystemManager implements ISystemManager {
     this.entityComponents = state.entityComponents;
   };
 
-  public step = () => {
-    this.input.update();
-    this.updateSystemEntities();
-    this.entityComponentCache = {};
-    this.epoch++;
+  public getState = (): ISystem => {
     return this.system;
   };
-
-  private updateSystemEntities = (): void => {
-    this.system.entities.forEach(this.updateComponentsForEntity)
-  }
-
-  private updateComponentsForEntity = (entity: IEntity): void => {
-    this.getComponentIdsForEntity(entity)
-      .map(this.componentManager.get)
-      .forEach(this.updateComponent);
-  }
-
-  private updateComponent = (o: IComponent) => o.update(this, o);
 
   public toString = () => {
     return JSON.stringify({

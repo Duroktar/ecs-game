@@ -1,4 +1,4 @@
-import { IVector, IEntity, IComponent } from '../../lib/types';
+import { IVector, IEntity, IComponent } from '../../engine/types';
 import { IGameState, IPointsLoot, ICurrentGameState } from '../../game/types';
 import { ILevel } from '../Levels/types';
 import * as React from 'react';
@@ -7,15 +7,15 @@ import StarField from '../Backgrounds/StarField';
 import { Gui } from '../Layouts/Gui';
 
 import { ProjectileModel } from '../../game/Domain/projectile';
-import { WithHealthState } from '../../lib/components/killable';
-import { IsLootable } from '../../lib/components/lootable';
+import { WithHealthState } from '../../engine/components/killable';
+import { IsLootable } from '../../engine/components/lootable';
 
 import { Loader, humanizedLevelNames } from '../Levels';
 import { LevelSummary } from '../Components/LevelSummary';
 
-import { first, mkEntity } from '../../lib/utils';
+import { first, mkEntity } from '../../engine/utils';
 
-import { ON_LEVEL_COMPLETE, ON_ENEMY_DEATH, ON_COLLISION, ON_GAME_OVER } from '../../events';
+import { ON_LEVEL_COMPLETE, ON_ENEMY_DEATH, ON_COLLISION, ON_GAME_OVER, ON_PLAYER_ATTACK } from '../../events';
 import { getNextLevel } from '../Levels/Directory';
 
 
@@ -55,7 +55,7 @@ export class Game extends React.Component<Props, ICurrentGameState> {
     this.props.system.events.unRegisterEvent(ON_GAME_OVER,      this.handleGameOver)
   }
 
-  handleBulletCollisions = (): void => {
+  handleBulletCollisions = (): void => { // !!! Move to system component
     const { bullet1, bullet2 } = this.props;
     if (bullet1.collisions.length || bullet2.collisions.length) {
 
@@ -93,6 +93,8 @@ export class Game extends React.Component<Props, ICurrentGameState> {
       ...state,
       shots: state.shots + 1,
     }));
+
+    this.props.system.events.emit(ON_PLAYER_ATTACK, this.props.player)
   }
 
   killEntity = (entity: IEntity) => {
@@ -182,6 +184,7 @@ export class Game extends React.Component<Props, ICurrentGameState> {
           state={this.props}
           system={this.props.system}
         />
+
         {this.state.complete ? (
           <div className="center-content absolute-fit">
             <LevelSummary

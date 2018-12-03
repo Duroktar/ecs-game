@@ -1,5 +1,5 @@
 
-import { IEntity, WithComponentMeta, ISystemManager } from "../../lib/types";
+import { IEntity, WithComponentMeta, ISystemManager } from "../../engine/types";
 import * as React from 'react';
 
 import { MobModel } from "../../game/Domain/mob";

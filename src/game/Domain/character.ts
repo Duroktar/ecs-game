@@ -1,13 +1,13 @@
-import { IEntity, ISystemManager } from "../../lib/types";
-import { nameableFactory,           WithName } from "../../lib/components/nameable";
-import { killableFactory,           WithHealth, WithHealthState } from "../../lib/components/killable";
-import { withPositionFactory,       WithPosition, WithPositionState } from "../../lib/components/withPosition";
-import { combatableFactory,         WithAttack } from "../../lib/components/combatable";
-import { withGeometryFactory,       WithGeometry } from "../../lib/components/withGeometry";
-import { isCollidableFactory,       IsCollidable } from "../../lib/components/isCollidable";
-import { withBoundaryFactory,       WithBoundary } from "../../lib/components/withBoundary";
-import { withPlayerControlsFactory, WithPlayerControls } from "../../lib/components/withPlayerControls";
-import { withTextureFactory, WithTexture } from "../../lib/components/withTexture";
+import { IEntity, ISystemManager } from "../../engine/types";
+import { nameableFactory,           WithName } from "../../engine/components/nameable";
+import { killableFactory,           WithHealth, WithHealthState } from "../../engine/components/killable";
+import { withPositionFactory,       WithPosition, WithPositionState } from "../../engine/components/withPosition";
+import { combatableFactory,         WithAttack } from "../../engine/components/combatable";
+import { withGeometryFactory,       WithGeometry } from "../../engine/components/withGeometry";
+import { isCollidableFactory,       IsCollidable } from "../../engine/components/isCollidable";
+import { withBoundaryFactory,       WithBoundary } from "../../engine/components/withBoundary";
+import { withPlayerControlsFactory, WithPlayerControls } from "../../engine/components/withPlayerControls";
+import { withTextureFactory, WithTexture } from "../../engine/components/withTexture";
 
 export function createCharacter(
   system:   ISystemManager,

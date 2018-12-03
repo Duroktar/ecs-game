@@ -1,6 +1,6 @@
-import { ISystemManager, IVector, IDimensions } from "../../lib/types";
+import { ISystemManager, IVector, IDimensions } from "../../engine/types";
 import { createMob } from "../Domain/mob";
-import { defaultBoundary } from "../../lib/utils";
+import { defaultBoundary } from "../../engine/utils";
 import { SpriteTextureIds } from "../catalogue";
 
 export function createEnemy(
@@ -39,7 +39,6 @@ export function createEnemy(
     },
 
     boundary: defaultBoundary,
-
   });
 
   return entity;

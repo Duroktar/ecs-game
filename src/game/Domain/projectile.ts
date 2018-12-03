@@ -1,10 +1,10 @@
-import { IEntity, ISystemManager, IComponent } from "../../lib/types";
-import { withPositionFactory,     WithPosition, WithPositionState } from "../../lib/components/withPosition";
-import { withMomentumFactory,     WithMomentum } from "../../lib/components/withMomentum";
-import { withOffscreenFactory,    WithOffscreen } from "../../lib/components/withOffscreen";
-import { withGeometryFactory,     WithGeometry } from "../../lib/components/withGeometry";
-import { withCollisionsFactory,   WithCollisionArgs, WithCollisions } from "../../lib/components/withCollisions";
-import { nameableFactory,         WithName } from "../../lib/components/nameable";
+import { IEntity, ISystemManager, IComponent } from "../../engine/types";
+import { withPositionFactory,     WithPosition, WithPositionState } from "../../engine/components/withPosition";
+import { withMomentumFactory,     WithMomentum } from "../../engine/components/withMomentum";
+import { withOffscreenFactory,    WithOffscreen } from "../../engine/components/withOffscreen";
+import { withGeometryFactory,     WithGeometry } from "../../engine/components/withGeometry";
+import { withCollisionsFactory,   WithCollisionArgs, WithCollisions } from "../../engine/components/withCollisions";
+import { nameableFactory,         WithName } from "../../engine/components/nameable";
 
 
 export function createProjectile(

@@ -1,4 +1,4 @@
-import { ISystemManager, WithId } from "../lib/types";
+import { ISystemManager, WithId } from "../engine/types";
 import { CharacterModel } from "./Domain/character";
 import { ProjectileModel } from "./Domain/projectile";
 import { ILevel } from "../client/Levels/types";

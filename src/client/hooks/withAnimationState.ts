@@ -4,7 +4,7 @@ import {useState} from 'react';
 export const withAnimationState = (options: WithAnimationOptions) => {
   const [animations, setAnimations] = useState(options.animations);
   const [currentFrame, setCurrentFrame] = useState(options.currentFrame || getDefaultFrame(options));
-  const [currentAnimation, setCurrentAnimation] = useState(options.currentAnimation);
+  const [currentState, setCurrentState] = useState(options.currentState);
   const [timers, setTimers] = useState<NodeJS.Timer[]>([])
 
   function queueFrame(frame: string, when: number) {
@@ -13,26 +13,31 @@ export const withAnimationState = (options: WithAnimationOptions) => {
     timers.push(setTimeout(() => setFrame(frame), when));
   }
 
-  if (different(options.currentAnimation, currentAnimation)) {
+  if (different(options.currentState, currentState)) {
     let buffer: number = 0;
 
-    setCurrentAnimation(options.currentAnimation);
+    setCurrentState(options.currentState);
 
-    animations[currentAnimation].forEach(({ frame, duration }) => {
-      queueFrame(frame, buffer);
-      buffer += duration;
-    })
+    animations[currentState]
+      .forEach(({ frame, duration }) => {
+        queueFrame(frame, buffer);
+        buffer += duration;
+      }
+    )
     
-    const timer = setTimeout(options.onFinished, buffer);
+    const timer = setTimeout(() => {
+      options.onFinished(currentState)
+    }, buffer);
+
     setTimers(timers.concat(timer));
   }
 
-  return { currentFrame, setCurrentAnimation };
+  return { currentFrame, setCurrentState };
 }
 
 export interface WithAnimationOptions {
   animations:       IAnimations;
-  currentAnimation: keyof IAnimations;
+  currentState:     keyof IAnimations;
   onFinished:       (...args: any[]) => void;
   currentFrame?:    string;
 }
@@ -54,5 +59,5 @@ export function different<T>(a: T, b: T) {
 export const fr = (frame: string, duration: number) => ({ frame, duration });
 
 export function getDefaultFrame(options: WithAnimationOptions): string {
-  return options.animations[options.currentAnimation][0].frame;
+  return options.animations[options.currentState][0].frame;
 }

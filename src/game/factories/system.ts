@@ -1,4 +1,4 @@
-import SystemManager from "../../lib/services/SystemManager";
+import SystemManager from "../../engine/services/SystemManager";
 
 type SystemArgs = { name: string; version?: string; logging?: boolean; }
 

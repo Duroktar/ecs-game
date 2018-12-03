@@ -1,4 +1,4 @@
-import { ISystemManager } from '../../lib/types';
+import { ISystemManager } from '../../engine/types';
 import { IGameState } from '../../game/types';
 import { ILevels, ILevel } from './types';
 import * as React from 'react';

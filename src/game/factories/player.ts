@@ -1,6 +1,6 @@
 import { createCharacter } from "../Domain/character";
-import { ISystemManager } from "../../lib/types";
-import { defaultBoundary } from "../../lib/utils";
+import { ISystemManager } from "../../engine/types";
+import { defaultBoundary } from "../../engine/utils";
 import { SpriteTextureIds } from "../catalogue";
 
 export function createPlayer(

@@ -1,33 +1,30 @@
 import { MobModel } from '../../../game/Domain/mob';
 
-import { withEntity } from '../../Hoc/withEntity';
-import { withSpriteAnimations } from '../../Hoc/withSpriteAnimations';
+import { withSpriteEffects } from '../../Hoc/withSpriteEffects';
 import { fr } from '../../hooks/withAnimationState';
 
-import ShipSprite from '../../../assets/crab-bug/crab-bug-ship.png';
-
-import Explosion0 from '../../../assets/enemy/enemy-explosion-00.png';
-import Explosion1 from '../../../assets/enemy/enemy-explosion-01.png';
-import Explosion2 from '../../../assets/enemy/enemy-explosion-02.png';
-import Explosion3 from '../../../assets/enemy/enemy-explosion-03.png';
-import Explosion4 from '../../../assets/enemy/enemy-explosion-04.png';
-import Explosion5 from '../../../assets/enemy/enemy-explosion-05.png';
+import ShootSound from '../../../audio/Weapons/Lasers/sfx_wpn_laser1.wav';
+import DeathSound from '../../../audio/Explosions/Short/sfx_exp_short_hard12.wav';
 
 
-export const AnimatedCrabBug = withSpriteAnimations<MobModel>({
+export const AnimatedCrabBug = withSpriteEffects<MobModel>({
   elementId: 'enemy',
   animations: {
     normal: [
-      fr(ShipSprite, 0)
+      fr(require('../../../assets/crab-bug/crab-bug-ship.png'), 0)
     ],
     death: [
-      fr(Explosion0, 0),
-      fr(Explosion1, 100),
-      fr(Explosion2, 100),
-      fr(Explosion3, 100),
-      fr(Explosion4, 100),
-      fr(Explosion5, 75),
+      fr(require('../../../assets/enemy/enemy-explosion-00.png'), 0),
+      fr(require('../../../assets/enemy/enemy-explosion-01.png'), 100),
+      fr(require('../../../assets/enemy/enemy-explosion-02.png'), 100),
+      fr(require('../../../assets/enemy/enemy-explosion-03.png'), 100),
+      fr(require('../../../assets/enemy/enemy-explosion-04.png'), 100),
+      fr(require('../../../assets/enemy/enemy-explosion-05.png'), 75),
     ],
   },
-  currentAnimation: 'normal',
+  sounds: {
+    shoot: ShootSound,
+    death: DeathSound,
+  },
+  currentState: 'normal',
 });
