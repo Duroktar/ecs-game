@@ -13,4 +13,4 @@ export const withEnterKeyEffect = (onEnter: () => void) => useEffect(() => {
   return function cleanup() {
     document.removeEventListener('keypress', enterKeyHandler);
   }
-});
+}, []);

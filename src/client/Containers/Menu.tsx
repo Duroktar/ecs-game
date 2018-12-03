@@ -10,35 +10,35 @@ import { ON_START_GAME } from '../../events';
 
 import { classNames } from '../Development/Dev';
 import { Songs, Sfx } from '../../game/catalogue';
+import { once } from '../../engine/utils';
 
 
 export function Menu(props: IGameState) {
   const [ready, setReady] = useState(false);
 
   function handleStartGame() {
-    props.system.events.emit(ON_START_GAME);
-  }
-
-  useEffect(() => {
-    setTimeout(() => setReady(true), 3000);
-  });
-
-  useEffect(() => {
-    props.system.audio.playSong(Songs.MENU);
-  }, []);
-
-  withEnterKeyEffect(() => {
-    props.system.audio.stopSong(Songs.MENU);
-
     setTimeout(() => {
       props.system.audio.playSound(Sfx.LEVEL_WIN);
     }, 750);
 
     setTimeout(() => {
-      handleStartGame();
+      props.system.events.emit(ON_START_GAME);
     }, 2000);
   }
-  );
+
+  useEffect(() => {
+    setTimeout(() => setReady(true), 3000);
+  }, []);
+
+  useEffect(() => {
+    props.system.audio.playSong(Songs.MENU);
+
+    return () => {
+      props.system.audio.stopSong(Songs.MENU);
+    }
+  }, []);
+
+  withEnterKeyEffect(once(handleStartGame));
 
   return (
     <Gui

@@ -156,6 +156,7 @@ export class Game extends React.Component<Props, ICurrentGameState> {
   }
 
   handleGameOver = (): void => {
+    this.props.system.audio.stopSong(Songs.GAME);
 
     setTimeout(() => {
       this.props.system.audio.playSound(Sfx.LEVEL_WIN);
@@ -194,11 +195,11 @@ export class Game extends React.Component<Props, ICurrentGameState> {
       const nextLevel = getNextLevel(currentLevel);
 
       this.setState({ currentLevel: nextLevel as ILevel, complete: false })
-    }, 1000);
+    }, 1200);
 
     setTimeout(() => {
       this.props.system.audio.playSong(Songs.GAME);
-    }, 2000);
+    }, 3000);
   }
 
   render() {

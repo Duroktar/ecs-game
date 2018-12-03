@@ -8,6 +8,7 @@ import GameOver from '../Backgrounds/GameOver';
 import { classNames } from '../Development/Dev';
 import { withEnterKeyEffect } from '../hooks/withEnterKeyEffect';
 import { Songs } from '../../game/catalogue';
+import { once } from '../../engine/utils';
 
 interface FinalScore {
   score:    number;
@@ -47,12 +48,10 @@ export function Outro(props: IGameState) {
       }
     }
 
-    setTimeout(() => setReady(true), 3000)
+    setTimeout(() => setReady(true), 3000);
   });
 
-  withEnterKeyEffect(() => {
-    handleStartNewGame();
-  })
+  withEnterKeyEffect(once(handleStartNewGame));
 
   return (
     <Gui

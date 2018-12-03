@@ -5,6 +5,7 @@ import * as React from 'react';
 import { withEnterKeyEffect } from '../hooks/withEnterKeyEffect';
 
 import { humanizedLevelNames } from '../Levels';
+import { once } from '../../engine/utils';
 
 interface Props {
   currentLevel: ILevel;
@@ -13,7 +14,7 @@ interface Props {
 }
 
 export function LevelSummary(props: Props) {
-  withEnterKeyEffect(props.onNextLevel);
+  withEnterKeyEffect(once(props.onNextLevel));
   return (
     <div className="complete container with-title is-center is-dark fade-in">
       <label className="title">{`Level ${humanizedLevelNames[props.currentLevel]} Complete`}</label>
