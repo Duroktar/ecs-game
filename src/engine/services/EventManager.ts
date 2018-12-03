@@ -17,6 +17,7 @@ class EventManager implements IEventManager {
     this.emitter     = new EventEmitter2({
       delimiter:  ':',
       wildcard:   true,
+      maxListeners: 20,
     });
   }
 

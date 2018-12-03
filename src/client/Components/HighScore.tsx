@@ -8,7 +8,7 @@ export function HighScore(props: Props) {
   return (
     <div className="flex rows">
       <span>High Score</span>
-      <span>{props.value}</span>
+      <span className="center-text">{props.value}</span>
     </div>
   )
 }

@@ -18,7 +18,7 @@ import { createBullet } from './game/factories/bullet';
 
 import { system } from './game';
 
-import { ON_START_GAME } from './events';
+import { ON_START_GAME, ON_START_ENGINE, ON_STOP_ENGINE } from './events';
 import { keys } from './engine/utils';
 import { SfxLibrary, Songs, SongLibrary } from './game/catalogue';
 
@@ -41,8 +41,9 @@ class App extends React.Component<{}, State> {
 
     this.gameAudioInitialize();
 
-    system.events.registerEvent(ON_START_GAME, this.startNewGame)
-
+    system.events.registerEvent(ON_START_GAME,    this.startNewGame);
+    system.events.registerEvent(ON_START_ENGINE,  this.start);
+    system.events.registerEvent(ON_STOP_ENGINE,   this.stop);
   }
 
   state = {
@@ -62,7 +63,9 @@ class App extends React.Component<{}, State> {
   componentWillUnmount() {
     this.gameAudioCleanup();
 
-    system.events.unRegisterEvent(ON_START_GAME, this.startNewGame)
+    system.events.unRegisterEvent(ON_START_GAME,  this.startNewGame)
+    system.events.registerEvent(ON_START_ENGINE,  this.start);
+    system.events.registerEvent(ON_STOP_ENGINE,   this.stop);
 
     this.stop();
 

@@ -49,3 +49,19 @@ body {
 .p-1 {
   padding: 1em;
 }
+
+.fadeout {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 1s, opacity 1s linear;
+}
+
+.fadeout-visible {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 1s linear;
+}
+
+.center-text {
+  text-align: center;
+}

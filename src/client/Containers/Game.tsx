@@ -15,7 +15,7 @@ import { LevelSummary } from '../Components/LevelSummary';
 
 import { first, mkEntity } from '../../engine/utils';
 
-import { ON_LEVEL_COMPLETE, ON_ENEMY_DEATH, ON_COLLISION, ON_GAME_OVER, ON_PLAYER_ATTACK } from '../../events';
+import { ON_LEVEL_COMPLETE, ON_ENEMY_DEATH, ON_COLLISION, ON_GAME_OVER, ON_PLAYER_ATTACK, ON_LEVEL_LOAD, ON_LEVEL_BEGIN, ON_START_ENGINE, ON_STOP_ENGINE } from '../../events';
 import { getNextLevel } from '../Levels/Directory';
 import { Sfx, Songs } from '../../game/catalogue';
 
@@ -25,6 +25,12 @@ interface Props extends IGameState {
 }
 
 export class Game extends React.Component<Props, ICurrentGameState> {
+  constructor(props: Props) {
+    super(props);
+
+    this.registerEvents();
+  }
+
   state = {
     score:              0,
     credits:            1,
@@ -38,10 +44,6 @@ export class Game extends React.Component<Props, ICurrentGameState> {
 
   componentDidMount() {
     this.props.system.audio.playSong(Songs.GAME);
-    this.props.system.events.registerEvent(ON_COLLISION,      this.handleBulletCollisions)
-    this.props.system.events.registerEvent(ON_ENEMY_DEATH,    this.handleEnemyDeath)
-    this.props.system.events.registerEvent(ON_LEVEL_COMPLETE, this.handleLevelComplete)
-    this.props.system.events.registerEvent(ON_GAME_OVER,      this.handleGameOver)
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -52,10 +54,25 @@ export class Game extends React.Component<Props, ICurrentGameState> {
 
   componentWillUnmount() {
     this.props.system.audio.stopSong(Songs.GAME);
-    this.props.system.events.unRegisterEvent(ON_COLLISION,      this.handleBulletCollisions)
-    this.props.system.events.unRegisterEvent(ON_ENEMY_DEATH,    this.handleEnemyDeath)
-    this.props.system.events.unRegisterEvent(ON_LEVEL_COMPLETE, this.handleLevelComplete)
-    this.props.system.events.unRegisterEvent(ON_GAME_OVER,      this.handleGameOver)
+    this.unRegisterEvents();
+  }
+
+  registerEvents = () => {
+    this.props.system.events.registerEvent(ON_LEVEL_LOAD,     this.handleLevelLoading);
+    this.props.system.events.registerEvent(ON_LEVEL_BEGIN,    this.handleLevelBegin);
+    this.props.system.events.registerEvent(ON_LEVEL_COMPLETE, this.handleLevelComplete);
+    this.props.system.events.registerEvent(ON_ENEMY_DEATH,    this.handleEnemyDeath);
+    this.props.system.events.registerEvent(ON_COLLISION,      this.handleBulletCollisions);
+    this.props.system.events.registerEvent(ON_GAME_OVER,      this.handleGameOver);
+  }
+
+  unRegisterEvents = () => {
+    this.props.system.events.unRegisterEvent(ON_LEVEL_LOAD,     this.handleLevelLoading);
+    this.props.system.events.unRegisterEvent(ON_LEVEL_BEGIN,    this.handleLevelBegin);
+    this.props.system.events.unRegisterEvent(ON_LEVEL_COMPLETE, this.handleLevelComplete);
+    this.props.system.events.unRegisterEvent(ON_ENEMY_DEATH,    this.handleEnemyDeath);
+    this.props.system.events.unRegisterEvent(ON_COLLISION,      this.handleBulletCollisions);
+    this.props.system.events.unRegisterEvent(ON_GAME_OVER,      this.handleGameOver);
   }
 
   handleBulletCollisions = (): void => { // !!! Move to system component
@@ -136,6 +153,16 @@ export class Game extends React.Component<Props, ICurrentGameState> {
       score: state.score + points,
       hits: state.hits + 1,
     }));
+  }
+
+  handleLevelLoading = (): void => {
+    debugger
+    this.props.system.events.emit(ON_STOP_ENGINE)
+  }
+  
+  handleLevelBegin = (): void => {
+    debugger
+    this.props.system.events.emit(ON_START_ENGINE)
   }
 
   handleLevelComplete = (level: string | number): void => {
