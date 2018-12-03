@@ -8,7 +8,7 @@ const COMPONENT_NAMESPACE = 'position';
 
 export type WithPosition = { position: IVector; }
 
-export function withWarpAroundPositionFactory(system: ISystemManager) {
+export function withWrapAroundPositionFactory(system: ISystemManager) {
   return (entity: IEntity, state: WithPosition, events: IComponentEvents, id = -1) => {
     return system.registerComponent(
       factory<IComponent<WithPosition>>({
@@ -36,10 +36,11 @@ function handleMovementState(entity: IEntity, system: ISystemManager, component:
   component.state.position.x += direction.x * speed.x;
   component.state.position.y += direction.y * speed.y;
 
+  // wrap around if necessary
   const boundaryComponent = system.getEntityComponent<WithBoundary>(entity, 'boundary');
   const geometryComponent = system.getEntityComponent<WithGeometry>(entity, 'geometry');
   
-  if (ifStateProp(boundaryComponent) && ifStateProp(boundaryComponent)) {
+  if (ifStateProp(boundaryComponent) && ifStateProp(geometryComponent)) {
 
     const {width, height} = geometryComponent.state.geometry;
     const {boundary}      = boundaryComponent.state;

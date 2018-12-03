@@ -24,7 +24,7 @@ interface Props extends IGameState {
   onRestart:  () => void;
 }
 
-export class Game extends React.Component<Props, ICurrentGameState> {
+export class Game extends React.PureComponent<Props, ICurrentGameState> {
   constructor(props: Props) {
     super(props);
 

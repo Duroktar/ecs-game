@@ -48,8 +48,12 @@ export function Outro(props: IGameState) {
       }
     }
 
-    setTimeout(() => setReady(true), 3000);
-  });
+    const timer = setTimeout(() => setReady(true), 3000);
+
+    return () => {
+      clearTimeout(timer)
+    }
+  }, []);
 
   withEnterKeyEffect(once(handleStartNewGame));
 

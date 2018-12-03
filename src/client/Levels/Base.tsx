@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export class Level extends React.Component {
+export class Level extends React.PureComponent {
   render() {
     return (
       <div className="screen level">

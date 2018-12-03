@@ -44,8 +44,6 @@ export function withRandomWalkFactory(system: ISystemManager) {
 
           if (!component.state.disabled) {
             handleMovement(entity, component, system, events, randomWalkGeneratorX, randomWalkGeneratorY);
-  
-            handleMovingFlag(entity, component, system, events);
           }
         },
       }))
@@ -63,10 +61,9 @@ function handleMovement(entity: IEntity, component: IWithRandomWalkEntity, syste
   component.state.direction.x = clamp(-1, 1, deltaX);
 
   component.state.direction.y = clamp(-1, 1, deltaY);
-}
 
-function handleMovingFlag(entity: IEntity, component: IWithRandomWalkEntity, system: ISystemManager, events: IComponentEvents) {
   const {x, y} = component.state.direction;
+
   if (x === 0 && y === 0) {
     component.state.moving = false;
   } else {

@@ -29,7 +29,7 @@ interface State {
   bullet2:  ProjectileModel;
 }
 
-class App extends React.Component<{}, State> {
+class App extends React.PureComponent<{}, State> {
   private handler: number | undefined;
 
   private player  = createPlayer(system, 'Odin');
@@ -186,14 +186,14 @@ class App extends React.Component<{}, State> {
             />
           } />
 
-          {null && <DevScreen
+          <DevScreen
             system={system}
             onStart={this.start}
             onStop={this.stop}
             onTick={this.tick}
             onSave={this.save}
             onLoad={this.load}
-          />}
+          />
         </div>
       </Router>
     );

@@ -15,9 +15,7 @@ export function isCollidableFactory(system: ISystemManager) {
         entityId: entity.id,
         name: COMPONENT_NAMESPACE,
         state: { collidable: state.collidable || true },
-        update: (system: ISystemManager, component: ICollidableEntity) => {
-          // handleCollisions(component, system);
-        },
+        update: (system: ISystemManager, component: ICollidableEntity) => null,
       }))
   }
 }

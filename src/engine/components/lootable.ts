@@ -15,9 +15,7 @@ export function lootableFactory<T>(system: ISystemManager) {
         entityId: entity.id,
         name: COMPONENT_NAMESPACE,
         state: { loot: state.loot },
-        update: (system: ISystemManager, component: LootableEntity) => {
-          // handleCollisions(component, system);
-        },
+        update: (system: ISystemManager, component: LootableEntity) => null,
       }))
   }
 }

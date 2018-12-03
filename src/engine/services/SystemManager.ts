@@ -1,12 +1,13 @@
 import { IComponent, ISystem, ISystemManager, EntityIdType, IConfigDefaults, IEntity, WithId, IEntityComponents, ISerializableState, IInputManager, IStorageManager, IObjectConfig, IComponentFactory, IComponentFactories, IComponentFactoryKey, IEventManager, IAudioManager } from "../types";
-import InputManager from "./InputManager";
-import StorageManager from "./StorageManager";
-import { defaultComponentFactories } from "../components";
-import { values, partialSetValue } from "../utils";
+import AudioManager from "./AudioManager";
 import ComponentManager from "./ComponentManager";
 import EntityManager from "./EntityManager";
 import EventManager from "./EventManager";
-import AudioManager from "./AudioManager";
+import InputManager from "./InputManager";
+import StorageManager from "./StorageManager";
+
+import { defaultComponentFactories } from "../components";
+import { values, partialSetValue } from "../utils";
 
 const configDefaults: IConfigDefaults = {
   debug: false,
@@ -27,6 +28,7 @@ class SystemManager implements ISystemManager {
   private entityManager:        EntityManager;
   private componentManager:     ComponentManager;
 
+  private entityModelCache:       { [key: string]: Array<IComponent> } = {};
   private entityComponentCache:   { [key: string]: number[] } = {};
   private entityComponentSetter:  (path: (string | number)[], value: any) => void;
 
@@ -86,14 +88,32 @@ class SystemManager implements ISystemManager {
     }
     return values(this.entityComponents[entity.id]);
   };
+  public getComponentsForEntity = (entity: IEntity): Array<IComponent> => {
+    return this.getComponentIdsForEntity(entity)
+      .map(this.componentManager.get);
+  };
   public getComponentFactory = (name: IComponentFactoryKey): IComponentFactory => {
     return this.componentFactories[name];
   };
+  private getCachedComponentsForEntity = (entity: IEntity): Array<IComponent> => {
+    const cached = this.entityModelCache[entity.id];
+
+    if (cached) {
+      return cached;
+    }
+
+    const entityModels = this.getComponentsForEntity(entity);
+
+    this.entityModelCache[entity.id] = entityModels;
+
+    return entityModels;
+  }
 
   public unRegisterEntity = (entityId: EntityIdType) => {
     this.unRegisterComponentsForEntity(entityId);
     this.deleteEntityComponents(entityId);
     this.clearEntityComponentCache();
+    this.clearEntityModelCache();
     this.entityManager.unRegisterEntity(entityId);
   };
   public unRegisterComponent = (entityId: EntityIdType) => {
@@ -110,6 +130,10 @@ class SystemManager implements ISystemManager {
   private clearEntityComponentCache = () => {
     delete this.entityComponentCache;
     this.entityComponentCache = {};
+  };
+  private clearEntityModelCache = () => {
+    delete this.entityModelCache;
+    this.entityModelCache = {};
   };
 
   public getEntityComponent = <T>(entity: IEntity, componentName: string): IComponent<T> => {
@@ -153,12 +177,16 @@ class SystemManager implements ISystemManager {
     return this.system;
   };
   private updateSystemEntities = (): void => {
-    this.system.entities.forEach(this.updateComponentsForEntity)
+    const entities = this.system.entities;
+    for (let i = 0; i < entities.length; i++) {
+      this.updateComponentsForEntity(entities[i])
+    }
   }
   private updateComponentsForEntity = (entity: IEntity): void => {
-    this.getComponentIdsForEntity(entity)
-      .map(this.componentManager.get)
-      .forEach(this.updateComponent);
+    const components = this.getCachedComponentsForEntity(entity);
+    for (let i = 0; i < components.length; i++) {
+      this.updateComponent(components[i])
+    }
   }
   private updateComponent = (o: IComponent) => o.update(this, o);
 

@@ -1,6 +1,6 @@
 import { IComponent, ISystemManager, IEntity, IComponentEvents } from "../types";
 
-import { factory } from "../utils";
+import { factory, ifStateProp } from "../utils";
 import { WithPosition } from "./withPosition";
 
 type WiggleState = { counter: number; increment: number; };
@@ -27,10 +27,7 @@ export function withBugWiggleFactory(system: ISystemManager) {
           }
         },
         update: (system: ISystemManager, component: IWithBugWiggleEntity) => {
-
-          if (component.state.wiggling) {
-            handleBugWiggle(entity, component, system, events);
-          }
+          handleBugWiggle(entity, component, system, events);
         },
       }))
   }
@@ -44,8 +41,6 @@ function handleBugWiggle(entity: IEntity, component: IWithBugWiggleEntity, syste
     return;
   }
 
-  const positionComponent = system.getEntityComponent<WithPosition>(entity, 'position');
-
   let {counter, increment} = component.state.wiggleState;
 
   if(counter == PULSE_WIDTH) {
@@ -57,5 +52,10 @@ function handleBugWiggle(entity: IEntity, component: IWithBugWiggleEntity, syste
   };
 
   component.state.wiggleState.counter+= increment;
-  positionComponent.state.position.x += (counter * BRAKE);
+
+  const positionComponent = system.getEntityComponent<WithPosition>(entity, 'position');
+
+  if (ifStateProp(positionComponent)) {
+    positionComponent.state.position.x += (counter * BRAKE);
+  }
 }

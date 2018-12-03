@@ -1,9 +1,11 @@
+import { ILevel, ILevels } from "./types";
+
 import { Demo } from "./Demo/Demo";
 import { Level1 } from "./1/Level.1";
 import { Level2 } from "./2/Level.2";
 import { Level3 } from "./3/Level.3";
+import { Level4 } from "./4/Level.4";
 import { End } from "./End/End";
-import { ILevel, ILevels } from "./types";
 
 export const Levels = {
 	demo: 		{
@@ -20,6 +22,10 @@ export const Levels = {
   },
 	level3: 	{
     level: Level3,
+    next: 'level4',
+  },
+	level4: 	{
+    level: Level4,
     next: 'end',
   },
 	end: 	{
@@ -33,6 +39,7 @@ export const humanizedLevelNames = {
   level1: '1',
   level2: '2',
   level3: '3',
+  level4: '4',
   end:    'End',
 }
 

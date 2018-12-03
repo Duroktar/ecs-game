@@ -14,8 +14,7 @@ export function withGeometryFactory(system: ISystemManager) {
         entityId: entity.id,
         name: COMPONENT_NAMESPACE,
         state: { geometry: { width: state.geometry.width, height: state.geometry.height } },
-        update: (system: ISystemManager, component: IWithGeometryEntity) => {
-        },
+        update: (system: ISystemManager, component: IWithGeometryEntity) => null,
       }))
   }
 }
