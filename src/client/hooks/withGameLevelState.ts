@@ -1,24 +1,36 @@
-import { ISystemManager, IEntity } from '../../engine/types';
+import { ISystemManager, EntityIdType, IEntity } from '../../engine/types';
+import { ILoadedEnemy } from '../Levels/types';
 import {useEffect, useState} from 'react';
 
 import { loadLevel } from '../utils';
 
 import { once } from '../../engine/utils';
 import { ON_ENEMY_DEATH, ON_LEVEL_COMPLETE } from '../../events';
-import { ILoadedEnemy } from '../Levels/types';
+
+function arrayRandom(items: any[]) {
+  return items[Math.floor(Math.random()*items.length)];
+}
 
 
 export const withGameLevelState = (options: WithGameLevelStateOptions) => {
   const [ready, setReady] = useState(false);
   const [enemies, setEnemies] = useState([] as ILoadedEnemy[]);
+  const [alive, setAlive] = useState([] as EntityIdType[]);
   const [enemiesDead, setEnemiesDead] = useState(0);
 
   const onLevelComplete = (system: ISystemManager, level: number | string) => {
     once(() => system.events.emit(ON_LEVEL_COMPLETE, level))
   }
 
-  const countDeath = () => {
-    ready && setEnemiesDead(enemiesDead + 1)
+  const countDeath = (entity: IEntity) => {
+    if (!ready) {
+      return;
+    }
+
+    setEnemiesDead(enemiesDead + 1);
+
+    debugger;
+    setAlive(alive.filter(o => o !== entity.id));
   }
 
   if (enemiesDead === enemies.length) {
@@ -27,11 +39,13 @@ export const withGameLevelState = (options: WithGameLevelStateOptions) => {
 
   useEffect(() => {
     const enemies = loadLevel(options.system, options.enemyPositions);
-
+        
     setEnemies(enemies);
-    setReady(true);
+    setAlive(enemies.map(o => o.entity.id));
 
     options.system.events.registerEvent(ON_ENEMY_DEATH, countDeath)
+
+    setReady(true);
 
     return function cleanup() {
       options.system.events
@@ -41,7 +55,7 @@ export const withGameLevelState = (options: WithGameLevelStateOptions) => {
         .unRegisterEntity(o.entity.id)
       );
     }
-  })
+  }, [options.levelId]);
 
   return { enemies, enemiesDead, ready };
 };

@@ -16,6 +16,9 @@ export const ON_DEATH           = 'dead:*';
 export const ON_ENEMY_DEATH     = 'dead:enemy';
 export const ON_CHARACTER_DEATH = 'dead:player';
 
+export const ON_ENEMY_FREE      = 'enemy:free';
+export const ON_ENEMY_GROUP     = 'enemy:group';
+export const ON_ENEMY_PATH      = 'enemy:path';
 
 export const ON_START_ENGINE    = 'engine:start';
 export const ON_STOP_ENGINE     = 'engine:stop';

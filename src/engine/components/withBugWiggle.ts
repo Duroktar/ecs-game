@@ -8,7 +8,8 @@ type WiggleState = { counter: number; increment: number; };
 export type WithBugWiggleArgs = { wiggling: boolean; wiggleState?: WiggleState; };
 export type WithBugWiggle = { wiggling: boolean; wiggleState: WiggleState; };
 
-const PULSE_WIDTH = 8;
+const BRAKE       = 0.1;
+const PULSE_WIDTH = 4;
 
 export function withBugWiggleFactory(system: ISystemManager) {
   return (entity: IEntity, state: WithBugWiggleArgs, events: IComponentEvents, id = -1) => {
@@ -56,5 +57,5 @@ function handleBugWiggle(entity: IEntity, component: IWithBugWiggleEntity, syste
   };
 
   component.state.wiggleState.counter+= increment;
-  positionComponent.state.position.x += counter;
+  positionComponent.state.position.x += (counter * BRAKE);
 }

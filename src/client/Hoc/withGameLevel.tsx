@@ -4,8 +4,14 @@ import { LevelProps, ILoadedEnemy } from '../Levels/types';
 import { Level } from '../Levels/Base';
 import { ConnectedPlayer } from '../Containers/Player/Player';
 import { Bullet } from '../Containers/Weapons/Bullet';
-import { once } from '../../engine/utils';
-import { ON_ENEMY_DEATH, ON_LEVEL_COMPLETE } from '../../events';
+import { once, first } from '../../engine/utils';
+import { ON_ENEMY_DEATH, ON_LEVEL_COMPLETE, ON_ENEMY_FREE, ON_ENEMY_GROUP, ON_LEVEL_BEGIN } from '../../events';
+import { WithControls } from '../../engine/components/controllable';
+import { WithRandomWalk } from '../../engine/components/withRandomWalk';
+
+function arrayRandom<T>(items: T[]) {
+  return items[Math.floor(Math.random()*items.length)];
+}
 
 interface WithGameLevelOptions {
   enemyPositions: number[][];
@@ -17,6 +23,8 @@ export const withGameLevel = (
   options: WithGameLevelOptions
 ): React.ComponentType<LevelProps> => {
   return class LevelHOC extends React.Component<LevelProps, State> {
+    private interval: any;
+
     state = {
       enemyPositions: options.enemyPositions,
       levelId: options.levelId,
@@ -34,7 +42,10 @@ export const withGameLevel = (
   
       this.setState({ enemies, ready: true })
   
-      system.events.registerEvent(ON_ENEMY_DEATH, this.countDeath)
+      system.events.registerEvent(ON_ENEMY_DEATH, this.countDeath);
+      system.events.registerEvent(ON_ENEMY_FREE,  this.enemyFree);
+      system.events.registerEvent(ON_ENEMY_GROUP, this.enemyGroup);
+      system.events.registerEvent(ON_LEVEL_BEGIN, this.startFreeEnemyInterval);
     }
   
     componentDidUpdate(nextProps: LevelProps, nextState: State) {
@@ -48,24 +59,50 @@ export const withGameLevel = (
     }
   
     componentWillUnmount() {
-      this.props.system.events
-        .unRegisterEvent(ON_ENEMY_DEATH, this.countDeath);
+      const {system} = this.props;
+
+      clearInterval(this.interval);
+      
+      system.events.unRegisterEvent(ON_ENEMY_DEATH, this.countDeath);
+      system.events.unRegisterEvent(ON_ENEMY_FREE,  this.enemyFree);
+      system.events.unRegisterEvent(ON_ENEMY_GROUP, this.enemyGroup);
+      system.events.unRegisterEvent(ON_LEVEL_BEGIN, this.startFreeEnemyInterval);
       
       this.state.enemies.forEach(o =>
-        this.props.system.unRegisterEntity(o.entity.id)
+        system.unRegisterEntity(o.entity.id)
       );
     }
   
     countDeath = () => {
       this.setState(state => ({
         enemiesDead: state.enemiesDead + 1,
-      }))
+      }));
     }
   
     onLevelComplete = once((system: ISystemManager, level: number | string) => {
-      system.events.emit(options.completeEvent || ON_LEVEL_COMPLETE, level)
+      system.events.emit(options.completeEvent || ON_LEVEL_COMPLETE, level);
+      clearInterval(this.interval);
     })
   
+    enemyFree = () => {
+      const maybeComponent = arrayRandom(this.state.enemies.map(o => o.entity));
+
+      const controlComponent = this.props.system
+        .getEntityComponent<WithRandomWalk>(maybeComponent, 'controls');
+
+      if (controlComponent) {
+        controlComponent.state.disabled = false;
+      }
+    }
+
+    enemyGroup = () => {}
+   
+    startFreeEnemyInterval = () => {
+      this.interval = setInterval(() => {
+        this.props.system.events.emit(ON_ENEMY_FREE);
+      }, 8000);
+    }
+
     render() {
       const {player, bullet1, bullet2, system} = this.props.state;
       return (

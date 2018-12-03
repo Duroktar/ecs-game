@@ -156,12 +156,10 @@ export class Game extends React.Component<Props, ICurrentGameState> {
   }
 
   handleLevelLoading = (): void => {
-    debugger
     this.props.system.events.emit(ON_STOP_ENGINE)
   }
   
   handleLevelBegin = (): void => {
-    debugger
     this.props.system.events.emit(ON_START_ENGINE)
   }
 
