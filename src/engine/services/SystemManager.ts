@@ -96,6 +96,7 @@ class SystemManager implements ISystemManager {
     return this.componentFactories[name];
   };
   private getCachedComponentsForEntity = (entity: IEntity): Array<IComponent> => {
+
     const cached = this.entityModelCache[entity.id];
 
     if (cached) {
@@ -177,10 +178,7 @@ class SystemManager implements ISystemManager {
     return this.system;
   };
   private updateSystemEntities = (): void => {
-    const entities = this.system.entities;
-    for (let i = 0; i < entities.length; i++) {
-      this.updateComponentsForEntity(entities[i])
-    }
+    this.system.entities.forEach(this.updateComponentsForEntity);
   }
   private updateComponentsForEntity = (entity: IEntity): void => {
     const components = this.getCachedComponentsForEntity(entity);
