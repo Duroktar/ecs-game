@@ -1,7 +1,6 @@
 import { ISystemManager, IVector, IDimensions } from "../../engine/types";
 import { createMob } from "../Domain/mob";
 import { defaultBoundary } from "../../engine/utils";
-import { SpriteTextureIds } from "../catalogue";
 
 export function createEnemy(
     system:           ISystemManager,
@@ -15,6 +14,8 @@ export function createEnemy(
     name,
 
     texture: textureId,
+
+    wiggling: true,
 
     controls: {
       disabled: true,

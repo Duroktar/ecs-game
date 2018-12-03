@@ -10,6 +10,7 @@ import { IPointsLoot } from "../types";
 import { withBoundaryFactory, WithBoundary } from "../../engine/components/withBoundary";
 import { WithPositionState } from "../../engine/components/withPosition";
 import { withTextureFactory, WithTexture } from "../../engine/components/withTexture";
+import { withBugWiggleFactory, WithBugWiggle, WithBugWiggleArgs } from "../../engine/components/withBugWiggle";
 
 
 export function createMob(
@@ -22,6 +23,7 @@ export function createMob(
   const withGeometry    = withGeometryFactory(system);
   const withTexture     = withTextureFactory(system);
   const withRandomWalk  = withRandomWalkFactory(system);
+  const withBugWiggle   = withBugWiggleFactory(system);
   const isCollidable    = isCollidableFactory(system);
   const withBoundary    = withBoundaryFactory(system);
   const isLootable      = lootableFactory<IPointsLoot>(system);
@@ -50,6 +52,9 @@ export function createMob(
     withRandomWalk(entity, options, system.events)
   );
   system.registerComponent(
+    withBugWiggle(entity, options, system.events)
+  );
+  system.registerComponent(
     isCollidable(entity, options, system.events)
   );
   system.registerComponent(
@@ -66,6 +71,7 @@ export type MobModelArgs =
   WithTexture             &
   WithBoundary            &
   WithRandomWalkArgs      &
+  WithBugWiggleArgs       &
   IsLootable<IPointsLoot> &
   IsCollidable;
 
@@ -77,5 +83,6 @@ export type MobModel =
   WithTexture             &
   WithBoundary            &
   WithRandomWalkArgs      &
+  WithBugWiggle           &
   IsLootable<IPointsLoot> &
   IsCollidable;

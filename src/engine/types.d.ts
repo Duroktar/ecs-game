@@ -51,6 +51,7 @@ export interface IComponentFactories {
   loot:         IComponentFactory;
   boundary:     IComponentFactory;
   texture:      IComponentFactory;
+  wiggle:       IComponentFactory;
 }
 
 export type IComponentFactoryKey = keyof IComponentFactories;

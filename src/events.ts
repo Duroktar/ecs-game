@@ -19,3 +19,5 @@ export const ON_CHARACTER_DEATH = 'dead:player';
 
 export const ON_START_ENGINE    = 'engine:start';
 export const ON_STOP_ENGINE     = 'engine:stop';
+
+// !!! Move to the catalogue I think

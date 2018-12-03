@@ -33,10 +33,12 @@ function handleMovementState(entity: IEntity, system: ISystemManager, component:
     return;
   }
 
+  // ai yai yai, wtf is this doing here
   const {direction, speed} = controls.state;
 
   component.state.position.x += direction.x * speed.x;
   component.state.position.y += direction.y * speed.y;
+  // !! ??? ^^^^^^^^
 
   const boundaryComponent = system.getEntityComponent<WithBoundary>(entity, 'boundary');
   const geometryComponent = system.getEntityComponent<WithGeometry>(entity, 'geometry');
