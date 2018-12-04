@@ -29,6 +29,8 @@ export const AnimatedPlayer = withSpriteEffects<CharacterModel>({
     shoot: ShootSound,
     death: DeathSound,
   },
+
+  collisionGroup: 'player',
 });
 
 export const ConnectedPlayer = withEntity<CharacterModel>(AnimatedPlayer)

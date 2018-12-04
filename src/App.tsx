@@ -41,9 +41,9 @@ class App extends React.PureComponent<{}, State> {
 
     this.gameAudioInitialize();
 
-    system.events.registerEvent(ON_START_GAME,    this.startNewGame);
-    system.events.registerEvent(ON_START_ENGINE,  this.start);
-    system.events.registerEvent(ON_STOP_ENGINE,   this.stop);
+    system.events.registerListener(ON_START_GAME,    this.startNewGame);
+    system.events.registerListener(ON_START_ENGINE,  this.start);
+    system.events.registerListener(ON_STOP_ENGINE,   this.stop);
   }
 
   state = {
@@ -63,9 +63,9 @@ class App extends React.PureComponent<{}, State> {
   componentWillUnmount() {
     this.gameAudioCleanup();
 
-    system.events.unRegisterEvent(ON_START_GAME,  this.startNewGame)
-    system.events.registerEvent(ON_START_ENGINE,  this.start);
-    system.events.registerEvent(ON_STOP_ENGINE,   this.stop);
+    system.events.unRegisterListener(ON_START_GAME,  this.startNewGame)
+    system.events.registerListener(ON_START_ENGINE,  this.start);
+    system.events.registerListener(ON_STOP_ENGINE,   this.stop);
 
     this.stop();
 

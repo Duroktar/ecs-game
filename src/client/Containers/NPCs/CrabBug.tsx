@@ -27,4 +27,5 @@ export const AnimatedCrabBug = withSpriteEffects<MobModel>({
     death: DeathSound,
   },
   currentState: 'normal',
+  collisionGroup: 'enemy',
 });

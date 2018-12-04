@@ -98,8 +98,8 @@ export interface IEventManager extends IComponentEvents {
 
   init: (config?: IBasicConfig) => null;
 
-  registerEvent: (name: string, callback: AnonymousCB) => void;
-  unRegisterEvent: (name: string, callback: AnonymousCB) => void;
+  registerListener: (name: string, callback: AnonymousCB) => void;
+  unRegisterListener: (name: string, callback: AnonymousCB) => void;
 
   emit: <T>(name: string, data?: T) => void;
 

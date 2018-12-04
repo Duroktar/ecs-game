@@ -1,13 +1,14 @@
 import { IEntity, ISystemManager } from "../../engine/types";
+import { combatableFactory,         WithAttack } from "../../engine/components/combatable";
 import { nameableFactory,           WithName } from "../../engine/components/nameable";
 import { killableFactory,           WithHealth, WithHealthState } from "../../engine/components/killable";
 import { withPositionFactory,       WithPosition, WithPositionState } from "../../engine/components/withPosition";
-import { combatableFactory,         WithAttack } from "../../engine/components/combatable";
 import { withGeometryFactory,       WithGeometry } from "../../engine/components/withGeometry";
-import { isCollidableFactory,       IsCollidable } from "../../engine/components/isCollidable";
 import { withBoundaryFactory,       WithBoundary } from "../../engine/components/withBoundary";
+import { withTextureFactory,        WithTexture } from "../../engine/components/withTexture";
 import { withPlayerControlsFactory, WithPlayerControls } from "../../engine/components/withPlayerControls";
-import { withTextureFactory, WithTexture } from "../../engine/components/withTexture";
+import { isCollidableFactory,       IsCollidable } from "../../engine/components/isCollidable";
+import { withCollisionsFactory } from "../../engine/components/withCollisions";
 
 export function createCharacter(
   system:   ISystemManager,
@@ -21,6 +22,7 @@ export function createCharacter(
   const withGeometry    = withGeometryFactory(system);
   const withTexture     = withTextureFactory(system);
   const isCollidable    = isCollidableFactory(system);
+  const withCollisions  = withCollisionsFactory(system);
   const withBoundary    = withBoundaryFactory(system);
 
   const entity = system.registerEntity();
@@ -45,6 +47,9 @@ export function createCharacter(
   );
   system.registerComponent(
     isCollidable(entity, options, system.events)
+  );
+  system.registerComponent(
+    withCollisions(entity, options, system.events)
   );
   system.registerComponent(
     withBoundary(entity, options, system.events)

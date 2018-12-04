@@ -26,4 +26,5 @@ export const AnimatedPincerBug = withSpriteEffects<MobModel>({
     death: DeathSound,
   },
   currentState: 'normal',
+  collisionGroup: 'enemy',
 });

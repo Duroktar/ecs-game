@@ -19,8 +19,8 @@ export const withSoundEffects = <T>(options: WithSoundEffectsOptions<T>) => {
   }
 
   useEffect(() => {
-    options.system.events.registerEvent(ON_DEATH,         playDeathAudio);
-    options.system.events.registerEvent(ON_ATTACK,        playAttackAudio);
+    options.system.events.registerListener(ON_DEATH,         playDeathAudio);
+    options.system.events.registerListener(ON_ATTACK,        playAttackAudio);
 
     keys(options.sounds).map(key => {
       const collectionKey = mkAudioCollectionKey(options.entity.id, `${key}`);
@@ -32,8 +32,8 @@ export const withSoundEffects = <T>(options: WithSoundEffectsOptions<T>) => {
     })
 
     return function cleanup() {
-      options.system.events.unRegisterEvent(ON_DEATH,     playDeathAudio);
-      options.system.events.unRegisterEvent(ON_ATTACK,    playAttackAudio);
+      options.system.events.unRegisterListener(ON_DEATH,     playDeathAudio);
+      options.system.events.unRegisterListener(ON_ATTACK,    playAttackAudio);
   
       keys(options.sounds).map((actionType: string | number) => {
         const collectionKey = mkAudioCollectionKey(options.entity.id, `${actionType}`);

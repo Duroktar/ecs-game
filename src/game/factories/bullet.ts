@@ -6,6 +6,7 @@ export function createBullet(
   name: string,
   x: number = -100,
   speed: number = 8,
+  collisionGroup: string = 'friendly',
 ) {
 
   const entity = createProjectile(system, {
@@ -28,6 +29,8 @@ export function createBullet(
       width:  2,
       height: 32,
     },
+
+    collisionGroup,
   });
 
   return entity;

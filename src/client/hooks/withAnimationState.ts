@@ -1,5 +1,21 @@
 import {useState} from 'react';
 
+interface IFrame {
+  frame:      string;
+  duration:   number;
+}
+
+interface IAnimations {
+  normal: IFrame[];
+  death:  IFrame[];
+}
+
+export interface WithAnimationOptions {
+  animations:       IAnimations;
+  currentState:     keyof IAnimations;
+  onFinished:       (...args: any[]) => void;
+  currentFrame?:    string;
+}
 
 export const withAnimationState = (options: WithAnimationOptions) => {
   const [animations, setAnimations] = useState(options.animations);
@@ -33,23 +49,6 @@ export const withAnimationState = (options: WithAnimationOptions) => {
   }
 
   return { currentFrame, setCurrentState };
-}
-
-export interface WithAnimationOptions {
-  animations:       IAnimations;
-  currentState:     keyof IAnimations;
-  onFinished:       (...args: any[]) => void;
-  currentFrame?:    string;
-}
-
-interface IFrame {
-  frame:      string;
-  duration:   number;
-}
-
-interface IAnimations {
-  normal: IFrame[];
-  death:  IFrame[];
 }
 
 export function different<T>(a: T, b: T) {

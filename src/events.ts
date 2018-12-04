@@ -12,9 +12,9 @@ export const ON_ENEMY_ATTACK    = 'attack:enemy';
 
 export const ON_COLLISION       = 'collision:begin';
 
-export const ON_DEATH           = 'dead:*';
+export const ON_DEATH           = 'dead';
 export const ON_ENEMY_DEATH     = 'dead:enemy';
-export const ON_CHARACTER_DEATH = 'dead:player';
+export const ON_PLAYER_DEATH    = 'dead:player';
 
 export const ON_ENEMY_FREE      = 'enemy:free';
 export const ON_ENEMY_GROUP     = 'enemy:group';

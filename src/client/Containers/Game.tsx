@@ -13,9 +13,9 @@ import { IsLootable } from '../../engine/components/lootable';
 import { Loader, humanizedLevelNames } from '../Levels';
 import { LevelSummary } from '../Components/LevelSummary';
 
-import { first, mkEntity } from '../../engine/utils';
+import { first } from '../../engine/utils';
 
-import { ON_LEVEL_COMPLETE, ON_ENEMY_DEATH, ON_COLLISION, ON_GAME_OVER, ON_PLAYER_ATTACK, ON_LEVEL_LOAD, ON_LEVEL_BEGIN, ON_START_ENGINE, ON_STOP_ENGINE } from '../../events';
+import { ON_LEVEL_COMPLETE, ON_GAME_OVER, ON_PLAYER_ATTACK, ON_LEVEL_LOAD, ON_LEVEL_BEGIN, ON_START_ENGINE, ON_STOP_ENGINE, ON_PLAYER_DEATH, ON_ENEMY_DEATH } from '../../events';
 import { getNextLevel } from '../Levels/Directory';
 import { Sfx, Songs } from '../../game/catalogue';
 
@@ -58,36 +58,21 @@ export class Game extends React.PureComponent<Props, ICurrentGameState> {
   }
 
   registerEvents = () => {
-    this.props.system.events.registerEvent(ON_LEVEL_LOAD,     this.handleLevelLoading);
-    this.props.system.events.registerEvent(ON_LEVEL_BEGIN,    this.handleLevelBegin);
-    this.props.system.events.registerEvent(ON_LEVEL_COMPLETE, this.handleLevelComplete);
-    this.props.system.events.registerEvent(ON_ENEMY_DEATH,    this.handleEnemyDeath);
-    this.props.system.events.registerEvent(ON_COLLISION,      this.handleBulletCollisions);
-    this.props.system.events.registerEvent(ON_GAME_OVER,      this.handleGameOver);
+    this.props.system.events.registerListener(ON_LEVEL_LOAD,      this.handleLevelLoading);
+    this.props.system.events.registerListener(ON_LEVEL_BEGIN,     this.handleLevelBegin);
+    this.props.system.events.registerListener(ON_LEVEL_COMPLETE,  this.handleLevelComplete);
+    this.props.system.events.registerListener(ON_PLAYER_DEATH,    this.handlePlayerDeath);
+    this.props.system.events.registerListener(ON_ENEMY_DEATH,     this.handleEnemyDeath);
+    this.props.system.events.registerListener(ON_GAME_OVER,       this.handleGameOver);
   }
 
   unRegisterEvents = () => {
-    this.props.system.events.unRegisterEvent(ON_LEVEL_LOAD,     this.handleLevelLoading);
-    this.props.system.events.unRegisterEvent(ON_LEVEL_BEGIN,    this.handleLevelBegin);
-    this.props.system.events.unRegisterEvent(ON_LEVEL_COMPLETE, this.handleLevelComplete);
-    this.props.system.events.unRegisterEvent(ON_ENEMY_DEATH,    this.handleEnemyDeath);
-    this.props.system.events.unRegisterEvent(ON_COLLISION,      this.handleBulletCollisions);
-    this.props.system.events.unRegisterEvent(ON_GAME_OVER,      this.handleGameOver);
-  }
-
-  handleBulletCollisions = (): void => { // !!! Move to system component
-    const { bullet1, bullet2 } = this.props;
-    if (bullet1.collisions.length || bullet2.collisions.length) {
-
-      const collisions = [ 
-        ...bullet1.collisions, 
-        ...bullet2.collisions,
-      ];
-
-      const deadpool = [...new Set(collisions)].map(mkEntity);
-
-      deadpool.forEach(this.killEntity);
-    }
+    this.props.system.events.unRegisterListener(ON_LEVEL_LOAD,      this.handleLevelLoading);
+    this.props.system.events.unRegisterListener(ON_LEVEL_BEGIN,     this.handleLevelBegin);
+    this.props.system.events.unRegisterListener(ON_LEVEL_COMPLETE,  this.handleLevelComplete);
+    this.props.system.events.unRegisterListener(ON_PLAYER_DEATH,    this.handlePlayerDeath);
+    this.props.system.events.unRegisterListener(ON_ENEMY_DEATH,     this.handleEnemyDeath);
+    this.props.system.events.unRegisterListener(ON_GAME_OVER,       this.handleGameOver);
   }
 
   getBullet = (): ProjectileModel => {
@@ -137,6 +122,10 @@ export class Game extends React.PureComponent<Props, ICurrentGameState> {
     }
   
     component.state.health.value = health;
+  }
+
+  handlePlayerDeath = (player: IComponent) => {
+    debugger
   }
 
   handleEnemyDeath = (source: IComponent): void => {

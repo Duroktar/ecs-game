@@ -6,6 +6,7 @@ import { SpriteTextureIds } from "../catalogue";
 export function createPlayer(
   system:           ISystemManager,
   name:             string = 'player 1',
+  collisionGroup:   string = 'friendly',
 ) {
 
   const playerEntity = createCharacter(system, {
@@ -15,7 +16,7 @@ export function createPlayer(
 
     health: {
       value: 100,
-      immortal: true,
+      immortal: false,
     },
 
     attackPower: 10,
@@ -44,7 +45,9 @@ export function createPlayer(
   
     attacking: false,
 
-    boundary: defaultBoundary
+    boundary: defaultBoundary,
+
+    collisionGroup,
   });
 
   return playerEntity;

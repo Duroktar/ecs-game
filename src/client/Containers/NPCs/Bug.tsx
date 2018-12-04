@@ -26,4 +26,5 @@ export const AnimatedBug = withSpriteEffects<MobModel>({
     death: DeathSound,
   },
   currentState: 'normal',
+  collisionGroup: 'enemy',
 });

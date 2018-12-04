@@ -5,7 +5,7 @@ import { WithPosition } from "./withPosition";
 
 const COMPONENT_NAMESPACE = 'collidable';
 
-export type IsCollidable = { collidable?: boolean; };
+export type IsCollidable = { collidable?: boolean; collisionGroup: string; };
 
 export function isCollidableFactory(system: ISystemManager) {
   return (entity: IEntity, state: IsCollidable, events: IComponentEvents, id = -1) => {
@@ -14,7 +14,7 @@ export function isCollidableFactory(system: ISystemManager) {
         id,
         entityId: entity.id,
         name: COMPONENT_NAMESPACE,
-        state: { collidable: state.collidable || true },
+        state: { collidable: state.collidable || true, collisionGroup: state.collisionGroup },
         update: (system: ISystemManager, component: ICollidableEntity) => null,
       }))
   }

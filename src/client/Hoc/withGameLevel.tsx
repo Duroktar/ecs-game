@@ -1,17 +1,22 @@
-import * as React from 'react';
-import { ISystemManager } from '../../engine/types';
+import { ISystemManager, IComponent, IEntity } from '../../engine/types';
 import { LevelProps, ILoadedEnemy } from '../Levels/types';
+import * as React from 'react';
+
 import { Level } from '../Levels/Base';
+
 import { ConnectedPlayer } from '../Containers/Player/Player';
 import { Bullet } from '../Containers/Weapons/Bullet';
-import { once, first } from '../../engine/utils';
-import { ON_ENEMY_DEATH, ON_LEVEL_COMPLETE, ON_ENEMY_FREE, ON_ENEMY_GROUP, ON_LEVEL_BEGIN } from '../../events';
-import { WithControls } from '../../engine/components/controllable';
+
+import { ON_DEATH, ON_LEVEL_COMPLETE, ON_ENEMY_FREE, ON_ENEMY_GROUP, ON_LEVEL_BEGIN, ON_PLAYER_DEATH, ON_ENEMY_DEATH } from '../../events';
 import { WithRandomWalk } from '../../engine/components/withRandomWalk';
+import { once } from '../../engine/utils';
+import { WithHealth } from '../../engine/components/killable';
 
 function arrayRandom<T>(items: T[]) {
   return items[Math.floor(Math.random()*items.length)];
 }
+
+const ENEMY_FREE_INTERVAL = 2000;
 
 interface WithGameLevelOptions {
   enemyPositions: number[][];
@@ -22,16 +27,16 @@ interface WithGameLevelOptions {
 export const withGameLevel = (
   options: WithGameLevelOptions
 ): React.ComponentType<LevelProps> => {
-  return class LevelHOC extends React.Component<LevelProps, State> {
+  return class LevelHOC extends React.PureComponent<LevelProps, State> {
     private interval: any;
 
     state = {
       enemyPositions: options.enemyPositions,
-      levelId: options.levelId,
+      levelId:        options.levelId,
       
-      enemies: [] as ILoadedEnemy[],
-      enemiesDead: 0,
-      ready: false,
+      enemies:        [] as ILoadedEnemy[],
+      enemiesDead:    0,
+      ready:          false,
     }
   
     componentDidMount() {
@@ -42,10 +47,10 @@ export const withGameLevel = (
   
       this.setState({ enemies, ready: true })
   
-      system.events.registerEvent(ON_ENEMY_DEATH, this.countDeath);
-      system.events.registerEvent(ON_ENEMY_FREE,  this.enemyFree);
-      system.events.registerEvent(ON_ENEMY_GROUP, this.enemyGroup);
-      system.events.registerEvent(ON_LEVEL_BEGIN, this.startFreeEnemyInterval);
+      system.events.registerListener(ON_DEATH,        this.handleDeath);
+      system.events.registerListener(ON_ENEMY_FREE,   this.enemyFree);
+      system.events.registerListener(ON_ENEMY_GROUP,  this.enemyGroup);
+      system.events.registerListener(ON_LEVEL_BEGIN,  this.startFreeEnemyInterval);
     }
   
     componentDidUpdate(nextProps: LevelProps, nextState: State) {
@@ -63,20 +68,27 @@ export const withGameLevel = (
 
       clearInterval(this.interval);
       
-      system.events.unRegisterEvent(ON_ENEMY_DEATH, this.countDeath);
-      system.events.unRegisterEvent(ON_ENEMY_FREE,  this.enemyFree);
-      system.events.unRegisterEvent(ON_ENEMY_GROUP, this.enemyGroup);
-      system.events.unRegisterEvent(ON_LEVEL_BEGIN, this.startFreeEnemyInterval);
+      system.events.unRegisterListener(ON_DEATH,        this.handleDeath);
+      system.events.unRegisterListener(ON_ENEMY_FREE,   this.enemyFree);
+      system.events.unRegisterListener(ON_ENEMY_GROUP,  this.enemyGroup);
+      system.events.unRegisterListener(ON_LEVEL_BEGIN,  this.startFreeEnemyInterval);
       
       this.state.enemies.forEach(o =>
         system.unRegisterEntity(o.entity.id)
       );
     }
   
-    countDeath = () => {
-      this.setState(state => ({
-        enemiesDead: state.enemiesDead + 1,
-      }));
+    handleDeath = (component: IComponent<WithHealth>, entity: IEntity) => {
+      if (this.state.enemies.find(o => o.entity.id === component.entityId)) {
+        this.props.system.events.emit(ON_ENEMY_DEATH, component)
+
+        this.setState(state => ({
+          enemiesDead: state.enemiesDead + 1,
+        }));
+
+      } else {
+        this.props.system.events.emit(ON_PLAYER_DEATH, component)
+      }
     }
   
     onLevelComplete = once((system: ISystemManager, level: number | string) => {
@@ -100,7 +112,7 @@ export const withGameLevel = (
     startFreeEnemyInterval = () => {
       this.interval = setInterval(() => {
         this.props.system.events.emit(ON_ENEMY_FREE);
-      }, 8000);
+      }, ENEMY_FREE_INTERVAL);
     }
 
     render() {
@@ -110,8 +122,8 @@ export const withGameLevel = (
     
           <ConnectedPlayer entity={player} system={system} />
     
-          <Bullet model={bullet1} />
-          <Bullet model={bullet2} />
+          <Bullet model={bullet1} system={system} />
+          <Bullet model={bullet2} system={system} />
     
           {this.state.enemies.map((enemy: ILoadedEnemy) => {
             const ConnectedEnemy = enemy.component;

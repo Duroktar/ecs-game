@@ -8,6 +8,7 @@ export function createEnemy(
     name:             string,
     position?:        IVector,
     geometry?:        IDimensions,
+    collisionGroup:   string = 'hostile',
 ) {
 
   const entity = createMob(system, {
@@ -40,6 +41,8 @@ export function createEnemy(
     },
 
     boundary: defaultBoundary,
+
+    collisionGroup,
   });
 
   return entity;
