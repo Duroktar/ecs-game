@@ -5,7 +5,8 @@ import { factory, boxMullerRandomGeneratorFactory, clamp, throttle } from "../ut
 export type WithRandomWalkArgs = { controls?: Partial<WithRandomWalk> };
 export type WithRandomWalk = { direction: IVector; moving: boolean; speed: IVector; disabled: boolean; jitter: number; };
 
-const defaults = { direction: { x: 0, y: 0 }, moving: true, speed: { x: 2, y: 1.65 }, disabled: false, jitter: 400 }
+// const defaults = { direction: { x: 0, y: 0 }, moving: true, speed: { x: 2, y: 1.65 }, disabled: false, jitter: 400 }
+const defaults = { direction: { x: 0, y: 0 }, moving: true, speed: { x: 0, y: 2.65 }, disabled: false, jitter: 400 }
 
 export function withRandomWalkFactory(system: ISystemManager) {
   return (entity: IEntity, state: WithRandomWalkArgs, events: IComponentEvents, id = -1) => {
@@ -54,6 +55,10 @@ type IWithRandomWalkEntity = IComponent<WithRandomWalk & Partial<WithPosition>>;
 type RNGFunc = (...args: any[]) => number;
 
 function handleMovement(entity: IEntity, component: IWithRandomWalkEntity, system: ISystemManager, events: IComponentEvents, randomWalkGeneratorX: RNGFunc, randomWalkGeneratorY: RNGFunc) {
+
+  if (component.state.disabled) {
+    return;
+  }
 
   const deltaX = randomWalkGeneratorX();
   const deltaY = randomWalkGeneratorY();

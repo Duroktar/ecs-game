@@ -1,6 +1,6 @@
 import { IComponentFactories, IComponentFactoryKey } from "../types";
 import { ageableFactory } from "./ageable";
-import { controllableFactory } from "./controllable";
+import { controllableFactory } from "./controllable__OLD";
 import { combatableFactory } from "./combatable";
 import { killableFactory } from "./killable";
 import { withPositionFactory } from "./withPosition";
@@ -14,6 +14,8 @@ import { lootableFactory } from "./lootable";
 import { withBoundaryFactory } from "./withBoundary";
 import { withTextureFactory } from "./withTexture";
 import { withBugWiggleFactory } from "./withBugWiggle";
+import { withHomePositionFactory } from "./withHomePosition";
+import { withWrapAroundPositionFactory } from "./withWrapAroundPosition";
 
 export const defaultComponentFactories: IComponentFactories = {
   name:         nameableFactory,
@@ -31,6 +33,8 @@ export const defaultComponentFactories: IComponentFactories = {
   boundary:     withBoundaryFactory,
   texture:      withTextureFactory,
   wiggle:       withBugWiggleFactory,
+  homePosition: withHomePositionFactory,
+  worldwrap:    withWrapAroundPositionFactory,
 }
 
 export function getComponentFactory<T extends IComponentFactoryKey>(name: T): IComponentFactories[T] {

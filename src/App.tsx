@@ -153,15 +153,15 @@ class App extends React.PureComponent<{}, State> {
         <div className="App container with-title is-center is-dark">
           <label className="title">Galaga.ts</label>
 
-          <Route exact path="/" render={(props) =>
+          {/* <Route exact path="/" render={(props) =>
             <Intro
               onPlayerInput={this.startNewGame}
               {...this.state}
               {...props}
             />
-          } />
+          } /> */}
 
-          <Route path="/menu" render={(props) =>
+          <Route exact path="/" render={(props) =>
             <Menu
               system={system}
               {...this.state}

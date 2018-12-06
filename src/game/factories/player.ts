@@ -30,6 +30,11 @@ export function createPlayer(
       x: 400,
       y: 475,
     },
+
+    homePosition: {
+      x: 400,
+      y: 475,
+    },
   
     direction: {
       x: 0,

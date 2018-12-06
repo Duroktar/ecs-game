@@ -51,11 +51,11 @@ class AudioManager implements IAudioManager {
   }
 
   public playSound(name: string, sprite?: string | number) {
-    try {
-      this.sounds[name].play(sprite);
-    } catch (e) {
-      throw new Error(`[AudioManager:ERROR]: Sound: "${name}" not found..`)
-    }
+    // try {
+    //   this.sounds[name].play(sprite);
+    // } catch (e) {
+    //   throw new Error(`[AudioManager:ERROR]: Sound: "${name}" not found..`)
+    // }
   }
 
   public stopSound(name: string, id?: number) {
@@ -67,11 +67,11 @@ class AudioManager implements IAudioManager {
   }
 
   public playSong(name: string, sprite?: string | number) {
-    try {
-      this.songs[name].play(sprite);
-    } catch (e) {
-      throw new Error(`[AudioManager:ERROR]: Song: "${name}" not found..`)
-    }
+    // try {
+    //   this.songs[name].play(sprite);
+    // } catch (e) {
+    //   throw new Error(`[AudioManager:ERROR]: Song: "${name}" not found..`)
+    // }
   }
 
   public stopSong(name: string, id?: number) {

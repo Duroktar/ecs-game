@@ -5,6 +5,7 @@ import { fr } from '../../hooks/withAnimationState';
 
 import ShootSound from '../../../audio/Weapons/Lasers/sfx_wpn_laser1.wav';
 import DeathSound from '../../../audio/Explosions/Short/sfx_exp_short_hard12.wav';
+import { ON_ENEMY_DEATH } from '../../../events';
 
 
 export const AnimatedCrabBug = withSpriteEffects<MobModel>({
@@ -27,5 +28,5 @@ export const AnimatedCrabBug = withSpriteEffects<MobModel>({
     death: DeathSound,
   },
   currentState: 'normal',
-  collisionGroup: 'enemy',
+  deathEvent: ON_ENEMY_DEATH,
 });

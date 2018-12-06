@@ -8,17 +8,23 @@ import { Gui } from '../Layouts/Gui';
 
 import { ProjectileModel } from '../../game/Domain/projectile';
 import { WithHealthState } from '../../engine/components/killable';
+import { WithPositionState, setPositionState } from '../../engine/components/withPosition';
 import { IsLootable } from '../../engine/components/lootable';
 
 import { Loader, humanizedLevelNames } from '../Levels';
 import { LevelSummary } from '../Components/LevelSummary';
 
-import { first } from '../../engine/utils';
+import { first, clamp } from '../../engine/utils';
 
-import { ON_LEVEL_COMPLETE, ON_GAME_OVER, ON_PLAYER_ATTACK, ON_LEVEL_LOAD, ON_LEVEL_BEGIN, ON_START_ENGINE, ON_STOP_ENGINE, ON_PLAYER_DEATH, ON_ENEMY_DEATH } from '../../events';
+import { ON_LEVEL_COMPLETE, ON_GAME_OVER, ON_PLAYER_ATTACK, ON_LEVEL_LOAD, ON_LEVEL_BEGIN, ON_START_ENGINE, ON_STOP_ENGINE, ON_PLAYER_DEATH, ON_ENEMY_DEATH, ON_COLLISION, ON_REVIVE_PLAYER } from '../../events';
 import { getNextLevel } from '../Levels/Directory';
 import { Sfx, Songs } from '../../game/catalogue';
+import { WithControls } from '../../engine/components/withControls__unused';
+import { MobModel } from '../../game/Domain/mob';
+import { CharacterModel } from '../../game/Domain/character';
+import { WithHomePosition } from '../../engine/components/withHomePosition';
 
+type LootablePoints = IsLootable<IPointsLoot>;
 
 interface Props extends IGameState {
   onRestart:  () => void;
@@ -61,18 +67,22 @@ export class Game extends React.PureComponent<Props, ICurrentGameState> {
     this.props.system.events.registerListener(ON_LEVEL_LOAD,      this.handleLevelLoading);
     this.props.system.events.registerListener(ON_LEVEL_BEGIN,     this.handleLevelBegin);
     this.props.system.events.registerListener(ON_LEVEL_COMPLETE,  this.handleLevelComplete);
-    this.props.system.events.registerListener(ON_PLAYER_DEATH,    this.handlePlayerDeath);
-    this.props.system.events.registerListener(ON_ENEMY_DEATH,     this.handleEnemyDeath);
+    this.props.system.events.registerListener(ON_PLAYER_DEATH,    this.onPlayerDeath);
+    this.props.system.events.registerListener(ON_REVIVE_PLAYER,   this.onPlayerRevive);
+    this.props.system.events.registerListener(ON_ENEMY_DEATH,     this.onEnemyDeath);
     this.props.system.events.registerListener(ON_GAME_OVER,       this.handleGameOver);
+    this.props.system.events.registerListener(ON_COLLISION,       this.handleCollision);
   }
 
   unRegisterEvents = () => {
     this.props.system.events.unRegisterListener(ON_LEVEL_LOAD,      this.handleLevelLoading);
     this.props.system.events.unRegisterListener(ON_LEVEL_BEGIN,     this.handleLevelBegin);
     this.props.system.events.unRegisterListener(ON_LEVEL_COMPLETE,  this.handleLevelComplete);
-    this.props.system.events.unRegisterListener(ON_PLAYER_DEATH,    this.handlePlayerDeath);
-    this.props.system.events.unRegisterListener(ON_ENEMY_DEATH,     this.handleEnemyDeath);
+    this.props.system.events.unRegisterListener(ON_PLAYER_DEATH,    this.onPlayerDeath);
+    this.props.system.events.unRegisterListener(ON_REVIVE_PLAYER,   this.onPlayerRevive);
+    this.props.system.events.unRegisterListener(ON_ENEMY_DEATH,     this.onEnemyDeath);
     this.props.system.events.unRegisterListener(ON_GAME_OVER,       this.handleGameOver);
+    this.props.system.events.unRegisterListener(ON_COLLISION,       this.handleCollision);
   }
 
   getBullet = (): ProjectileModel => {
@@ -124,13 +134,39 @@ export class Game extends React.PureComponent<Props, ICurrentGameState> {
     component.state.health.value = health;
   }
 
-  handlePlayerDeath = (player: IComponent) => {
-    debugger
+  handleCollision = (component: IComponent, entity: IEntity) => {
+    if (this.props.player.id === entity.id) {
+      this.props.system.events.emit(ON_PLAYER_DEATH, component)
+    } else {
+      this.props.system.events.emit(ON_ENEMY_DEATH, component)
+    }
   }
 
-  handleEnemyDeath = (source: IComponent): void => {
+  onPlayerRevive = () => {
+    this.reviveEntity(this.props.player, 100);
+  }
+
+  onPlayerDeath = (player: IComponent) => {
+
+    if (this.state.lives === 0) {
+      this.handleGameOver();
+      return;
+    }
+
+    this.handleLevelLoading();
+
+    setTimeout(() => {
+      this.props.system.events.emit(ON_REVIVE_PLAYER);
+    }, 850);
+
+    this.setState(state => ({
+      lives: clamp(0, Infinity, state.lives - 1),
+    }));
+  }
+
+  onEnemyDeath = (source: IComponent): void => {
     const component = this.props.system
-      .getEntityComponent<IsLootable<IPointsLoot>>({ id: source.entityId }, 'loot');
+      .getEntityComponent<LootablePoints>({ id: source.entityId }, 'loot');
 
     if (component === undefined) {
       return;
@@ -146,10 +182,30 @@ export class Game extends React.PureComponent<Props, ICurrentGameState> {
 
   handleLevelLoading = (): void => {
     this.props.system.events.emit(ON_STOP_ENGINE)
+        
+    const controls: IComponent<WithPositionState>[] = this.props.system.getState().components.filter(o => o.name === 'position');
+    const homePositions: IComponent<WithHomePosition>[] = this.props.system.getState().components.filter(o => o.name === 'homePosition');
+
+    controls.forEach(component => {
+      component.state.controllable = false;
+    })
+    homePositions.forEach(component => {
+      component.state.goHome = true;
+    })
+
+    this.props.system.events.emit(ON_START_ENGINE)
   }
   
   handleLevelBegin = (): void => {
-    this.props.system.events.emit(ON_START_ENGINE)
+    const controls: IComponent<WithPositionState>[] = this.props.system.getState().components.filter(o => o.name === 'position');
+    const homePositions: IComponent<WithHomePosition>[] = this.props.system.getState().components.filter(o => o.name === 'homePosition');
+    
+    controls.forEach(component => {
+      component.state.controllable = true;
+    })
+    homePositions.forEach(component => {
+      component.state.goHome = false;
+    })
   }
 
   handleLevelComplete = (level: string | number): void => {

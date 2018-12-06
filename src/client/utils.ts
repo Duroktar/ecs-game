@@ -23,7 +23,7 @@ export function loadLevel(system: ISystemManager, enemyPositions: number[][]): I
           y:    y * geometry.height,
         }
   
-        const entity = createEnemy(system, enemyTypeId, JSON.stringify(position), position, geometry)
+        const entity = createEnemy(system, enemyTypeId, JSON.stringify(position), position, position, geometry)
         enemies.push({
           component: withTexture(enemyTypeId),
           entity,

@@ -6,24 +6,26 @@ import { withPositionFactory,       WithPosition, WithPositionState } from "../.
 import { withGeometryFactory,       WithGeometry } from "../../engine/components/withGeometry";
 import { withBoundaryFactory,       WithBoundary } from "../../engine/components/withBoundary";
 import { withTextureFactory,        WithTexture } from "../../engine/components/withTexture";
-import { withPlayerControlsFactory, WithPlayerControls } from "../../engine/components/withPlayerControls";
+import { withPlayerControlsFactory, WithControls } from "../../engine/components/withPlayerControls";
 import { isCollidableFactory,       IsCollidable } from "../../engine/components/isCollidable";
 import { withCollisionsFactory } from "../../engine/components/withCollisions";
+import { withHomePositionFactory, WithHomePosition } from "../../engine/components/withHomePosition";
 
 export function createCharacter(
   system:   ISystemManager,
   options:  CharacterModelArgs,
 ): IEntity {
-  const withName        = nameableFactory(system);
-  const withHealth      = killableFactory(system);
-  const withPosition    = withPositionFactory(system);
-  const withControls    = withPlayerControlsFactory(system);
-  const withAttack      = combatableFactory(system);
-  const withGeometry    = withGeometryFactory(system);
-  const withTexture     = withTextureFactory(system);
-  const isCollidable    = isCollidableFactory(system);
-  const withCollisions  = withCollisionsFactory(system);
-  const withBoundary    = withBoundaryFactory(system);
+  const withName          = nameableFactory(system);
+  const withHealth        = killableFactory(system);
+  const withPosition      = withPositionFactory(system);
+  const withControls      = withPlayerControlsFactory(system);
+  const withAttack        = combatableFactory(system);
+  const withGeometry      = withGeometryFactory(system);
+  const withTexture       = withTextureFactory(system);
+  const isCollidable      = isCollidableFactory(system);
+  const withCollisions    = withCollisionsFactory(system);
+  const withBoundary      = withBoundaryFactory(system);
+  const withHomePosition  = withHomePositionFactory(system);
 
   const entity = system.registerEntity();
 
@@ -35,6 +37,9 @@ export function createCharacter(
   );
   system.registerComponent(
     withPosition(entity, options, system.events)
+  );
+  system.registerComponent(
+    withHomePosition(entity, options, system.events)
   );
   system.registerComponent(
     withGeometry(entity, options, system.events)
@@ -73,7 +78,8 @@ export type CharacterModelArgs =
   WithAttack        &
   WithBoundary      &
   IsCollidable      &
-  WithPlayerControls;
+  WithHomePosition  &
+  WithControls;
 
 export type CharacterModel =
   WithName          &
@@ -84,4 +90,5 @@ export type CharacterModel =
   WithAttack        &
   WithBoundary      &
   IsCollidable      &
-  WithPlayerControls;
+  WithHomePosition  &
+  WithControls;

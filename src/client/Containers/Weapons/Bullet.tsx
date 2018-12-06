@@ -1,13 +1,6 @@
+import { ISystemManager } from '../../../engine/types';
 import * as React from 'react';
 import { ProjectileModel } from '../../../game/Domain/projectile';
-import { withCollisionEffect } from '../../hooks/withCollisionEffect';
-import { ISystemManager, IComponent } from '../../../engine/types';
-import { WithCollisions } from '../../../engine/components/withCollisions';
-
-function handleCollision(component: IComponent<WithCollisions>) {
-  component
-  debugger;
-}
 
 interface Props {
   system: ISystemManager;
@@ -15,13 +8,6 @@ interface Props {
 }
 
 export function Bullet(props: Props) {
-  withCollisionEffect({
-    entity:           props.model,
-    system:           props.system,
-    collisionGroup:   'bullet',
-    onCollision:      handleCollision,
-  })
-
   const styles = getStyles(props);
 
   return (

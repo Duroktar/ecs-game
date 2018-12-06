@@ -1,40 +1,29 @@
-import { IComponent, ISystemManager, IVector, IEntity, IComponentEvents } from "../types";
-import { factory, createSelector, createSetter, clamp, ifStateProp } from "../utils";
-import { WithControls } from "./controllable";
+import { IComponent, ISystemManager, IEntity, IComponentEvents } from "../types";
+import { factory, ifStateProp } from "../utils";
 import { WithBoundary } from "./withBoundary";
 import { WithGeometry } from "./withGeometry";
+import { WithPositionState } from "./withPosition";
 
-const COMPONENT_NAMESPACE = 'position';
-
-export type WithPosition = { position: IVector; }
+const COMPONENT_NAMESPACE = 'worldwrap';
 
 export function withWrapAroundPositionFactory(system: ISystemManager) {
-  return (entity: IEntity, state: WithPosition, events: IComponentEvents, id = -1) => {
-    return system.registerComponent(
-      factory<IComponent<WithPosition>>({
+  return (entity: IEntity, state: {}, events: IComponentEvents, id = -1) => {
+    return system.registerComponent<WithPositionState>(
+      factory<IComponent>({
         id,
         name: COMPONENT_NAMESPACE,
         entityId: entity.id,
-        state: { position: state.position },
-        update: (system: ISystemManager, component: IComponent<WithPosition>) => {
+        state: {},
+        update: (system: ISystemManager, component: IComponent<{}>) => {
           handleMovementState(entity, system, component, events);
         },
       }))
     }
   }
   
-function handleMovementState(entity: IEntity, system: ISystemManager, component: IComponent<WithPosition>, events: IComponentEvents) {
+function handleMovementState(entity: IEntity, system: ISystemManager, component: IComponent<{}>, events: IComponentEvents) {
 
-  const controls = system.getEntityComponent<WithControls>(entity, 'controls');
-
-  if (!controls || !controls.state.moving) {
-    return;
-  }
-
-  const {direction, speed} = controls.state;
-
-  component.state.position.x += direction.x * speed.x;
-  component.state.position.y += direction.y * speed.y;
+  const positionComponent = system.getEntityComponent<WithPositionState>(entity, 'position');
 
   // wrap around if necessary
   const boundaryComponent = system.getEntityComponent<WithBoundary>(entity, 'boundary');
@@ -45,11 +34,8 @@ function handleMovementState(entity: IEntity, system: ISystemManager, component:
     const {width, height} = geometryComponent.state.geometry;
     const {boundary}      = boundaryComponent.state;
 
-    const {x, y} = component.state.position;
-    component.state.position.x = (x < boundary.left) ? (boundary.right - width) : (x > boundary.right) ? boundary.left : x;
-    component.state.position.y = (y < boundary.top) ? (boundary.bottom - height) : (y > boundary.bottom) ? boundary.top : y;
+    const {x, y} = positionComponent.state.position;
+    positionComponent.state.position.x = (x < boundary.left) ? (boundary.right - width) : (x > boundary.right) ? boundary.left : x;
+    positionComponent.state.position.y = (y < boundary.top) ? (boundary.bottom - height) : (y > boundary.bottom) ? boundary.top : y;
   }
 };
-
-export const selectPositionState = createSelector<WithPosition>(COMPONENT_NAMESPACE);
-export const setPositionState    = createSetter<WithPosition>(selectPositionState);

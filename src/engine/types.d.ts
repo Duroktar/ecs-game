@@ -52,6 +52,8 @@ export interface IComponentFactories {
   boundary:     IComponentFactory;
   texture:      IComponentFactory;
   wiggle:       IComponentFactory;
+  homePosition: IComponentFactory;
+  worldwrap:    IComponentFactory;
 }
 
 export type IComponentFactoryKey = keyof IComponentFactories;
@@ -168,7 +170,7 @@ interface IComponentEvents {
 export type IConfig         = IObjectConfig | IFileConfig;
 export type IConfigDefaults = PickOptionalProps<IObjectConfig>;
 
-export interface IBasicConfig {
+export interface IBasicConfig extends Partial<IDevConfig>{
   name:     string;
   version:  string;
 }

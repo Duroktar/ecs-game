@@ -2,11 +2,17 @@ import { ISystemManager, IVector, IDimensions } from "../../engine/types";
 import { createMob } from "../Domain/mob";
 import { defaultBoundary } from "../../engine/utils";
 
+// const defaultPosition = {
+//   x: -999,
+//   y: -999,
+// }
+
 export function createEnemy(
     system:           ISystemManager,
     textureId:        number,
     name:             string,
-    position?:        IVector,
+    position:         IVector,
+    homePosition?:    IVector,
     geometry?:        IDimensions,
     collisionGroup:   string = 'hostile',
 ) {
@@ -26,10 +32,9 @@ export function createEnemy(
       value: 1,
     },
 
-    position: position || {
-      x: -999,
-      y: -999,
-    },
+    position: position,
+
+    homePosition: homePosition || position,
 
     geometry: geometry ||{
       width:  64,

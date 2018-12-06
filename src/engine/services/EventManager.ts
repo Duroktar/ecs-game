@@ -32,16 +32,23 @@ class EventManager implements IEventManager {
   };
 
   public emit = <T>(eventName: string, data?: T) => {
-    this.emitter.emit(eventName, data);
+    this._emit(eventName, data);
   };
 
   public onUpdate = (component: IComponent, entity: IEntity) => {
-    this.emitter.emit('updateComponent', component, entity);
+    this._emit('updateComponent', component, entity);
   };
 
   public onChange = (eventName: string, component: IComponent, entity: IEntity): void => {
-    this.emitter.emit(eventName, component, entity);
+    this._emit(eventName, component, entity);
   };
+
+  private _emit = (event: string, ...args: any[]) => {
+    if (this.config.logging) {
+      console.log(`[EventService]: Event: "${event}"; args:`, args)
+    }
+    this.emitter.emit(event, ...args);
+  }
 }
 
 export default EventManager;

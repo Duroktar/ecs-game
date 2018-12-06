@@ -3,12 +3,12 @@ import { WithPosition } from "./withPosition";
 import { factory } from "../utils";
 import { WithBoundary } from "./withBoundary";
 
-export type WithPlayerControls = { direction: IVector; moving: boolean; speed: IVector; };
+export type WithControls = { direction: IVector; moving: boolean; speed: IVector; disabled?: boolean; };
 
 export function withPlayerControlsFactory(system: ISystemManager) {
-  return (entity: IEntity, state: WithPlayerControls, events: IComponentEvents, id = -1) => {
+  return (entity: IEntity, state: WithControls, events: IComponentEvents, id = -1) => {
     return system.registerComponent(
-      factory<IComponent<WithPlayerControls>>({
+      factory<IComponent<WithControls>>({
         id,
         entityId: entity.id,
         name: 'controls',
@@ -16,6 +16,7 @@ export function withPlayerControlsFactory(system: ISystemManager) {
           direction: state.direction,
           moving: state.moving,
           speed: state.speed,
+          disabled: !!state.disabled,
         },
         update: (system: ISystemManager, component: IPlayerControllableEntity) => {
           handleVerticalMovement(entity, component, system);
@@ -27,7 +28,7 @@ export function withPlayerControlsFactory(system: ISystemManager) {
   }
 }
 
-export type IPlayerControllableEntity = IComponent<WithPlayerControls & Partial<WithPosition> & Partial<WithBoundary>>
+export type IPlayerControllableEntity = IComponent<WithControls & Partial<WithPosition> & Partial<WithBoundary>>
 
 function handleVerticalMovement(entity: IEntity, component: IPlayerControllableEntity, system: ISystemManager) {
   handleMovement(entity, component, system, 'vertical');
@@ -38,6 +39,10 @@ function handleHorizontalMovement(entity: IEntity, component: IPlayerControllabl
 }
 
 function handleMovement(entity: IEntity, component: IPlayerControllableEntity, system: ISystemManager, direction: 'vertical' | 'horizontal' = 'horizontal') {
+
+  if (component.state.disabled) {
+    return;
+  }
 
   const key = direction === 'horizontal' ? 'x' : 'y';
   const [neg, pos] = direction === 'horizontal'

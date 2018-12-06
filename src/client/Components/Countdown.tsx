@@ -3,6 +3,7 @@ import { classNames } from '../Development/Dev';
 
 interface Props {
   level:    string;
+  retries : number;
   onReady:  () => void;
 }
 
@@ -25,7 +26,7 @@ export function Countdown(props: Props) {
       setReady(true);
       props.onReady();
     }, END * 1000);
-  }, [props.level])
+  }, [props.level, props.retries])
 
   return (
     <div className={classNames("center-content", "absolute-fit", ready ? 'fadeout' : 'fadeout-visible')}>

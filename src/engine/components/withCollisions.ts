@@ -53,7 +53,7 @@ function handleCollisions(entity: IEntity, component: ICollidableEntity, system:
 
   component.state.collisions = collisions;
 
-  if (new Set(lastCollisions) !== new Set(collisions) && collisions.length > 0) {
+  if (diff(lastCollisions, collisions) && collisions.length > 0) {
     events.onChange(ON_COLLISION, component, entity);
   }
 }
@@ -80,4 +80,22 @@ function overlap(a: Bounds, b: Bounds) {
     return false;
 
   return true;
+}
+
+function diff(arrayToCompareTo: number[], comparedArray: number[])
+{
+  const sorted1 = arrayToCompareTo.sort();
+  const sorted2 = comparedArray.sort();
+
+  if (sorted2.length > sorted1.length) {
+    return true;
+  }
+
+  for(var i = 0; i < sorted1.length; ++i) {
+    if (sorted1[i] != sorted2[i]) {
+      return true;
+    }
+  }
+
+  return false;
 }

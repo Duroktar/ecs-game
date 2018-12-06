@@ -3,7 +3,7 @@ import { WithPosition } from "./withPosition";
 import { factory } from "../utils";
 import { WithBoundary } from "./withBoundary";
 
-export type WithControls = { direction: IVector; moving: boolean; speed: IVector; };
+export type WithControls = { direction: IVector; moving: boolean; speed: IVector; disabled?: boolean; };
 
 export function withControlsFactory(system: ISystemManager) {
   return (entity: IEntity, state: WithControls, events: IComponentEvents, id = -1) => {
