@@ -1,26 +1,26 @@
 import * as React from 'react';
 import { BrowserRouter as Router, Route } from "react-router-dom";
-import './App.style.css';
-import './FontGlow.style.css';
+import './styles/App.style.css';
+import './styles/FontGlow.style.css';
 
-import { DevScreen } from './client/Development/Dev';
+import { DevScreen } from './Development/Dev';
 
-import { Intro } from './client/Containers/Intro';
-import { Menu } from './client/Containers/Menu';
-import { Game } from './client/Containers/Game';
-import { Outro } from './client/Containers/Outro';
+import { Intro } from './Containers/Intro';
+import { Menu } from './Containers/Menu';
+import { Game } from './Containers/Game';
+import { Outro } from './Containers/Outro';
 
-import { CharacterModel } from './game/Domain/character';
-import { ProjectileModel } from './game/Domain/projectile';
+import { CharacterModel } from '../game/Domain/character';
+import { ProjectileModel } from '../game/Domain/projectile';
 
-import { createPlayer } from './game/factories/player';
-import { createBullet } from './game/factories/bullet';
+import { createPlayer } from '../game/factories/player';
+import { createBullet } from '../game/factories/bullet';
 
-import { system } from './game';
+import { system } from '../game';
 
-import { ON_START_GAME, ON_START_ENGINE, ON_STOP_ENGINE } from './events';
-import { keys } from './engine/utils';
-import { SfxLibrary, Songs, SongLibrary } from './game/catalogue';
+import { ON_START_GAME, ON_START_ENGINE, ON_STOP_ENGINE } from '../events';
+import { keys } from '../engine/utils';
+import { SfxLibrary, SongLibrary } from '../game/catalogue';
 
 interface State {
   epoch:    number;
