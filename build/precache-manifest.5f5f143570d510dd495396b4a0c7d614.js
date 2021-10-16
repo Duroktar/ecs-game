@@ -1,15 +1,15 @@
 self.__precacheManifest = [
   {
-    "revision": "35e9b099dd53b42751ba1e3dc8eff704",
-    "url": "/static/media/sfx_sounds_powerup2.35e9b099.wav"
+    "revision": "2e42aa2aea5e6caa68d3",
+    "url": "/static/css/main.7748932f.chunk.css"
   },
   {
-    "revision": "678939b1954b508888c8",
-    "url": "/static/css/main.fb7f9912.chunk.css"
+    "revision": "2e42aa2aea5e6caa68d3",
+    "url": "/static/js/main.2e42aa2a.chunk.js"
   },
   {
-    "revision": "9cf3c852c9c39cef5921",
-    "url": "/static/js/1.9cf3c852.chunk.js"
+    "revision": "9f1e0393392d808156bc",
+    "url": "/static/js/1.9f1e0393.chunk.js"
   },
   {
     "revision": "229c360febb4351a89df",
@@ -52,8 +52,8 @@ self.__precacheManifest = [
     "url": "/static/media/sfx_sounds_fanfare3.25f989ff.wav"
   },
   {
-    "revision": "678939b1954b508888c8",
-    "url": "/static/js/main.678939b1.chunk.js"
+    "revision": "35e9b099dd53b42751ba1e3dc8eff704",
+    "url": "/static/media/sfx_sounds_powerup2.35e9b099.wav"
   },
   {
     "revision": "6098824846a8ca06881b849d794848ea",
@@ -100,7 +100,7 @@ self.__precacheManifest = [
     "url": "/static/media/GameOver.184328c9.png"
   },
   {
-    "revision": "708658f9aa337d38fad96214a13602bc",
+    "revision": "812304e5e7957bbc7babcdc2e9935efd",
     "url": "/index.html"
   }
 ];
