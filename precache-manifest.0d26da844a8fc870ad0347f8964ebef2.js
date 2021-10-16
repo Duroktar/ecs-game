@@ -1,15 +1,15 @@
 self.__precacheManifest = [
   {
-    "revision": "efafac38d4d13d591cde",
-    "url": "/ecs-game/static/css/main.f818235e.chunk.css"
+    "revision": "0a083936f2bfe6b66531",
+    "url": "/ecs-game/static/css/main.5d2486a3.chunk.css"
   },
   {
-    "revision": "efafac38d4d13d591cde",
-    "url": "/ecs-game/static/js/main.efafac38.chunk.js"
+    "revision": "0a083936f2bfe6b66531",
+    "url": "/ecs-game/static/js/main.0a083936.chunk.js"
   },
   {
-    "revision": "9f1e0393392d808156bc",
-    "url": "/ecs-game/static/js/1.9f1e0393.chunk.js"
+    "revision": "9b650e78df5c07bf4fe7",
+    "url": "/ecs-game/static/js/1.9b650e78.chunk.js"
   },
   {
     "revision": "46de768981e563071400",
@@ -100,7 +100,7 @@ self.__precacheManifest = [
     "url": "/ecs-game/static/media/GameOver.184328c9.png"
   },
   {
-    "revision": "62a7d47035c4de11abb6f7f524425c1c",
+    "revision": "c012f904c8992c073a0a27f6c75a226d",
     "url": "/ecs-game/index.html"
   }
 ];

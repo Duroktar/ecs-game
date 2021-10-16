@@ -1,9 +1,9 @@
 {
-  "main.css": "/ecs-game/static/css/main.f818235e.chunk.css",
-  "main.js": "/ecs-game/static/js/main.efafac38.chunk.js",
-  "main.js.map": "/ecs-game/static/js/main.efafac38.chunk.js.map",
-  "static/js/1.9f1e0393.chunk.js": "/ecs-game/static/js/1.9f1e0393.chunk.js",
-  "static/js/1.9f1e0393.chunk.js.map": "/ecs-game/static/js/1.9f1e0393.chunk.js.map",
+  "main.css": "/ecs-game/static/css/main.5d2486a3.chunk.css",
+  "main.js": "/ecs-game/static/js/main.0a083936.chunk.js",
+  "main.js.map": "/ecs-game/static/js/main.0a083936.chunk.js.map",
+  "static/js/1.9b650e78.chunk.js": "/ecs-game/static/js/1.9b650e78.chunk.js",
+  "static/js/1.9b650e78.chunk.js.map": "/ecs-game/static/js/1.9b650e78.chunk.js.map",
   "runtime~main.js": "/ecs-game/static/js/runtime~main.46de7689.js",
   "runtime~main.js.map": "/ecs-game/static/js/runtime~main.46de7689.js.map",
   "static/media/sfx_wpn_laser1.wav": "/ecs-game/static/media/sfx_wpn_laser1.7c857ee1.wav",
@@ -27,8 +27,8 @@
   "static/media/ship.png": "/ecs-game/static/media/ship.8745c391.png",
   "static/media/Logo.style.css": "/ecs-game/static/media/Galaga-Logo.053dad25.png",
   "static/media/GameOver.style.css": "/ecs-game/static/media/GameOver.184328c9.png",
-  "static/css/main.f818235e.chunk.css.map": "/ecs-game/static/css/main.f818235e.chunk.css.map",
+  "static/css/main.5d2486a3.chunk.css.map": "/ecs-game/static/css/main.5d2486a3.chunk.css.map",
   "index.html": "/ecs-game/index.html",
-  "precache-manifest.1686dbfa8e2111cfad02b6f1c232bc7c.js": "/ecs-game/precache-manifest.1686dbfa8e2111cfad02b6f1c232bc7c.js",
+  "precache-manifest.0d26da844a8fc870ad0347f8964ebef2.js": "/ecs-game/precache-manifest.0d26da844a8fc870ad0347f8964ebef2.js",
   "service-worker.js": "/ecs-game/service-worker.js"
 }
