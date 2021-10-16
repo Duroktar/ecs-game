@@ -61,21 +61,21 @@ export class Game extends React.PureComponent<Props, ICurrentGameState> {
   }
 
   registerEvents = () => {
-    this.props.system.events.registerEvent(ON_LEVEL_LOAD,     this.handleLevelLoading);
-    this.props.system.events.registerEvent(ON_LEVEL_BEGIN,    this.handleLevelBegin);
-    this.props.system.events.registerEvent(ON_LEVEL_COMPLETE, this.handleLevelComplete);
-    this.props.system.events.registerEvent(ON_ENEMY_DEATH,    this.handleEnemyDeath);
-    this.props.system.events.registerEvent(ON_COLLISION,      this.handleBulletCollisions);
-    this.props.system.events.registerEvent(ON_GAME_OVER,      this.handleGameOver);
+    this.props.system.events.registerListener(ON_LEVEL_LOAD,     this.handleLevelLoading);
+    this.props.system.events.registerListener(ON_LEVEL_BEGIN,    this.handleLevelBegin);
+    this.props.system.events.registerListener(ON_LEVEL_COMPLETE, this.handleLevelComplete);
+    this.props.system.events.registerListener(ON_ENEMY_DEATH,    this.handleEnemyDeath);
+    this.props.system.events.registerListener(ON_COLLISION,      this.handleBulletCollisions);
+    this.props.system.events.registerListener(ON_GAME_OVER,      this.handleGameOver);
   }
 
   unRegisterEvents = () => {
-    this.props.system.events.unRegisterEvent(ON_LEVEL_LOAD,     this.handleLevelLoading);
-    this.props.system.events.unRegisterEvent(ON_LEVEL_BEGIN,    this.handleLevelBegin);
-    this.props.system.events.unRegisterEvent(ON_LEVEL_COMPLETE, this.handleLevelComplete);
-    this.props.system.events.unRegisterEvent(ON_ENEMY_DEATH,    this.handleEnemyDeath);
-    this.props.system.events.unRegisterEvent(ON_COLLISION,      this.handleBulletCollisions);
-    this.props.system.events.unRegisterEvent(ON_GAME_OVER,      this.handleGameOver);
+    this.props.system.events.unRegisterListener(ON_LEVEL_LOAD,     this.handleLevelLoading);
+    this.props.system.events.unRegisterListener(ON_LEVEL_BEGIN,    this.handleLevelBegin);
+    this.props.system.events.unRegisterListener(ON_LEVEL_COMPLETE, this.handleLevelComplete);
+    this.props.system.events.unRegisterListener(ON_ENEMY_DEATH,    this.handleEnemyDeath);
+    this.props.system.events.unRegisterListener(ON_COLLISION,      this.handleBulletCollisions);
+    this.props.system.events.unRegisterListener(ON_GAME_OVER,      this.handleGameOver);
   }
 
   handleBulletCollisions = (): void => { // !!! Move to system component

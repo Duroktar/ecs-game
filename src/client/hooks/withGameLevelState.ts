@@ -7,10 +7,6 @@ import { loadLevel } from '../utils';
 import { once } from '../../engine/utils';
 import { ON_ENEMY_DEATH, ON_LEVEL_COMPLETE } from '../../events';
 
-function arrayRandom(items: any[]) {
-  return items[Math.floor(Math.random()*items.length)];
-}
-
 
 export const withGameLevelState = (options: WithGameLevelStateOptions) => {
   const [ready, setReady] = useState(false);
@@ -43,13 +39,13 @@ export const withGameLevelState = (options: WithGameLevelStateOptions) => {
     setEnemies(enemies);
     setAlive(enemies.map(o => o.entity.id));
 
-    options.system.events.registerEvent(ON_ENEMY_DEATH, countDeath)
+    options.system.events.registerListener(ON_ENEMY_DEATH, countDeath)
 
     setReady(true);
 
     return function cleanup() {
       options.system.events
-        .unRegisterEvent(ON_ENEMY_DEATH, countDeath);
+        .unRegisterListener(ON_ENEMY_DEATH, countDeath);
       
       enemies.forEach(o => options.system
         .unRegisterEntity(o.entity.id)

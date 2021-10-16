@@ -42,10 +42,10 @@ export const withGameLevel = (
   
       this.setState({ enemies, ready: true })
   
-      system.events.registerEvent(ON_ENEMY_DEATH, this.countDeath);
-      system.events.registerEvent(ON_ENEMY_FREE,  this.enemyFree);
-      system.events.registerEvent(ON_ENEMY_GROUP, this.enemyGroup);
-      system.events.registerEvent(ON_LEVEL_BEGIN, this.startFreeEnemyInterval);
+      system.events.registerListener(ON_ENEMY_DEATH, this.countDeath);
+      system.events.registerListener(ON_ENEMY_FREE,  this.enemyFree);
+      system.events.registerListener(ON_ENEMY_GROUP, this.enemyGroup);
+      system.events.registerListener(ON_LEVEL_BEGIN, this.startFreeEnemyInterval);
     }
   
     componentDidUpdate(nextProps: LevelProps, nextState: State) {
@@ -63,10 +63,10 @@ export const withGameLevel = (
 
       clearInterval(this.interval);
       
-      system.events.unRegisterEvent(ON_ENEMY_DEATH, this.countDeath);
-      system.events.unRegisterEvent(ON_ENEMY_FREE,  this.enemyFree);
-      system.events.unRegisterEvent(ON_ENEMY_GROUP, this.enemyGroup);
-      system.events.unRegisterEvent(ON_LEVEL_BEGIN, this.startFreeEnemyInterval);
+      system.events.unRegisterListener(ON_ENEMY_DEATH, this.countDeath);
+      system.events.unRegisterListener(ON_ENEMY_FREE,  this.enemyFree);
+      system.events.unRegisterListener(ON_ENEMY_GROUP, this.enemyGroup);
+      system.events.unRegisterListener(ON_LEVEL_BEGIN, this.startFreeEnemyInterval);
       
       this.state.enemies.forEach(o =>
         system.unRegisterEntity(o.entity.id)
