@@ -18,10 +18,13 @@ import { first, mkEntity } from '../../engine/utils';
 import { ON_LEVEL_COMPLETE, ON_ENEMY_DEATH, ON_COLLISION, ON_GAME_OVER, ON_PLAYER_ATTACK, ON_LEVEL_LOAD, ON_LEVEL_BEGIN, ON_START_ENGINE, ON_STOP_ENGINE } from '../../events';
 import { getNextLevel } from '../Levels/Directory';
 import { Sfx, Songs } from '../../game/catalogue';
+import { Screens } from '../Screens';
 
 
 interface Props extends IGameState {
-  onRestart:  () => void;
+  onRestart:    () => void;
+  onFinalScore: (stats: ICurrentGameState) => void;
+  nav:          (screen: Screens) => void;
 }
 
 export class Game extends React.PureComponent<Props, ICurrentGameState> {
@@ -192,13 +195,7 @@ export class Game extends React.PureComponent<Props, ICurrentGameState> {
     }, 2250);
 
     setTimeout(() => {
-      window.location.assign(`/end?final=${JSON.stringify({
-        score:    this.state.score,
-        hits:     this.state.hits,
-        shots:    this.state.shots,
-        lives:    this.state.lives,
-        credits:  this.state.credits,
-      })}`);
+      this.props.onFinalScore(this.state);
     }, 3000);
   }
 

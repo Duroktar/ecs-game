@@ -10,6 +10,7 @@ import { pp } from '../../engine/utils';
 import { withBlur } from '../utils';
 import { withEntity } from '../Hoc/withEntity';
 import { FPS } from './FPS';
+import { Screens } from '../Screens';
 
 interface Props {
   system:   ISystemManager;
@@ -18,6 +19,7 @@ interface Props {
   onTick:   () => void;
   onSave:   () => void;
   onLoad:   () => void;
+  nav:      (screen: Screens) => void;
 }
 
 const EntityInspector = withEntity(props =>
@@ -52,9 +54,9 @@ export const DevScreen = (props: Props) => {
 
         <div className={classNames(!open && 'hidden')}>
           <span className="links">
-            <Link to="/intro">Intro</Link>{' | '}
-            <Link to="/menu">Menu</Link>{' | '}
-            <Link to="/game">Game</Link>
+            <a onClick={() => props.nav('intro')}>Intro</a>{' | '}
+            <a onClick={() => props.nav('menu')}>Menu</a>{' | '}
+            <a onClick={() => props.nav('game')}>Game</a>
           </span>
 
           <Buttons {...props} />

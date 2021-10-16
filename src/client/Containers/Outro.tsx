@@ -9,6 +9,7 @@ import { classNames } from '../Development/Dev';
 import { withEnterKeyEffect } from '../hooks/withEnterKeyEffect';
 import { Songs } from '../../game/catalogue';
 import { once } from '../../engine/utils';
+import { Screens } from '../Screens';
 
 interface FinalScore {
   score:    number;
@@ -18,16 +19,20 @@ interface FinalScore {
   credits:  number;
 }
 
-export function Outro(props: IGameState) {
+type Props = {
+  nav:    (screen: Screens) => void;
+  final?: FinalScore
+}
+export function Outro(props: Props & IGameState) {
   const [ready, setReady] = useState(false);
   const [final, setFinalScore] = useState<FinalScore>({} as FinalScore);
 
   function handleStartNewGame() {
-    window.location.assign('/game');
+    props.nav('game');
   }
-
+  
   function handleRestartGame() {
-    window.location.assign('/menu');
+    props.nav('menu');
   }
 
   useEffect(() => {
@@ -38,11 +43,9 @@ export function Outro(props: IGameState) {
   }, []);
 
   useEffect(() => {
-    const serialized = getQueryParams(window.location.search);
-
-    if (serialized && typeof serialized.final === 'string') {
+    if (props.final) {
       try {
-        setFinalScore(JSON.parse(serialized.final));
+        setFinalScore(props.final);
       } catch (e) {
         // meh
       }
@@ -76,18 +79,4 @@ export function Outro(props: IGameState) {
       </div>
     </Gui>
   )
-}
-
-function getQueryParams(qs: string) {
-  const searchString = qs.split('+').join(' ');
-
-  let params: any = {};
-  let tokens: RegExpExecArray | null;
-  const re = /[?&]?([^=]+)=([^&]*)/g;
-
-  while (tokens = re.exec(searchString)) {
-      params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
-  }
-
-  return params;
 }

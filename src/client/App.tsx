@@ -21,12 +21,16 @@ import { system } from '../game';
 import { ON_START_GAME, ON_START_ENGINE, ON_STOP_ENGINE } from '../events';
 import { keys } from '../engine/utils';
 import { SfxLibrary, SongLibrary } from '../game/catalogue';
+import { ICurrentGameState } from '../game/types';
+import { Screens } from './Screens';
 
 interface State {
   epoch:    number;
   player:   CharacterModel;
   bullet1:  ProjectileModel;
   bullet2:  ProjectileModel;
+  final?:   ICurrentGameState;
+  screen:   Screens;
 }
 
 class App extends React.PureComponent<{}, State> {
@@ -51,6 +55,8 @@ class App extends React.PureComponent<{}, State> {
     player:  system.getEntityModel<CharacterModel>(this.player),
     bullet1: system.getEntityModel<ProjectileModel>(this.bullet1),
     bullet2: system.getEntityModel<ProjectileModel>(this.bullet2),
+    final:   undefined,
+    screen:  'intro' as Screens,
   }
   
 
@@ -110,7 +116,7 @@ class App extends React.PureComponent<{}, State> {
   }
 
   startNewGame = () => {
-    window.location.assign('/game')
+    this.gotoScreen('game')
   }
 
   start = () => {
@@ -144,7 +150,15 @@ class App extends React.PureComponent<{}, State> {
   }
 
   restart = () => {
-    window.location.assign('/menu');
+    this.gotoScreen('menu');
+  }
+
+  gotoScreen = (screen: Screens) => {
+    this.setState({ screen});
+  }
+
+  setFinalScore = (score: ICurrentGameState) => {
+    this.setState(state => ({ ...state, final: score }));
   }
 
   render() {
@@ -153,38 +167,40 @@ class App extends React.PureComponent<{}, State> {
         <div className="App container with-title is-center is-dark">
           <label className="title">Galaga.ts</label>
 
-          <Route exact path="/" render={(props) =>
-            <Intro
-              onPlayerInput={this.startNewGame}
-              {...this.state}
-              {...props}
-            />
-          } />
+          {this.state.screen === 'intro'
+            ? <Intro
+                onPlayerInput={this.startNewGame}
+                nav={this.gotoScreen}
+                {...this.state}
+              />
+            : null
+          }
+          {this.state.screen === 'menu'
+            ? <Menu
+                system={system}
+                {...this.state}
+              />
+            : null
+          }
+          {this.state.screen === 'game'
+            ? <Game
+                system={system}
+                onRestart={this.restart}
+                onFinalScore={this.setFinalScore}
+                nav={this.gotoScreen}
+                {...this.state}
+              />
+            : null
+          }
+          {this.state.screen === 'end'
+            ? <Outro
+                system={system}
+                nav={this.gotoScreen}
 
-          <Route path="/menu" render={(props) =>
-            <Menu
-              system={system}
-              {...this.state}
-              {...props}
-            />
-          } />
-
-          <Route path="/game" render={(props) =>
-            <Game
-              system={system}
-              onRestart={this.restart}
-              {...this.state}
-              {...props}
-            />
-          } />
-
-          <Route path="/end" render={(props) =>
-            <Outro
-              system={system}
-              {...this.state}
-              {...props}
-            />
-          } />
+                {...this.state}
+              />
+            : null
+          }
 
           <DevScreen
             system={system}
@@ -193,6 +209,7 @@ class App extends React.PureComponent<{}, State> {
             onTick={this.tick}
             onSave={this.save}
             onLoad={this.load}
+            nav={this.gotoScreen}
           />
         </div>
       </Router>
