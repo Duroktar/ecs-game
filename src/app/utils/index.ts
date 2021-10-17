@@ -1,8 +1,8 @@
-import { ISystemManager } from "../engine/interfaces/ISystemManager";
+import { ISystemManager } from "../../engine/interfaces/ISystemManager";
 import { MouseEvent } from "react";
-import { createEnemy } from "../game/factories/enemy";
-import { withTexture } from "./Hoc/withTexture";
-import { ILoadedEnemy } from "./Levels/types";
+import { createEnemy } from "../../game/factories/enemy";
+import { withTexture } from "../Hoc/withTexture";
+import { ILoadedEnemy } from "../Levels/types";
 
 export function loadLevel(system: ISystemManager, enemyPositions: number[][]): ILoadedEnemy[] {
   let enemies: ILoadedEnemy[] = [];
@@ -17,13 +17,13 @@ export function loadLevel(system: ISystemManager, enemyPositions: number[][]): I
           width:    64,
           height:   64,
         }
-  
+
         const position = {
           x:    x * geometry.width,
           y:    y * geometry.height,
         }
-  
-        const entity = createEnemy(system, enemyTypeId, JSON.stringify(position), position, geometry)
+
+        const entity = createEnemy(system, enemyTypeId, JSON.stringify(position), position, position, geometry)
         enemies.push({
           component: withTexture(enemyTypeId),
           entity,

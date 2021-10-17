@@ -1,5 +1,5 @@
 import { withGameLevel } from '../../Hoc/withGameLevel';
-import { ON_GAME_OVER } from '../../../events';
+import { GAME_OVER } from '../../../events';
 
 export const Level4 = withGameLevel({
   enemyPositions: [
@@ -12,5 +12,5 @@ export const Level4 = withGameLevel({
   ],
   levelId: '4',
 
-  completeEvent: ON_GAME_OVER,
+  // completeEvent: ON_GAME_OVER,
 });

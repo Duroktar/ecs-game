@@ -33,6 +33,7 @@ class EventManager implements IEventManager {
   };
 
   public emit = <T>(eventName: string, data?: T) => {
+    console.log('Emitting:', eventName, data);
     this.emitter.emit(eventName, data);
   };
 

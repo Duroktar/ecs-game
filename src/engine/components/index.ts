@@ -15,6 +15,7 @@ import { withBoundaryFactory } from "./withBoundary";
 import { withTextureFactory } from "./withTexture";
 import { withBugWiggleFactory } from "./withBugWiggle";
 import { withHomePositionFactory } from "./withHomePosition";
+import { withWrapAroundPositionFactory } from "./withWrapAroundPosition";
 
 export const defaultComponentFactories: IComponentFactories = {
   name:         nameableFactory,
@@ -33,6 +34,7 @@ export const defaultComponentFactories: IComponentFactories = {
   texture:      withTextureFactory,
   wiggle:       withBugWiggleFactory,
   homePosition: withHomePositionFactory,
+  worldwrap:    withWrapAroundPositionFactory,
 }
 
 export function getComponentFactory<T extends IComponentFactoryKey>(name: T): IComponentFactories[T] {

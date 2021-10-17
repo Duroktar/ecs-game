@@ -3,6 +3,7 @@ import { classNames } from '../Development/Dev';
 
 interface Props {
   level:    string;
+  retries : number;
   onReady:  () => void;
 }
 
@@ -24,20 +25,20 @@ function useCountdownHooks(props: Props) {
 
   React.useEffect(() => {
     let END = 5;
-    
+
     setTime(END);
     setReady(false);
-  
+
     for (let i = 0; i <= END; i++) {
       setTimeout(() => setTime(END - i), i * 1000);
     }
-  
+
     setTimeout(() => {
       setReady(true);
       props.onReady();
     }, END * 1000);
 
-  }, [props.level])
+  }, [props.level, props.retries])
 
   return { time, ready }
 }

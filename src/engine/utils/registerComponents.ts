@@ -1,6 +1,6 @@
-import { IEntity, IComponent } from "./types";
-import { IEventManager } from "./interfaces/IEventManager";
-import { ISystemManager } from "./interfaces/ISystemManager";
+import { IEntity, IComponent } from "../types";
+import { IEventManager } from "../interfaces/IEventManager";
+import { ISystemManager } from "../interfaces/ISystemManager";
 
 type IFactory<O> = (system: ISystemManager) => (entity: IEntity, options: O, events: IEventManager) => IComponent
 

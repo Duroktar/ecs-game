@@ -7,7 +7,8 @@ export function createEnemy(
     system:           ISystemManager,
     textureId:        number,
     name:             string,
-    position?:        IVector,
+    position:         IVector,
+    homePosition?:    IVector,
     geometry?:        IDimensions,
     collisionGroup:   string = 'hostile',
 ) {
@@ -27,10 +28,9 @@ export function createEnemy(
       value: 1,
     },
 
-    position: position || {
-      x: -999,
-      y: -999,
-    },
+    position: position,
+
+    homePosition: homePosition || position,
 
     geometry: geometry ||{
       width:  64,
@@ -44,6 +44,8 @@ export function createEnemy(
     boundary: defaultBoundary,
 
     collisionGroup,
+
+    collidable: true,
   });
 
   return entity;

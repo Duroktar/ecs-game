@@ -1,12 +1,15 @@
+import { ISystemManager } from '../../../engine/interfaces/ISystemManager';
 import * as React from 'react';
 import { ProjectileModel } from '../../../game/Domain/projectile';
 
 interface Props {
-  model: ProjectileModel;
+  system: ISystemManager;
+  model:  ProjectileModel;
 }
 
 export function Bullet(props: Props) {
   const styles = getStyles(props);
+
   return (
     <div id="bullet" className="sprite" style={styles} />
   )

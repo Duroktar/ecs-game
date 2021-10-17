@@ -1,4 +1,4 @@
-import { IModelType } from './withEntity';
+import { IModelType } from './withEntityModel';
 import * as React from 'react';
 import { Omit } from 'react-router';
 
@@ -8,11 +8,13 @@ import { MobModel } from '../../game/Domain/mob';
 import { withAnimationState, WithAnimationOptions } from '../hooks/withAnimationState';
 import { withSoundEffects } from '../hooks/withSoundEffects';
 import { IAudioCollectionInitializer, WithComponentMeta, IComponent, IEntity } from '../../engine/types';
-import { withCollisionEffect, WithCollisionOptions } from '../hooks/withCollisionEffect';
+import { withDeathState, WithDeathEffectOptions } from '../hooks/withDeathState';
 import { WithCollisions } from '../../engine/components/withCollisions';
+import { once } from '../../engine/utils';
+import { keyframes } from '../utils/keyframes';
 
 
-interface WithSpriteEffectsOptions extends WithAnimationOptions, WithCollisionOptions {
+interface WithSpriteEffectsOptions extends WithAnimationOptions, WithDeathEffectOptions {
   elementId:          string;
   sounds:             IAudioCollectionInitializer;
   handleCollision?:   (model: WithComponentMeta<any>, component: IComponent<WithCollisions>, entity: IEntity) => void;
@@ -25,6 +27,7 @@ type ISpriteState = 'normal' | 'death';
 export function withSpriteEffects<T extends HOCModelType>(
   options: Omit<WithSpriteEffectsOptions, 'onFinished'>
 ): React.ComponentType<IModelType<T>> {
+
   return function WithSpriteEffectsHOC(props: IModelType<T>) {
     const [hidden, setHidden] = React.useState(() => false)
     const [dead, setDead]     = React.useState(() => false)
@@ -37,27 +40,46 @@ export function withSpriteEffects<T extends HOCModelType>(
         { if (state === 'death') setHidden(true); }
     });
 
+    const deathState = withDeathState({
+      entity:         props.model,
+      system:         props.system,
+      deathEvent:     options.deathEvent,
+    })
+
     withSoundEffects<T>({
       entity:         props.model,
       system:         props.system,
       sounds:         options.sounds,
     });
 
-    withCollisionEffect<T>({
-      entity:         props.model,
-      system:         props.system,
-      collisionGroup: options.collisionGroup,
-      onCollision:    handleCollision,
+    const setStateToAlive = () => {
+      setCurrentState('normal');
+      setDead(false);
+
+      keyframes(
+        [() => setHidden(false),  100],
+        [() => setHidden(true),   300],
+        [() => setHidden(false),  400],
+        [() => setHidden(true),   600],
+        [() => setHidden(false),  700],
+        [() => setHidden(true),   900],
+        [() => setHidden(false), 1100],
+        [() => setHidden(true),  1400],
+        [() => setHidden(false), 1500],
+      );
+    }
+
+    const setStateToDead = once(() => {
+      setCurrentState('death');
+      setDead(true);
     })
 
-    function handleCollision(component: IComponent<WithCollisions>, entity: IEntity) {
-      if (options.handleCollision) {
-        options.handleCollision(props.model, component, entity);
-      }
+    if (deathState.dead && !dead) {
+      setStateToDead();
+    }
 
-      props.model.health.value = 0;
-
-      setCurrentState('death');
+    if (dead && !deathState.dead) {
+      setStateToAlive();
     }
 
     const styles: React.CSSProperties = {
@@ -71,7 +93,7 @@ export function withSpriteEffects<T extends HOCModelType>(
       top:                    hidden ? -9999 : props.model.position.y,
       display:                cssDisplayValue(hidden),
     }
-  
+
     return (
       <div id={options.elementId} className="sprite" style={styles} />
     )

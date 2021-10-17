@@ -9,7 +9,6 @@ export function createPlayer(
   collisionGroup:   string = 'friendly',
 ) {
 
-  debugger
   const playerEntity = createCharacter(system, {
     name,
 
@@ -53,7 +52,9 @@ export function createPlayer(
     homePosition: {
       x: 400,
       y: 475,
-    }
+    },
+
+    collidable: true,
   });
 
   return playerEntity;

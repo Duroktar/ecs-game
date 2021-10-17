@@ -31,6 +31,8 @@ export function createBullet(
     },
 
     collisionGroup,
+
+    collidable: true,
   });
 
   return entity;

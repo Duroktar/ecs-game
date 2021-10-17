@@ -4,13 +4,16 @@ import { LevelProps, ILoadedEnemy } from '../Levels/types';
 import { Level } from '../Levels/Base';
 import { ConnectedPlayer } from '../Containers/Player/Player';
 import { Bullet } from '../Containers/Weapons/Bullet';
-import { once } from '../../engine/utils';
-import { ON_ENEMY_DEATH, ON_LEVEL_COMPLETE, ON_ENEMY_FREE, ON_ENEMY_GROUP, ON_LEVEL_BEGIN } from '../../events';
+import { ENEMY_DEATH, LEVEL_COMPLETE, ENEMY_FREE, ENEMY_GROUP, LEVEL_BEGIN, REVIVE_PLAYER, DEATH, PLAYER_DEATH } from '../../events';
 import { WithRandomWalk } from '../../engine/components/withRandomWalk';
+import { IComponent, IEntity } from '../../engine/types';
+import { WithHealth } from '../../engine/components/killable';
 
 function arrayRandom<T>(items: T[]) {
   return items[Math.floor(Math.random()*items.length)];
 }
+
+const ENEMY_FREE_INTERVAL = 2000;
 
 interface WithGameLevelOptions {
   enemyPositions: number[][];
@@ -18,9 +21,17 @@ interface WithGameLevelOptions {
   completeEvent?: string;
 }
 
-export const withGameLevel = (
-  options: WithGameLevelOptions
-): React.ComponentType<LevelProps> => {
+interface State {
+  enemies:          ILoadedEnemy[];
+  enemyPositions:   number[][];
+  enemiesDead:      number;
+  levelId:          string | number;
+  ready:            boolean;
+  levelComplete:    boolean;
+}
+
+export const withGameLevel = (options: WithGameLevelOptions): React.ComponentType<LevelProps> => {
+
   return class LevelHOC extends React.Component<LevelProps, State> {
     private interval: any;
 
@@ -31,6 +42,8 @@ export const withGameLevel = (
       enemies: [] as ILoadedEnemy[],
       enemiesDead: 0,
       ready: false,
+
+      levelComplete: false,
     }
 
     componentDidMount() {
@@ -41,14 +54,15 @@ export const withGameLevel = (
 
       this.setState({ enemies, ready: true })
 
-      system.events.registerListener(ON_ENEMY_DEATH, this.countDeath);
-      system.events.registerListener(ON_ENEMY_FREE,  this.enemyFree);
-      system.events.registerListener(ON_ENEMY_GROUP, this.enemyGroup);
-      system.events.registerListener(ON_LEVEL_BEGIN, this.startFreeEnemyInterval);
+      system.events.registerListener(DEATH,         this.handleDeath);
+      system.events.registerListener(ENEMY_FREE,    this.enemyFree);
+      system.events.registerListener(ENEMY_GROUP,   this.enemyGroup);
+      system.events.registerListener(LEVEL_BEGIN,   this.startFreeEnemyInterval);
+      system.events.registerListener(REVIVE_PLAYER, this.stopAllFreeEnemies);
     }
 
     componentDidUpdate(nextProps: LevelProps, nextState: State) {
-      if (!nextState.ready) {
+      if (!nextState.ready || nextState.levelComplete || this.state.levelComplete) {
         return;
       }
 
@@ -62,44 +76,71 @@ export const withGameLevel = (
 
       clearInterval(this.interval);
 
-      system.events.unRegisterListener(ON_ENEMY_DEATH, this.countDeath);
-      system.events.unRegisterListener(ON_ENEMY_FREE,  this.enemyFree);
-      system.events.unRegisterListener(ON_ENEMY_GROUP, this.enemyGroup);
-      system.events.unRegisterListener(ON_LEVEL_BEGIN, this.startFreeEnemyInterval);
+      system.events.unRegisterListener(DEATH,         this.handleDeath);
+      system.events.unRegisterListener(ENEMY_FREE,    this.enemyFree);
+      system.events.unRegisterListener(ENEMY_GROUP,   this.enemyGroup);
+      system.events.unRegisterListener(LEVEL_BEGIN,   this.startFreeEnemyInterval);
+      system.events.unRegisterListener(REVIVE_PLAYER, this.stopAllFreeEnemies);
 
       this.state.enemies.forEach(o =>
         system.unRegisterEntity(o.entity.id)
       );
     }
 
-    countDeath = () => {
-      this.setState(state => ({
-        enemiesDead: state.enemiesDead + 1,
-      }));
+    handleDeath = (component: IComponent<WithHealth>, entity: IEntity) => {
+      if (this.props.state.player.id === component.entityId) {
+        this.props.system.events.emit(PLAYER_DEATH, component)
+      } else {
+        this.props.system.events.emit(ENEMY_DEATH, component)
+
+        this.setState(state => ({ enemiesDead: state.enemiesDead + 1 }));
+      }
     }
 
-    onLevelComplete = once((system: ISystemManager, level: number | string) => {
-      system.events.emit(options.completeEvent || ON_LEVEL_COMPLETE, level);
-      clearInterval(this.interval);
-    })
+    onLevelComplete = (system: ISystemManager, level: number | string) => {
+      this.stopFreeEnemyInterval();
+
+      if (!this.state.levelComplete) {
+        system.events.emit(options.completeEvent || LEVEL_COMPLETE, level);
+
+        this.setState(() => ({ levelComplete: true }));
+      }
+    }
 
     enemyFree = () => {
-      const maybeComponent = arrayRandom(this.state.enemies.map(o => o.entity));
+      const randomEnemyEntity = arrayRandom(this.state.enemies.map(o => o.entity));
 
       const controlComponent = this.props.system
-        .getEntityComponent<WithRandomWalk>(maybeComponent, 'controls');
+        .getEntityComponent<WithRandomWalk>(randomEnemyEntity, 'controls');
 
       if (controlComponent) {
         controlComponent.state.disabled = false;
       }
     }
 
+    stopAllFreeEnemies = () => {
+      this.stopFreeEnemyInterval();
+
+      this.state.enemies.forEach(o => {
+        const controlComponent = this.props.system
+          .getEntityComponent<WithRandomWalk>(o.entity, 'controls');
+
+        if (controlComponent) {
+          controlComponent.state.disabled = true;
+        }
+      });
+    }
+
     enemyGroup = () => {}
 
     startFreeEnemyInterval = () => {
       this.interval = setInterval(() => {
-        this.props.system.events.emit(ON_ENEMY_FREE);
-      }, 8000);
+        this.props.system.events.emit(ENEMY_FREE);
+      }, ENEMY_FREE_INTERVAL);
+    }
+
+    stopFreeEnemyInterval = () => {
+      clearInterval(this.interval);
     }
 
     render() {
@@ -109,8 +150,8 @@ export const withGameLevel = (
 
           <ConnectedPlayer entity={player} system={system} />
 
-          <Bullet model={bullet1} />
-          <Bullet model={bullet2} />
+          <Bullet model={bullet1} system={system} />
+          <Bullet model={bullet2} system={system} />
 
           {this.state.enemies.map((enemy: ILoadedEnemy) => {
             const ConnectedEnemy = enemy.component;
@@ -127,12 +168,4 @@ export const withGameLevel = (
       )
     }
   }
-}
-
-interface State {
-  enemies:          ILoadedEnemy[];
-  enemyPositions:   number[][];
-  enemiesDead:      number;
-  levelId:          string | number;
-  ready:            boolean;
 }

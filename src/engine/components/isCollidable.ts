@@ -15,7 +15,7 @@ export function isCollidableFactory(system: ISystemManager) {
         id,
         entityId: entity.id,
         name: COMPONENT_NAMESPACE,
-        state: { collidable: state.collidable || true, collisionGroup: state.collisionGroup },
+        state: { collidable: state.collidable === undefined ? true: state.collidable, collisionGroup: state.collisionGroup },
         update: (system: ISystemManager, component: ICollidableEntity) => null,
       }))
   }

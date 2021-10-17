@@ -21,18 +21,18 @@ export const withAnimationState = (options: WithAnimationOptions) => {
   const [animations, setAnimations] = useState(options.animations);
   const [currentFrame, setCurrentFrame] = useState(options.currentFrame || getDefaultFrame(options));
   const [currentState, setCurrentState] = useState(options.currentState);
+  const [lastState, setLastState] = useState("" as 'normal' | 'death');
   const [timers, setTimers] = useState<NodeJS.Timer[]>([])
 
-  if (options.currentState !== currentState) {
+  function queueFrame(frame: string, when: number) {
+    const setFrame = (fr: string) => setCurrentFrame(fr);
+    timers.push(setTimeout(() => setFrame(frame), when));
+  }
 
-    function queueFrame(frame: string, when: number) {
-      const setFrame = (fr: string) => setCurrentFrame(fr);
-      timers.push(setTimeout(() => setFrame(frame), when));
-    }
-
+  if (lastState !== currentState) {
     let buffer: number = 0;
 
-    setCurrentState(options.currentState);
+    setLastState(currentState);
 
     animations[currentState]
       .forEach(({ frame, duration }) => {

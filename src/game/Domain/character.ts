@@ -11,8 +11,7 @@ import { isCollidableFactory,       IsCollidable } from "../../engine/components
 import { withCollisionsFactory,     WithCollisions } from "../../engine/components/withCollisions";
 import { withHomePositionFactory,   WithHomePosition } from "../../engine/components/withHomePosition";
 import { withPlayerControlsFactory, WithPlayerControls } from "../../engine/components/withPlayerControls";
-import { registerComponentFactories } from "../../engine/registerComponents";
-import { WithControls } from "../../engine/components/controllable";
+import { registerComponentFactories } from "../../engine/utils";
 
 export function createCharacter(
   system:   ISystemManager,

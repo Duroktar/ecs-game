@@ -5,7 +5,7 @@ import { WithControls } from "./controllable";
 import { WithBoundary } from "./withBoundary";
 import { WithGeometry } from "./withGeometry";
 
-const COMPONENT_NAMESPACE = 'position';
+const COMPONENT_NAMESPACE = 'worldwrap';
 
 export type WithPosition = { position: IVector; }
 
@@ -23,7 +23,7 @@ export function withWrapAroundPositionFactory(system: ISystemManager) {
       }))
     }
   }
-  
+
 function handleMovementState(entity: IEntity, system: ISystemManager, component: IComponent<WithPosition>, events: IComponentEvents) {
 
   const controls = system.getEntityComponent<WithControls>(entity, 'controls');
@@ -40,7 +40,7 @@ function handleMovementState(entity: IEntity, system: ISystemManager, component:
   // wrap around if necessary
   const boundaryComponent = system.getEntityComponent<WithBoundary>(entity, 'boundary');
   const geometryComponent = system.getEntityComponent<WithGeometry>(entity, 'geometry');
-  
+
   if (ifStateProp(boundaryComponent) && ifStateProp(geometryComponent)) {
 
     const {width, height} = geometryComponent.state.geometry;

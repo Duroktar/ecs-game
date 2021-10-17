@@ -1,7 +1,7 @@
 import { IComponent, IEntity, IComponentEvents } from "../types";
 import { ISystemManager } from "../interfaces/ISystemManager";
 import { factory, createSelector, createSetter } from "../utils";
-import { ON_ENEMY_DEATH } from "../../events";
+import { DEATH } from "../../events";
 
 const COMPONENT_NAMESPACE = 'health';
 
@@ -25,6 +25,7 @@ export function killableFactory(system: ISystemManager) {
         update: (system: ISystemManager, component: IComponent<WithHealthState>) => {
 
           if (component.state.health.immortal) {
+            component.state.isDead = false;
             return;
           }
 
@@ -35,7 +36,7 @@ export function killableFactory(system: ISystemManager) {
 
           if (!wasDeadBefore && isDeadNow) {
             // sad times
-            events.onChange!(ON_ENEMY_DEATH, component, entity)
+            events.onChange(DEATH, component, entity)
           }
         },
       }))

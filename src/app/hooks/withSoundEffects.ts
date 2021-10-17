@@ -2,7 +2,7 @@ import { IAudioCollectionInitializer, WithComponentMeta, IComponent, IEntity, En
 import { ISystemManager } from "../../engine/interfaces/ISystemManager";
 import {useEffect} from 'react';
 
-import { ON_DEATH, ON_ATTACK } from '../../events';
+import { DEATH, ATTACK } from '../../events';
 import { keys } from '../../engine/utils';
 import { WithHealthState } from '../../engine/components/killable';
 
@@ -19,8 +19,8 @@ export const withSoundEffects = <T>(options: WithSoundEffectsOptions<T>) => useE
     options.system.audio.playSound(collectionKey);
   }
 
-  options.system.events.registerListener(ON_DEATH,         playDeathAudio);
-  options.system.events.registerListener(ON_ATTACK,        playAttackAudio);
+  options.system.events.registerListener(DEATH,  playDeathAudio);
+  options.system.events.registerListener(ATTACK, playAttackAudio);
 
   keys(options.sounds).map(key => {
     const collectionKey = mkAudioCollectionKey(options.entity.id, `${key}`);
@@ -32,8 +32,8 @@ export const withSoundEffects = <T>(options: WithSoundEffectsOptions<T>) => useE
   })
 
   return function cleanup() {
-    options.system.events.unRegisterListener(ON_DEATH,     playDeathAudio);
-    options.system.events.unRegisterListener(ON_ATTACK,    playAttackAudio);
+    options.system.events.unRegisterListener(DEATH,  playDeathAudio);
+    options.system.events.unRegisterListener(ATTACK, playAttackAudio);
 
     keys(options.sounds).map((actionType: string | number) => {
       const collectionKey = mkAudioCollectionKey(options.entity.id, `${actionType}`);

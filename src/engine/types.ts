@@ -52,6 +52,7 @@ export interface IComponentFactories {
   texture:      IComponentFactory;
   wiggle:       IComponentFactory;
   homePosition: IComponentFactory;
+  worldwrap:    IComponentFactory;
 }
 
 export type IComponentFactoryKey = keyof IComponentFactories;

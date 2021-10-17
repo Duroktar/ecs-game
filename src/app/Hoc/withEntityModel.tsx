@@ -12,14 +12,12 @@ interface WithEntityProps {
 
 export type IModelType<P> = { model: WithComponentMeta<P>; system: ISystemManager };
 
-export const withEntity = <P extends MobModel | CharacterModel> (
-    Component: React.ComponentType<IModelType<P>>,
+export const withEntityModel = <P extends MobModel | CharacterModel> (
+  Component: React.ComponentType<IModelType<P>>,
 ): React.ComponentType<WithEntityProps> => {
-  function WithEntity(props: WithEntityProps) {
-    const { entity, system, ...rest } = props;
-    const model = system.getEntityModel<P>(props.entity);
-    return <Component {...rest} model={model} system={system} />;
-  };
 
-  return WithEntity;
+  return function WithEntityModelHOC(props: WithEntityProps) {
+    const model = props.system.getEntityModel<P>(props.entity);
+    return <Component {...props} model={model} />;
+  };
 }

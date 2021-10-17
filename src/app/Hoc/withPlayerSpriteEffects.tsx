@@ -1,5 +1,5 @@
 import { IAudioCollectionInitializer, IComponent, IEntity, WithComponentMeta } from '../../engine/types';
-import { IModelType } from './withEntity';
+import { IModelType } from './withEntityModel';
 import * as React from 'react';
 import { Omit } from 'react-router';
 
@@ -21,6 +21,7 @@ type ISpriteState = 'normal' | 'death';
 export function withPlayerSpriteEffects<T extends CharacterModel>(
   options: Omit<WithSpriteEffectsOptions, 'onFinished'>
 ): React.ComponentType<IModelType<T>> {
+
   return function WithSpriteEffectsHOC(props: IModelType<T>) {
     const [hidden, setHidden] = React.useState(() => false)
 
@@ -46,16 +47,15 @@ export function withPlayerSpriteEffects<T extends CharacterModel>(
     });
 
     function handleCollision(component: IComponent<WithCollisions>, entity: IEntity) {
-      debugger
-      // if (options.handleCollision) {
-      //   options.handleCollision(props.model, component, entity);
-      // }
+      if (options.handleCollision) {
+        options.handleCollision(props.model, component, entity);
+      }
 
-      // props.model.health.value = 0;
+      props.model.health.value = 0;
 
-      // setCurrentState('death');
+      setCurrentState('death');
     }
-    
+
     const styles: React.CSSProperties = {
       position:               'absolute',
       backgroundImage:        `url(${currentFrame})`,
@@ -67,7 +67,7 @@ export function withPlayerSpriteEffects<T extends CharacterModel>(
       top:                    hidden ? -9999 : props.model.position.y,
       display:                cssDisplayValue(hidden),
     }
-  
+
     return (
       <div id={options.elementId} className="sprite" style={styles} />
     )

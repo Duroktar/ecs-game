@@ -6,7 +6,8 @@ import { withOffscreenFactory,    WithOffscreen } from "../../engine/components/
 import { withGeometryFactory,     WithGeometry } from "../../engine/components/withGeometry";
 import { withCollisionsFactory,   WithCollisionArgs, WithCollisions } from "../../engine/components/withCollisions";
 import { nameableFactory,         WithName } from "../../engine/components/nameable";
-import { registerComponentFactories } from "../../engine/registerComponents";
+import { isCollidableFactory,     IsCollidable } from "../../engine/components/isCollidable";
+import { registerComponentFactories } from "../../engine/utils";
 
 
 export function createProjectile(
@@ -20,6 +21,7 @@ export function createProjectile(
     withPositionFactory,
     withGeometryFactory,
     withMomentumFactory,
+    isCollidableFactory,
     withCollisionsFactory,
     withOffscreenFactory,
   ]);
@@ -33,7 +35,8 @@ export type ProjectileBaseArgs =
   WithGeometry        &
   WithCollisionArgs   &
   WithName            &
-  WithOffscreen;
+  WithOffscreen       &
+  IsCollidable;
 
 export type ProjectileBase =
   WithPosition        &
@@ -41,8 +44,9 @@ export type ProjectileBase =
   WithGeometry        &
   WithCollisions      &
   WithName            &
-  WithOffscreen;
+  WithOffscreen       &
+  IsCollidable;
 
-export type ProjectileModel = 
+export type ProjectileModel =
   IComponent &
   ProjectileBase;

@@ -1,9 +1,8 @@
 import { IAudioCollectionInitializer, IComponent, IEntity, WithComponentMeta } from '../../engine/types';
-import { IModelType } from './withEntity';
+import { IModelType } from './withEntityModel';
 import * as React from 'react';
 import { Omit } from 'react-router';
 
-import { CharacterModel } from '../../game/Domain/character';
 import { MobModel } from '../../game/Domain/mob';
 
 import { withAnimationState, WithAnimationOptions } from '../hooks/withAnimationState';
@@ -22,6 +21,7 @@ type ISpriteState = 'normal' | 'death';
 export function withMobSpriteEffects<T extends MobModel>(
   options: Omit<WithSpriteEffectsOptions, 'onFinished'>
 ): React.ComponentType<IModelType<T>> {
+
   return function WithSpriteEffectsHOC(props: IModelType<T>) {
     const [hidden, setHidden] = React.useState(() => false)
 
@@ -29,8 +29,7 @@ export function withMobSpriteEffects<T extends MobModel>(
       animations:             options.animations,
       currentState:           options.currentState,
 
-      onFinished:             (state: ISpriteState) =>
-        { if (state === 'death') setHidden(true); }
+      onFinished:             (state: ISpriteState) => (state === 'death' && setHidden(true))
     });
 
     withCollisionEffect<T>({
@@ -55,7 +54,7 @@ export function withMobSpriteEffects<T extends MobModel>(
 
       setCurrentState('death');
     }
-    
+
     const styles: React.CSSProperties = {
       position:               'absolute',
       backgroundImage:        `url(${currentFrame})`,
@@ -67,7 +66,7 @@ export function withMobSpriteEffects<T extends MobModel>(
       top:                    hidden ? -9999 : props.model.position.y,
       display:                cssDisplayValue(hidden),
     }
-  
+
     return (
       <div id={options.elementId} className="sprite" style={styles} />
     )

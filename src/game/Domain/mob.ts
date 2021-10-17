@@ -11,8 +11,9 @@ import { withWrapAroundPositionFactory, WithPosition } from "../../engine/compon
 import { withBoundaryFactory,           WithBoundary } from "../../engine/components/withBoundary";
 import { withTextureFactory,            WithTexture } from "../../engine/components/withTexture";
 import { withBugWiggleFactory,          WithBugWiggle, WithBugWiggleArgs } from "../../engine/components/withBugWiggle";
-import { WithPositionState } from "../../engine/components/withPosition";
-import { registerComponentFactories } from "../../engine/registerComponents";
+import { withHomePositionFactory,       WithHomePosition } from "../../engine/components/withHomePosition";
+import { withPositionFactory,           WithPositionState } from "../../engine/components/withPosition";
+import { registerComponentFactories } from "../../engine/utils";
 
 export function createMob(
   system:   ISystemManager,
@@ -23,13 +24,15 @@ export function createMob(
   registerComponentFactories(system, entity, options, [
     nameableFactory,
     killableFactory,
-    withWrapAroundPositionFactory,
     withGeometryFactory,
-    withTextureFactory,
     withBoundaryFactory,
-    withRandomWalkFactory,
     withBugWiggleFactory,
+    withRandomWalkFactory,
+    withPositionFactory,
+    withWrapAroundPositionFactory,
+    withHomePositionFactory,
     isCollidableFactory,
+    withTextureFactory,
     lootableFactory,
   ]);
 
@@ -44,6 +47,7 @@ export type MobModelArgs =
   WithTexture             &
   WithBoundary            &
   WithRandomWalkArgs      &
+  WithHomePosition        &
   WithBugWiggleArgs       &
   IsLootable<IPointsLoot> &
   IsCollidable;
@@ -56,6 +60,7 @@ export type MobModel =
   WithTexture             &
   WithBoundary            &
   WithRandomWalkArgs      &
+  WithHomePosition        &
   WithBugWiggle           &
   IsLootable<IPointsLoot> &
   IsCollidable;

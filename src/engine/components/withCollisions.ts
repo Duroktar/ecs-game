@@ -3,13 +3,13 @@ import { ISystemManager } from "../interfaces/ISystemManager";
 import { factory, createSelector, createSetter } from "../utils";
 import { WithGeometry } from "./withGeometry";
 import { WithPosition } from "./withPosition";
-import { ON_COLLISION } from "../../events";
+import { COLLISION } from "../../events";
 import { IsCollidable } from "./isCollidable";
 
 const COMPONENT_NAMESPACE = 'collisions';
 
 export type WithCollisionArgs = Partial<WithCollisions>;
-export type WithCollisions = { collisions: EntityIdType[]; collisionGroup: string; };
+export type WithCollisions = { collisions: Set<EntityIdType>; collisionGroup: string; };
 
 export function withCollisionsFactory(system: ISystemManager) {
   return (entity: IEntity, state: WithCollisionArgs, events: IComponentEvents, id = -1) => {
@@ -18,7 +18,7 @@ export function withCollisionsFactory(system: ISystemManager) {
         id,
         entityId: entity.id,
         name: COMPONENT_NAMESPACE,
-        state: { collisions: state.collisions || [], collisionGroup: state.collisionGroup },
+        state: { collisions: state.collisions || new Set(), collisionGroup: state.collisionGroup },
         update: (system: ISystemManager, component: ICollidableEntity) => {
           handleCollisions(entity, component, system, events);
         },
@@ -26,36 +26,43 @@ export function withCollisionsFactory(system: ISystemManager) {
   }
 }
 
-type ICollidableEntity = IComponent<WithCollisions & WithGeometry & WithPosition>
+function eqSet<T>(as: Set<T>, bs: Set<T>) {
+  if (as.size !== bs.size) return false;
+  for (var a of as) if (!bs.has(a)) return false;
+  return true;
+}
+
+type ICollidableEntity = IComponent<WithCollisions & WithGeometry & WithPosition & IsCollidable>
 
 function handleCollisions(entity: IEntity, component: ICollidableEntity, system: ISystemManager, events: IComponentEvents) {
-  const position = system.getEntityModel<WithGeometry & WithPosition>({ id: component.entityId });
+  const model = system.getEntityModel<WithGeometry & WithPosition & IsCollidable & WithCollisions>({ id: component.entityId });
+
+  if (!model.collidable) {
+    return
+  }
 
   const collidableEntities = system
     .getEntitiesByComponentTypes(['geometry', 'position', 'collidable'])
     .filter(id => id !== component.entityId)
     .map(id => system.getEntityModel<IsCollidable & WithGeometry & WithPosition>({ id }))
-    .filter(model => model.collisionGroup !== component.state.collisionGroup);
+    .filter(model => model.collidable && (model.entityId !== component.entityId) && (model.collisionGroup !== component.state.collisionGroup));
 
-  const ownBounds = getBounds(position.position, position.geometry);
+  const ownBounds = getBounds(model.position, model.geometry);
 
-  const collisions: EntityIdType[] = [];
+  const lastCollisions = new Set(component.state.collisions)
+
+  let collisions = 0;
 
   collidableEntities.forEach(o => {
     const otherBounds = getBounds(o.position, o.geometry);
-    if (overlap(ownBounds, otherBounds) && otherBounds !== undefined) {
-      collisions.push(o.id);
+    if (otherBounds !== undefined && overlap(ownBounds, otherBounds)) {
+      component.state.collisions.add(o.id);
+      collisions++;
     }
   });
 
-  const lastCollisions = component.state.collisions
-    ? component.state.collisions.map(o => o)
-    : [];
-
-  component.state.collisions = collisions;
-
-  if (new Set(lastCollisions) !== new Set(collisions) && collisions.length > 0) {
-    events.onChange(ON_COLLISION, component, entity);
+  if (!eqSet(lastCollisions, component.state.collisions) && collisions > 0) {
+    events.onChange(COLLISION, component, entity);
   }
 }
 

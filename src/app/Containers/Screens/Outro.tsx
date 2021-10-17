@@ -1,15 +1,16 @@
-import { IGameState } from '../../game/types';
+import { IGameState } from '../../../game/types';
 import * as React from 'react';
 import {useEffect, useState} from 'react';
 
-import { Gui } from '../Layouts/Gui';
-import GameOver from '../Backgrounds/GameOver';
+import { Gui } from '../../Layouts/Gui';
+import GameOver from '../../Backgrounds/GameOver';
 
-import { classNames } from '../Development/Dev';
-import { withEnterKeyEffect } from '../hooks/withEnterKeyEffect';
-import { Songs } from '../../game/catalogue';
-import { once } from '../../engine/utils';
-import { Screens } from '../Screens';
+import { classNames } from '../../Development/Dev';
+import { withEnterKeyEffect } from '../../hooks/withEnterKeyEffect';
+import { Songs } from '../../../game/catalogue';
+import { once } from '../../../engine/utils';
+import { Screens } from '../../Screens';
+import { ISystemManager } from '../../../engine/interfaces/ISystemManager';
 
 interface FinalScore {
   score:    number;
@@ -20,29 +21,25 @@ interface FinalScore {
 }
 
 type Props = {
+  system: ISystemManager
   nav:    (screen: Screens) => void;
   final?: FinalScore
 }
-export function Outro(props: Props & IGameState) {
+export function Outro(props: Props) {
   const [ready, setReady] = useState(false);
   const [final, setFinalScore] = useState<FinalScore>({} as FinalScore);
 
   function handleStartNewGame() {
     props.nav('game');
   }
-  
+
   function handleRestartGame() {
     props.nav('menu');
   }
 
   useEffect(() => {
     props.system.audio.playSong(Songs.END);
-    return () => {
-      props.system.audio.stopSong(Songs.END);
-    }
-  }, []);
 
-  useEffect(() => {
     if (props.final) {
       try {
         setFinalScore(props.final);
@@ -54,7 +51,8 @@ export function Outro(props: Props & IGameState) {
     const timer = setTimeout(() => setReady(true), 3000);
 
     return () => {
-      clearTimeout(timer)
+      props.system.audio.stopSong(Songs.END);
+      clearTimeout(timer);
     }
   }, []);
 

@@ -1,29 +1,27 @@
-export const ON_START_GAME      = 'game:start';
-export const ON_GAME_WIN        = 'game:win';
-export const ON_GAME_OVER       = 'game:lose';
+export const START_GAME      = 'game:start';
+export const GAME_WIN        = 'game:win';
+export const GAME_OVER       = 'game:lose';
 
-export const ON_LEVEL_LOAD      = 'level:load';
-export const ON_LEVEL_BEGIN     = 'level:begin';
-export const ON_LEVEL_COMPLETE  = 'level:finished';
+export const LEVEL_LOAD      = 'level:load';
+export const LEVEL_BEGIN     = 'level:begin';
+export const LEVEL_COMPLETE  = 'level:finished';
 
-export const ON_ATTACK          = 'attack:*';
-export const ON_PLAYER_ATTACK   = 'attack:player';
-export const ON_ENEMY_ATTACK    = 'attack:enemy';
+export const ATTACK          = 'attack:*';
+export const PLAYER_ATTACK   = 'attack:player';
+export const ENEMY_ATTACK    = 'attack:enemy';
 
-export const ON_COLLISION       = 'collision:begin';
+export const COLLISION       = 'collision:begin';
 
-export const ON_REVIVE          = 'revive:*';
-export const ON_REVIVE_PLAYER   = 'revive:player';
+export const REVIVE          = 'revive:*';
+export const REVIVE_PLAYER   = 'revive:player';
 
-export const ON_DEATH           = 'dead:*';
-export const ON_ENEMY_DEATH     = 'dead:enemy';
-export const ON_PLAYER_DEATH    = 'dead:player';
+export const DEATH           = 'dead:dead';
+export const ENEMY_DEATH     = 'dead:enemy';
+export const PLAYER_DEATH    = 'dead:player';
 
-export const ON_ENEMY_FREE      = 'enemy:free';
-export const ON_ENEMY_GROUP     = 'enemy:group';
-export const ON_ENEMY_PATH      = 'enemy:path';
+export const ENEMY_FREE      = 'enemy:free';
+export const ENEMY_GROUP     = 'enemy:group';
+export const ENEMY_PATH      = 'enemy:path';
 
-export const ON_START_ENGINE    = 'engine:start';
-export const ON_STOP_ENGINE     = 'engine:stop';
-
-// !!! Move to the catalogue I think
+export const START_ENGINE    = 'engine:start';
+export const STOP_ENGINE     = 'engine:stop';

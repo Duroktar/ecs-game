@@ -5,6 +5,7 @@ import { fr } from '../../hooks/withAnimationState';
 
 import ShootSound from '../../../audio/Weapons/Lasers/sfx_wpn_laser1.wav';
 import DeathSound from '../../../audio/Explosions/Short/sfx_exp_short_soft5.wav';
+import { ENEMY_DEATH } from '../../../events';
 
 export const AnimatedBug = withSpriteEffects<MobModel>({
   elementId: 'enemy',
@@ -26,5 +27,6 @@ export const AnimatedBug = withSpriteEffects<MobModel>({
     death: DeathSound,
   },
   currentState: 'normal',
-  collisionGroup: 'enemy',
+
+  deathEvent: ENEMY_DEATH,
 });

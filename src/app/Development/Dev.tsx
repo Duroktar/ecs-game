@@ -9,7 +9,7 @@ import Draggable from 'react-draggable';
 
 import { pp } from '../../engine/utils';
 import { withBlur } from '../utils';
-import { withEntity } from '../Hoc/withEntity';
+import { withEntityModel } from '../Hoc/withEntityModel';
 import { FPS } from './FPS';
 import { Screens } from '../Screens';
 
@@ -23,7 +23,7 @@ interface Props {
   nav:      (screen: Screens) => void;
 }
 
-const EntityInspector = withEntity(props =>
+const EntityInspector = withEntityModel(props =>
   <pre>{pp(props.model)}</pre>
 );
 

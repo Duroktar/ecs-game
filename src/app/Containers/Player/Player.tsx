@@ -1,11 +1,12 @@
 import { CharacterModel } from '../../../game/Domain/character';
 
-import { withEntity } from '../../Hoc/withEntity';
+import { withEntityModel } from '../../Hoc/withEntityModel';
 import { withSpriteEffects } from '../../Hoc/withSpriteEffects';
 import { fr } from '../../hooks/withAnimationState';
 
 import ShootSound from '../../../audio/Weapons/Cannon/sfx_wpn_cannon1.wav';
 import DeathSound from '../../../audio/Explosions/Long/sfx_exp_long1.wav';
+import { PLAYER_DEATH } from '../../../events';
 
 export const AnimatedPlayer = withSpriteEffects<CharacterModel>({
   elementId: 'player',
@@ -30,7 +31,7 @@ export const AnimatedPlayer = withSpriteEffects<CharacterModel>({
     death: DeathSound,
   },
 
-  collisionGroup: 'player',
+  deathEvent: PLAYER_DEATH,
 });
 
-export const ConnectedPlayer = withEntity<CharacterModel>(AnimatedPlayer)
+export const ConnectedPlayer = withEntityModel<CharacterModel>(AnimatedPlayer)

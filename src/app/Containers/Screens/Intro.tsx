@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Layout } from '../Layouts/Base';
-import { Screens } from '../Screens';
+import { Layout } from '../../Layouts/Base';
+import { Screens } from '../../Screens';
 
 interface Props {
   onPlayerInput: (ev: KeyboardEvent) => void;

@@ -2,12 +2,12 @@ import * as React from 'react';
 import './styles/App.style.css';
 import './styles/FontGlow.style.css';
 
-import { DevScreen } from './Development/Dev';
+// import { DevScreen } from './Development/Dev';
 
-import { Intro } from './Containers/Intro';
-import { Menu } from './Containers/Menu';
-import { Game } from './Containers/Game';
-import { Outro } from './Containers/Outro';
+import { Intro } from './Containers/Screens/Intro';
+import { Menu } from './Containers/Screens/Menu';
+import { Game } from './Containers/Screens/Game';
+import { Outro } from './Containers/Screens/Outro';
 
 import { CharacterModel } from '../game/Domain/character';
 import { ProjectileModel } from '../game/Domain/projectile';
@@ -15,7 +15,7 @@ import { ProjectileModel } from '../game/Domain/projectile';
 import { createPlayer } from '../game/factories/player';
 import { createBullet } from '../game/factories/bullet';
 
-import { ON_START_GAME, ON_START_ENGINE, ON_STOP_ENGINE } from '../events';
+import { START_GAME, START_ENGINE, STOP_ENGINE } from '../events';
 import { keys } from '../engine/utils';
 import { SfxLibrary, SongLibrary } from '../game/catalogue';
 import { ICurrentGameState, IGameState } from '../game/types';
@@ -57,9 +57,9 @@ class App extends React.PureComponent<Props, IGameState> {
 
     this.gameAudioInitialize();
 
-    system.events.registerListener(ON_START_GAME,    this.startNewGame);
-    system.events.registerListener(ON_START_ENGINE,  this.start);
-    system.events.registerListener(ON_STOP_ENGINE,   this.stop);
+    system.events.registerListener(START_GAME,    this.startNewGame);
+    system.events.registerListener(START_ENGINE,  this.start);
+    system.events.registerListener(STOP_ENGINE,   this.stop);
   }
 
   componentDidMount() {
@@ -71,9 +71,9 @@ class App extends React.PureComponent<Props, IGameState> {
   componentWillUnmount() {
     this.gameAudioCleanup();
 
-    this.system.events.unRegisterListener(ON_START_GAME,    this.startNewGame)
-    this.system.events.unRegisterListener(ON_START_ENGINE,  this.start);
-    this.system.events.unRegisterListener(ON_STOP_ENGINE,   this.stop);
+    this.system.events.unRegisterListener(START_GAME,    this.startNewGame)
+    this.system.events.unRegisterListener(START_ENGINE,  this.start);
+    this.system.events.unRegisterListener(STOP_ENGINE,   this.stop);
 
     this.stop();
 
@@ -124,11 +124,11 @@ class App extends React.PureComponent<Props, IGameState> {
   start = () => {
     this.stop();
 
-    this._update();
+    this._gameloop();
   }
 
-  _update = () => {
-    this.handler = requestAnimationFrame(this._update);
+  _gameloop = () => {
+    this.handler = requestAnimationFrame(this._gameloop);
 
     this.tick();
   }
@@ -172,15 +172,11 @@ class App extends React.PureComponent<Props, IGameState> {
           ? <Intro
               onPlayerInput={this.startNewGame}
               nav={this.gotoScreen}
-              {...this.state}
             />
           : null
         }
         {this.state.screen === 'menu'
-          ? <Menu
-              system={this.system}
-              {...this.state}
-            />
+          ? <Menu system={this.system} />
           : null
         }
         {this.state.screen === 'game'
@@ -197,13 +193,11 @@ class App extends React.PureComponent<Props, IGameState> {
           ? <Outro
               system={this.system}
               nav={this.gotoScreen}
-
-              {...this.state}
             />
           : null
         }
 
-        <DevScreen
+        {/* <DevScreen
           system={this.system}
           onStart={this.start}
           onStop={this.stop}
@@ -211,7 +205,7 @@ class App extends React.PureComponent<Props, IGameState> {
           onSave={this.save}
           onLoad={this.load}
           nav={this.gotoScreen}
-        />
+        /> */}
       </div>
     );
   }
