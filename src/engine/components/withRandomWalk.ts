@@ -1,4 +1,5 @@
-import { IComponent, ISystemManager, IVector, IEntity, IComponentEvents } from "../types";
+import { IComponent, IVector, IEntity, IComponentEvents } from "../types";
+import { ISystemManager } from "../interfaces/ISystemManager";
 import { WithPosition } from "./withPosition";
 import { factory, boxMullerRandomGeneratorFactory, clamp, throttle } from "../utils";
 
@@ -54,6 +55,10 @@ type IWithRandomWalkEntity = IComponent<WithRandomWalk & Partial<WithPosition>>;
 type RNGFunc = (...args: any[]) => number;
 
 function handleMovement(entity: IEntity, component: IWithRandomWalkEntity, system: ISystemManager, events: IComponentEvents, randomWalkGeneratorX: RNGFunc, randomWalkGeneratorY: RNGFunc) {
+
+  if (component.state.disabled) {
+    return;
+  }
 
   const deltaX = randomWalkGeneratorX();
   const deltaY = randomWalkGeneratorY();

@@ -1,9 +1,10 @@
-import { IComponent, ISystemManager, IVector, IEntity, IComponentEvents } from "../types";
+import { IComponent, IVector, IEntity, IComponentEvents } from "../types";
+import { ISystemManager } from "../interfaces/ISystemManager";
 import { WithPosition } from "./withPosition";
 import { factory } from "../utils";
 import { WithBoundary } from "./withBoundary";
 
-export type WithPlayerControls = { direction: IVector; moving: boolean; speed: IVector; };
+export type WithPlayerControls = { direction: IVector; moving: boolean; speed: IVector; disabled?: boolean; };
 
 export function withPlayerControlsFactory(system: ISystemManager) {
   return (entity: IEntity, state: WithPlayerControls, events: IComponentEvents, id = -1) => {
@@ -16,11 +17,12 @@ export function withPlayerControlsFactory(system: ISystemManager) {
           direction: state.direction,
           moving: state.moving,
           speed: state.speed,
+          disabled: !!state.disabled,
         },
         update: (system: ISystemManager, component: IPlayerControllableEntity) => {
-          handleVerticalMovement(entity, component, system);
-          handleHorizontalMovement(entity, component, system);
-          
+          handleMovement(entity, component, system, 'vertical');
+          handleMovement(entity, component, system, 'horizontal');
+
           handleMovingFlag(entity, component, system);
         },
       }))
@@ -29,15 +31,11 @@ export function withPlayerControlsFactory(system: ISystemManager) {
 
 export type IPlayerControllableEntity = IComponent<WithPlayerControls & Partial<WithPosition> & Partial<WithBoundary>>
 
-function handleVerticalMovement(entity: IEntity, component: IPlayerControllableEntity, system: ISystemManager) {
-  handleMovement(entity, component, system, 'vertical');
-}
-
-function handleHorizontalMovement(entity: IEntity, component: IPlayerControllableEntity, system: ISystemManager) {
-  handleMovement(entity, component, system);
-}
-
 function handleMovement(entity: IEntity, component: IPlayerControllableEntity, system: ISystemManager, direction: 'vertical' | 'horizontal' = 'horizontal') {
+
+  if (component.state.disabled) {
+    return;
+  }
 
   const key = direction === 'horizontal' ? 'x' : 'y';
   const [neg, pos] = direction === 'horizontal'

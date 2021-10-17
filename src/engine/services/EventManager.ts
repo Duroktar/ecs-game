@@ -1,4 +1,5 @@
-import { IBasicConfig, IComponent, IEventManager, AnonymousCB, IEntity } from "../types";
+import { IBasicConfig, IComponent, AnonymousCB, IEntity } from "../types";
+import { IEventManager } from "../interfaces/IEventManager";
 import {EventEmitter2} from 'eventemitter2';
 
 const configDefaults = {
@@ -11,13 +12,13 @@ const configDefaults = {
 class EventManager implements IEventManager {
   public config:        IBasicConfig;
   public emitter:       EventEmitter2;
- 
+
   constructor(config: IBasicConfig) {
     this.config      = { ...configDefaults, ...config };
     this.emitter     = new EventEmitter2({
-      delimiter:  ':',
-      wildcard:   true,
-      maxListeners: 20,
+      delimiter:     ':',
+      wildcard:      true,
+      maxListeners:  200,
     });
   }
 

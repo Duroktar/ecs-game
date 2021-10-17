@@ -1,13 +1,15 @@
-import { IComponent, ISystemManager, IEntity, EntityIdType, Bounds, IVector, IDimensions, IComponentEvents } from "../types";
+import { IComponent, IEntity, EntityIdType, Bounds, IVector, IDimensions, IComponentEvents } from "../types";
+import { ISystemManager } from "../interfaces/ISystemManager";
 import { factory, createSelector, createSetter } from "../utils";
 import { WithGeometry } from "./withGeometry";
 import { WithPosition } from "./withPosition";
 import { ON_COLLISION } from "../../events";
+import { IsCollidable } from "./isCollidable";
 
 const COMPONENT_NAMESPACE = 'collisions';
 
 export type WithCollisionArgs = Partial<WithCollisions>;
-export type WithCollisions = { collisions: EntityIdType[]; };
+export type WithCollisions = { collisions: EntityIdType[]; collisionGroup: string; };
 
 export function withCollisionsFactory(system: ISystemManager) {
   return (entity: IEntity, state: WithCollisionArgs, events: IComponentEvents, id = -1) => {
@@ -16,7 +18,7 @@ export function withCollisionsFactory(system: ISystemManager) {
         id,
         entityId: entity.id,
         name: COMPONENT_NAMESPACE,
-        state: { collisions: state.collisions || [] },
+        state: { collisions: state.collisions || [], collisionGroup: state.collisionGroup },
         update: (system: ISystemManager, component: ICollidableEntity) => {
           handleCollisions(entity, component, system, events);
         },
@@ -32,7 +34,8 @@ function handleCollisions(entity: IEntity, component: ICollidableEntity, system:
   const collidableEntities = system
     .getEntitiesByComponentTypes(['geometry', 'position', 'collidable'])
     .filter(id => id !== component.entityId)
-    .map(id => system.getEntityModel<WithGeometry & WithPosition>({ id }));
+    .map(id => system.getEntityModel<IsCollidable & WithGeometry & WithPosition>({ id }))
+    .filter(model => model.collisionGroup !== component.state.collisionGroup);
 
   const ownBounds = getBounds(position.position, position.geometry);
 

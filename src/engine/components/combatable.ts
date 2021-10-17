@@ -1,4 +1,5 @@
-import { IComponent, ISystemManager, IEntity, IComponentEvents } from "../types";
+import { IComponent, IEntity, IComponentEvents } from "../types";
+import { ISystemManager } from "../interfaces/ISystemManager";
 import { factory, createSelector, createSetter } from "../utils";
 
 const COMPONENT_NAMESPACE = 'attack';

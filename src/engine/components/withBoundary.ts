@@ -1,4 +1,5 @@
-import { IComponent, ISystemManager, IEntity, EntityIdType, Bounds, IVector, IDimensions, IComponentEvents, BoundedTouchingState, BoundedTouchingStateKeys } from "../types";
+import { IComponent, IEntity, EntityIdType, Bounds, IVector, IDimensions, IComponentEvents, BoundedTouchingState, BoundedTouchingStateKeys } from "../types";
+import { ISystemManager } from "../interfaces/ISystemManager";
 import { factory, createSelector, createSetter, keys, defaultBoundary } from "../utils";
 import { WithGeometry } from "./withGeometry";
 import { WithPosition } from "./withPosition";

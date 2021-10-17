@@ -1,5 +1,6 @@
 import {Howl, Howler} from 'howler';
-import { IBasicConfig, IAudioManager, IAudioCollection } from "../types";
+import { IBasicConfig, IAudioCollection } from "../types";
+import { IAudioManager } from "../interfaces/IAudioManager";
 
 const configDefaults = {
   name: 'AudioManager',

@@ -1,5 +1,6 @@
-import { IComponent, ISystemManager, IEntity, IComponentEvents } from "../types";
-import { factory, createSelector, createSetter, defaultComponentEvents } from "../utils";
+import { IComponent, IEntity, IComponentEvents } from "../types";
+import { ISystemManager } from "../interfaces/ISystemManager";
+import { factory, createSelector, createSetter } from "../utils";
 import { ON_ENEMY_DEATH } from "../../events";
 
 const COMPONENT_NAMESPACE = 'health';

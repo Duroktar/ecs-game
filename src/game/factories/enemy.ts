@@ -1,4 +1,5 @@
-import { ISystemManager, IVector, IDimensions } from "../../engine/types";
+import { IVector, IDimensions } from "../../engine/types";
+import { ISystemManager } from "../../engine/interfaces/ISystemManager";
 import { createMob } from "../Domain/mob";
 import { defaultBoundary } from "../../engine/utils";
 
@@ -8,6 +9,7 @@ export function createEnemy(
     name:             string,
     position?:        IVector,
     geometry?:        IDimensions,
+    collisionGroup:   string = 'hostile',
 ) {
 
   const entity = createMob(system, {
@@ -40,6 +42,8 @@ export function createEnemy(
     },
 
     boundary: defaultBoundary,
+
+    collisionGroup,
   });
 
   return entity;

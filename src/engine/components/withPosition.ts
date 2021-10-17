@@ -1,4 +1,5 @@
-import { IComponent, ISystemManager, IVector, IEntity, IComponentEvents } from "../types";
+import { IComponent, IVector, IEntity, IComponentEvents } from "../types";
+import { ISystemManager } from "../interfaces/ISystemManager";
 import { factory, createSelector, createSetter, clamp, ifStateProp } from "../utils";
 import { WithControls } from "./controllable";
 import { WithBoundary } from "./withBoundary";
@@ -6,7 +7,7 @@ import { WithGeometry } from "./withGeometry";
 
 const COMPONENT_NAMESPACE = 'position';
 
-export type WithPosition = { position: IVector; }
+export type WithPosition = { position: IVector; controllable?: boolean; }
 export type WithCenter = { center: IVector; }
 export type WithPositionState = WithPosition & WithCenter;
 
@@ -17,15 +18,19 @@ export function withPositionFactory(system: ISystemManager) {
         id,
         name: COMPONENT_NAMESPACE,
         entityId: entity.id,
-        state: { position: { ...state.position }, center: { ...state.position } },
+        state: { position: { ...state.position }, center: { ...state.position }, controllable: state.controllable || true },
         update: (system: ISystemManager, component: IComponent<WithPositionState>) => {
           handleMovementState(entity, system, component, events);
         },
       }))
     }
   }
-  
+
 function handleMovementState(entity: IEntity, system: ISystemManager, component: IComponent<WithPositionState>, events: IComponentEvents) {
+
+  if (!component.state.controllable) {
+    return;
+  }
 
   const controls = system.getEntityComponent<WithControls>(entity, 'controls');
 
@@ -42,12 +47,12 @@ function handleMovementState(entity: IEntity, system: ISystemManager, component:
 
   const boundaryComponent = system.getEntityComponent<WithBoundary>(entity, 'boundary');
   const geometryComponent = system.getEntityComponent<WithGeometry>(entity, 'geometry');
-  
+
   if (ifStateProp(boundaryComponent) && ifStateProp(boundaryComponent)) {
 
     const {width, height} = geometryComponent.state.geometry;
     const {boundary}      = boundaryComponent.state;
-    
+
     const clampedX = clamp(boundary.left, boundary.right - width,   component.state.position.x)
     const clampedY = clamp(boundary.top,  boundary.bottom - height, component.state.position.y)
 

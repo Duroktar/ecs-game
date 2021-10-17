@@ -1,4 +1,4 @@
-import { createSystem } from "./factories/system";
+import { createSystem } from "../engine/system";
 
 const system = createSystem({ name: 'Galaga' })
 

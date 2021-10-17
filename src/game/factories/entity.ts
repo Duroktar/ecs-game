@@ -1,4 +1,4 @@
-import { ISystemManager } from "../../engine/types";
+import { ISystemManager } from "../../engine/interfaces/ISystemManager";
 import { createCharacter,   CharacterModel } from "../Domain/character";
 import { createProjectile,  ProjectileBase } from "../Domain/projectile";
 import { createMob,         MobModel } from "../Domain/mob";

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import './client/styles/index.css';
+import './app/styles/index.css';
 
-import App from './client/App';
+import { system } from './game';
+import App from './app/App';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<App system={system} />, document.getElementById('root'));

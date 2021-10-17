@@ -1,4 +1,9 @@
-import { IComponent, ISystem, ISystemManager, EntityIdType, IConfigDefaults, IEntity, WithId, IEntityComponents, ISerializableState, IInputManager, IStorageManager, IObjectConfig, IComponentFactory, IComponentFactories, IComponentFactoryKey, IEventManager, IAudioManager } from "../types";
+import { IComponent, ISystem, EntityIdType, IConfigDefaults, IEntity, WithId, IEntityComponents, ISerializableState, IObjectConfig, IComponentFactory, IComponentFactories, IComponentFactoryKey } from "../types";
+import { IStorageManager } from "../interfaces/IStorageManager";
+import { IInputManager } from "../interfaces/IInputManager";
+import { IAudioManager } from "../interfaces/IAudioManager";
+import { IEventManager } from "../interfaces/IEventManager";
+import { ISystemManager } from "../interfaces/ISystemManager";
 import AudioManager from "./AudioManager";
 import ComponentManager from "./ComponentManager";
 import EntityManager from "./EntityManager";
@@ -25,8 +30,8 @@ class SystemManager implements ISystemManager {
 
   private entityComponents:     IEntityComponents;
   private componentFactories:   IComponentFactories;
-  private entityManager:        EntityManager;
-  private componentManager:     ComponentManager;
+  private entities:             EntityManager;
+  private components:           ComponentManager;
 
   private entityModelCache:       { [key: string]: Array<IComponent> } = {};
   private entityComponentCache:   { [key: string]: number[] } = {};
@@ -43,16 +48,16 @@ class SystemManager implements ISystemManager {
     this.events               = new EventManager(config);
     this.audio                = new AudioManager(config);
     this.epoch                = epochs ? epochs : 0;
-    
+
     this.componentFactories   = defaultComponentFactories;
-    
-    this.entityManager        = new EntityManager(config);
-    this.componentManager     = new ComponentManager(config);
+
+    this.entities             = new EntityManager(config);
+    this.components           = new ComponentManager(config);
     this.entityComponents     = {};
 
     this.system = {
-      entities:   this.entityManager.entities,
-      components: this.componentManager.components,
+      entities:   this.entities.entities,
+      components: this.components.components,
     }
 
     this.entityComponentSetter = partialSetValue(this.entityComponents);
@@ -61,11 +66,14 @@ class SystemManager implements ISystemManager {
   public init = (config?: IObjectConfig) => null;
 
   public registerEntity = () => {
-    return this.entityManager.registerEntity();
+    return this.entities.registerEntity();
   };
 
+  public registerComponents = (...components: IComponent[]) => {
+    return components.map(this.registerComponent)
+  }
   public registerComponent = <T>(component: IComponent) => {
-    const registered = this.componentManager
+    const registered = this.components
       .registerComponent<T>(component)
 
     this.entityComponentSetter(
@@ -77,10 +85,10 @@ class SystemManager implements ISystemManager {
   };
 
   public getComponent = <T>(component: IComponent): IComponent<T> => {
-    return this.componentManager.get(component);
+    return this.components.get(component);
   };
   public getComponentById = <T>(componentId: EntityIdType): IComponent<T> => {
-    return this.componentManager.get(componentId);
+    return this.components.get(componentId);
   };
   public getComponentIdsForEntity = (entity: IEntity): Array<EntityIdType> => {
     if(entity === undefined) {
@@ -90,7 +98,7 @@ class SystemManager implements ISystemManager {
   };
   public getComponentsForEntity = (entity: IEntity): Array<IComponent> => {
     return this.getComponentIdsForEntity(entity)
-      .map(this.componentManager.get);
+      .map(this.components.get);
   };
   public getComponentFactory = (name: IComponentFactoryKey): IComponentFactory => {
     return this.componentFactories[name];
@@ -115,19 +123,20 @@ class SystemManager implements ISystemManager {
     this.deleteEntityComponents(entityId);
     this.clearEntityComponentCache();
     this.clearEntityModelCache();
-    this.entityManager.unRegisterEntity(entityId);
+    this.entities.unRegisterEntity(entityId);
   };
   public unRegisterComponent = (entityId: EntityIdType) => {
-    this.componentManager.unRegisterComponent(entityId);
+    this.components.unRegisterComponent(entityId);
   };
- 
   private unRegisterComponentsForEntity = (entityId: EntityIdType) => {
     const componentIds = this.getComponentIdsForEntity({ id: entityId });
-    componentIds.forEach(id => this.componentManager.unRegisterComponent(id));
+    componentIds.forEach(id => this.components.unRegisterComponent(id));
   };
+
   private deleteEntityComponents = (entityId: EntityIdType) => {
     delete this.entityComponents[entityId];
   };
+
   private clearEntityComponentCache = () => {
     delete this.entityComponentCache;
     this.entityComponentCache = {};
@@ -153,7 +162,7 @@ class SystemManager implements ISystemManager {
     const isValidComponent = (component: IComponent) => componentNames.indexOf(component.name) !== -1;
 
     const entities: EntityIdType[] = [];
-    
+
     for (let i = 0; i < this.system.entities.length; i++) {
       const entity = this.system.entities[i];
       const components = this.getComponentIdsForEntity(entity)

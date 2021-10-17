@@ -1,4 +1,5 @@
-import { IInputManager, IMouse, IKeyboard} from '../types';
+import { IMouse, IKeyboard} from '../types';
+import { IInputManager } from "../interfaces/IInputManager";
 import { Mouse } from "../../extern/Mouse";
 import { Keyboard } from "../../extern/Keyboard";
 
@@ -8,7 +9,7 @@ class InputManager implements IInputManager {
     private mouse: IMouse = new Mouse(),
     private keyboard: IKeyboard = new Keyboard(),
   ) {}
-  
+
   public buttonPressed = (button: number) => this.mouse.buttonPressed(button);
 
   public keyPressed = (key: number) => this.keyboard.keyPressed(key);

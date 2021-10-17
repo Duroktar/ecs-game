@@ -1,4 +1,5 @@
-import { IComponent, ISystemManager, IVector, IEntity, IComponentEvents } from "../types";
+import { IComponent, IVector, IEntity, IComponentEvents } from "../types";
+import { ISystemManager } from "../interfaces/ISystemManager";
 import { factory, createSelector, createSetter, clamp, ifStateProp } from "../utils";
 import { WithControls } from "./controllable";
 import { WithBoundary } from "./withBoundary";

@@ -71,5 +71,3 @@ class ComponentManager {
 }
 
 export default ComponentManager;
-
-// const manager = new ComponentManager(system.system, configDefaults, [], defaultIdGenerator());

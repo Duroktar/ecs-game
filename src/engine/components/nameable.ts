@@ -1,4 +1,5 @@
-import { IComponent, ISystemManager, IEntity, IComponentEvents } from "../types";
+import { IComponent, IEntity, IComponentEvents } from "../types";
+import { ISystemManager } from "../interfaces/ISystemManager";
 import { factory } from "../utils";
 
 export type WithName = { name: string };

@@ -15,7 +15,7 @@ const configDefaults = {
 
 class EntityManager {
   public config:              IBasicConfig;
-  public entities:           IEntity[];
+  public entities:            IEntity[];
   private idGenerator:        IdGeneratorFunc;
   constructor(config: IBasicConfig) {
     this.config      = { ...configDefaults, ...config };
