@@ -1,7 +1,8 @@
-import { ISystemManager, IComponent, IEntity } from '../../engine/types';
+import { IComponent, IEntity } from '../../engine/types';
 import {useEffect, useState} from 'react';
 import { ON_ENEMY_DEATH, ON_PLAYER_DEATH, ON_REVIVE_PLAYER } from '../../events';
 import { WithCollisions } from '../../engine/components/withCollisions';
+import { ISystemManager } from '../../engine/interfaces/ISystemManager';
 
 export const withDeathState = (options: WithDeathEffectOwnProps) => {
   const [dead, setDead] = useState(options.dead);
@@ -32,7 +33,7 @@ export const withDeathState = (options: WithDeathEffectOwnProps) => {
 
     options.system.events.registerListener(ON_REVIVE_PLAYER, handleRevivePlayerEvent);
     options.system.events.registerListener(options.deathEvent, handleDeathEvent);
-    
+
     return function cleanup() {
       options.system.events.unRegisterListener(ON_REVIVE_PLAYER, handleRevivePlayerEvent);
       options.system.events.unRegisterListener(options.deathEvent, handleDeathEvent);
